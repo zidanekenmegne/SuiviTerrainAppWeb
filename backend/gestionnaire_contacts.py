@@ -217,7 +217,7 @@ def menu():
     
     while True:
         print("\n" + "-"*40)
-        print("MENU PRINCIPAL - v2")
+        print("MENU PRINCIPAL - version A")
         print("-"*40)
         print("1. Ajouter un contact")
         print("2. Modifier un contact")
