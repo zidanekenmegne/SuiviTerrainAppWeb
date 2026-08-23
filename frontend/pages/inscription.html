@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - SuiviTerrain</title>
+    <meta name="description" content="Créez votre compte SuiviTerrain pour gérer vos visites et points de vente.">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Style personnalisé -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <main class="container min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="row w-100">
+            <div class="col-12 col-md-8 col-lg-5 mx-auto">
+                <!-- Carte d'inscription -->
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
+                        
+                        <!-- En-tête -->
+                        <header class="text-center mb-4">
+                            <img src="../assets/images/favicon_io/favicon.png" alt="Logo SuiviTerrain" height="60" class="mb-3">
+                            <h1 class="h3 fw-bold" style="font-family: 'Segoe UI', sans-serif; font-size: 1.75rem;">
+                                <span style="color: #1a1a1a;">Suivi</span><span style="color: #8B0000;">Terrain</span>
+                            </h1>
+                            <p class="text-muted small" style="font-family: 'Segoe UI', sans-serif;">
+                                Créez votre compte
+                            </p>
+                        </header>
+
+                        <!-- Formulaire d'inscription -->
+                        <form id="form-inscription" novalidate aria-label="Formulaire d'inscription">
+                            
+                            <!-- Nom complet -->
+                            <div class="mb-3">
+                                <label for="nom" class="form-label fw-semibold" style="font-family: 'Segoe UI', sans-serif;">
+                                    Nom complet
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-person" aria-hidden="true" style="color: #8B0000;"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0" id="nom" 
+                                           placeholder="Entrez votre nom complet" required
+                                           style="font-family: 'Segoe UI', sans-serif;">
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold" style="font-family: 'Segoe UI', sans-serif;">
+                                    Email
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-envelope" aria-hidden="true" style="color: #8B0000;"></i>
+                                    </span>
+                                    <input type="email" class="form-control border-start-0" id="email" 
+                                           placeholder="Entrez votre email" required
+                                           style="font-family: 'Segoe UI', sans-serif;">
+                                </div>
+                            </div>
+
+                            <!-- Mot de passe avec œil -->
+                            <div class="mb-3">
+                                <label for="motdepasse" class="form-label fw-semibold" style="font-family: 'Segoe UI', sans-serif;">
+                                    Mot de passe
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock" aria-hidden="true" style="color: #8B0000;"></i>
+                                    </span>
+                                    <input type="password" class="form-control border-start-0 border-end-0" id="motdepasse" 
+                                           placeholder="Créez un mot de passe" required
+                                           style="font-family: 'Segoe UI', sans-serif;">
+                                    <button type="button" class="btn btn-light border-start-0" id="togglePassword" 
+                                            aria-label="Afficher ou masquer le mot de passe" 
+                                            style="border-radius: 0 8px 8px 0; border-color: #dee2e6; background-color: #fff;">
+                                        <i class="bi bi-eye" id="eyeIcon" style="color: #8B0000;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Confirmation mot de passe -->
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label fw-semibold" style="font-family: 'Segoe UI', sans-serif;">
+                                    Confirmer le mot de passe
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-shield-lock" aria-hidden="true" style="color: #8B0000;"></i>
+                                    </span>
+                                    <input type="password" class="form-control border-start-0" id="confirm_password" 
+                                           placeholder="Confirmez votre mot de passe" required
+                                           style="font-family: 'Segoe UI', sans-serif;">
+                                </div>
+                            </div>
+
+                            <!-- Rôle -->
+                            <div class="mb-3">
+                                <label for="role" class="form-label fw-semibold" style="font-family: 'Segoe UI', sans-serif;">
+                                    Rôle
+                                </label>
+                                <select class="form-select" id="role" style="font-family: 'Segoe UI', sans-serif;">
+                                    <option value="agent">Agent commercial</option>
+                                    <option value="admin">Administrateur</option>
+                                </select>
+                            </div>
+
+                            <!-- Bouton S'inscrire -->
+                            <button type="submit" class="btn w-100 py-2 fw-bold text-white" 
+                                    style="background-color: #8B0000; border-color: #8B0000; border-radius: 8px; font-family: 'Segoe UI', sans-serif; font-size: 1rem;">
+                                S'inscrire
+                            </button>
+                        </form>
+
+                        <!-- Message d'erreur -->
+                        <div id="message-erreur" class="alert alert-danger mt-3 d-none" role="alert" 
+                             style="font-family: 'Segoe UI', sans-serif; font-size: 0.9rem;">
+                            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                            <span id="erreur-texte">Erreur lors de l'inscription.</span>
+                        </div>
+
+                        <!-- Lien retour vers connexion -->
+                        <footer class="text-center mt-4">
+                            <p class="small" style="font-family: 'Segoe UI', sans-serif; color: #6c757d; margin-bottom: 0;">
+                                Vous avez déjà un compte ?
+                            </p>
+                            <a href="connexion.html" class="text-decoration-none fw-semibold" 
+                               style="font-family: 'Segoe UI', sans-serif; color: #8B0000; display: inline-block; margin-top: 2px;">
+                                Se connecter
+                            </a>
+                        </footer>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App JS -->
+    <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+/**
+ * Navbar - Styles de la barre de navigation PC
+ * Version 1.0
+ * 
+ * Ce fichier contient les styles de la barre de navigation
+ * visible sur les ecrans PC (> 768px)
+ */
+
+/* ==========================================================
+   BARRE DE NAVIGATION PC
+   ========================================================== */
+.navbar-pc {
+    background-color: var(--primary-red);
+    padding: 0.6rem 1.5rem;
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+}
+
+/* ==========================================================
+   BRAND (Logo + Nom)
+   ========================================================== */
+.navbar-pc .navbar-brand {
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.navbar-pc .navbar-brand img {
+    height: 30px;
+    width: auto;
+}
+
+.navbar-pc .navbar-brand .brand-suivi {
+    color: var(--text-light);
+}
+
+.navbar-pc .navbar-brand .brand-terrain {
+    color: var(--gold);
+}
+
+/* ==========================================================
+   LIENS DE NAVIGATION
+   ========================================================== */
+.navbar-pc .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+}
+
+.navbar-pc .nav-links li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: var(--font-family);
+    font-weight: 600;
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.navbar-pc .nav-links li a:hover,
+.navbar-pc .nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-light);
+}
+
+.navbar-pc .nav-links li a i {
+    margin-right: 0.3rem;
+    font-size: 0.85rem;
+}
+
+/* ==========================================================
+   PARTIE DROITE (Recherche + Notification + Profil)
+   ========================================================== */
+.navbar-pc .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+/* ==========================================================
+   BARRE DE RECHERCHE
+   ========================================================== */
+.navbar-pc .search-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.navbar-pc .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 0.1rem 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.navbar-pc .search-input-wrapper:focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+
+.navbar-pc .search-input-wrapper i {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    margin-right: 0.3rem;
+    transition: color 0.2s;
+}
+
+.navbar-pc .search-input-wrapper:focus-within i {
+    color: var(--primary-red);
+}
+
+.navbar-pc .search-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 0.35rem 0.2rem;
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    color: var(--text-light);
+    outline: none;
+    width: 100%;
+    min-width: 120px;
+}
+
+.navbar-pc .search-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-pc .search-input-wrapper:focus-within input {
+    color: var(--text-dark);
+}
+
+.navbar-pc .search-input-wrapper:focus-within input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ==========================================================
+   SUGGESTIONS DE RECHERCHE
+   ========================================================== */
+.navbar-pc .search-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10000;
+    padding: 0.3rem 0;
+}
+
+.navbar-pc .search-suggestions.visible {
+    display: block;
+}
+
+.navbar-pc .search-suggestions .suggestion-group-title {
+    font-family: var(--font-family);
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.3rem 0.8rem 0.15rem 0.8rem;
+    border-bottom: 1px solid #f0ece6;
+}
+
+.navbar-pc .search-suggestions .suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    border-radius: 6px;
+    margin: 0.1rem 0.3rem;
+    gap: 0.5rem;
+}
+
+.navbar-pc .search-suggestions .suggestion-item:hover {
+    background-color: var(--cream);
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-light);
+    font-size: 0.7rem;
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-icon.visit {
+    background-color: var(--primary-red);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-icon.point {
+    background-color: var(--success);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-icon.user {
+    background-color: var(--info);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-icon.planning {
+    background-color: var(--warning);
+    color: var(--text-dark);
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-info .suggestion-title {
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.05rem;
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-info .suggestion-subtitle {
+    font-family: var(--font-family);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-badge {
+    font-family: var(--font-family);
+    font-size: 0.55rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.navbar-pc .search-suggestions .suggestion-item .suggestion-badge.visit {
+    background-color: #fce4e4;
+    color: var(--primary-red);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-badge.point {
+    background-color: #e8f5e9;
+    color: var(--success);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-badge.user {
+    background-color: #e3f2fd;
+    color: var(--info);
+}
+.navbar-pc .search-suggestions .suggestion-item .suggestion-badge.planning {
+    background-color: #fff8e1;
+    color: #f57c00;
+}
+
+.navbar-pc .search-suggestions .suggestion-empty {
+    padding: 1.5rem 0.8rem;
+    text-align: center;
+    font-family: var(--font-family);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.navbar-pc .search-suggestions .suggestion-empty i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+    color: #ced4da;
+}
+
+/* ==========================================================
+   NOTIFICATION
+   ========================================================== */
+.navbar-pc .notification-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    position: relative;
+    padding: 0.25rem;
+    cursor: pointer;
+}
+
+.navbar-pc .notification-btn .badge-notif {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    background-color: var(--danger);
+    color: var(--text-light);
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================
+   PROFIL DROPDOWN
+   ========================================================== */
+.navbar-pc .dropdown-toggle {
+    color: var(--text-light);
+    text-decoration: none;
+    font-family: var(--font-family);
+    font-weight: 600;
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+}
+
+.navbar-pc .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-pc .dropdown-toggle i {
+    font-size: 1.1rem;
+}
+
+.navbar-pc .dropdown-menu {
+    border-radius: var(--radius-md);
+    padding: 0.4rem;
+    box-shadow: var(--shadow-lg);
+    border: none;
+    min-width: 180px;
+}
+
+.navbar-pc .dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.navbar-pc .dropdown-item:hover {
+    background-color: var(--cream);
+}
+
+.navbar-pc .dropdown-item i {
+    margin-right: 0.5rem;
+    width: 18px;
+    text-align: center;
+}
+
+.navbar-pc .dropdown-divider {
+    margin: 0.2rem 0;
+}
+
+/* ==========================================================
+   RESPONSIVE : AFFICHAGE UNIQUEMENT SUR PC
+   ========================================================== */
+@media (max-width: 768px) {
+    .navbar-pc {
+        display: none !important;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE : AJUSTEMENTS POUR PETITS ECRANS PC
+   ========================================================== */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .navbar-pc .nav-links li a {
+        font-size: 0.78rem;
+        padding: 0.35rem 0.5rem;
+    }
+    
+    .navbar-pc .search-container {
+        min-width: 150px;
+    }
+    
+    .navbar-pc .search-input-wrapper input {
+        min-width: 80px;
+        font-size: 0.75rem;
+    }
+    
+    .navbar-pc .navbar-brand {
+        font-size: 1rem;
+    }
+}

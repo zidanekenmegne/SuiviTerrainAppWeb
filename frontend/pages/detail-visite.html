@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Détail de la visite - SuiviTerrain</title>
+    <meta name="description" content="Consultez les détails d'une visite SuiviTerrain.">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================
+           STYLES GLOBAUX
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #FFF8F0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0;
+        }
+
+        /* ==========================================================
+           BARRE DE NAVIGATION PC (> 768px)
+           ========================================================== */
+        .navbar-pc {
+            background-color: #8B0000;
+            padding: 0.75rem 1.5rem;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .navbar-pc .navbar-brand {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-pc .navbar-brand img {
+            height: 30px;
+        }
+
+        .navbar-pc .navbar-brand span:first-child {
+            color: #ffffff;
+        }
+
+        .navbar-pc .navbar-brand span:last-child {
+            color: #C9A84C;
+        }
+
+        .navbar-pc .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-pc .nav-links li a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .navbar-pc .nav-links li a:hover,
+        .navbar-pc .nav-links li a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .navbar-pc .nav-links li a i {
+            margin-right: 0.4rem;
+        }
+
+        .navbar-pc .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        /* ==========================================================
+           BARRE DE RECHERCHE GÉNÉRALE (PC)
+           ========================================================== */
+        .search-container {
+            position: relative;
+            min-width: 220px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 0.1rem 0.5rem;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input-wrapper:focus-within {
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+        }
+
+        .search-input-wrapper i {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-right: 0.4rem;
+            transition: color 0.2s;
+        }
+
+        .search-input-wrapper:focus-within i {
+            color: #8B0000;
+        }
+
+        .search-input-wrapper input {
+            background: transparent;
+            border: none;
+            padding: 0.45rem 0.3rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.85rem;
+            color: #ffffff;
+            outline: none;
+            width: 100%;
+            min-width: 140px;
+        }
+
+        .search-input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input-wrapper:focus-within input {
+            color: #1a1a1a;
+        }
+
+        .search-input-wrapper:focus-within input::placeholder {
+            color: #6c757d;
+        }
+
+        .search-shortcut {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Segoe UI', sans-serif;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .search-input-wrapper:focus-within .search-shortcut {
+            color: #6c757d;
+            background: #f0ece6;
+            border-color: #e0dcd6;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            max-height: 320px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10000;
+            padding: 0.3rem 0;
+        }
+
+        .search-suggestions.visible {
+            display: block;
+        }
+
+        .search-suggestions .suggestion-group-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.4rem 0.8rem 0.2rem 0.8rem;
+            border-bottom: 1px solid #f0ece6;
+        }
+
+        .search-suggestions .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            border-radius: 6px;
+            margin: 0.1rem 0.3rem;
+            gap: 0.6rem;
+        }
+
+        .search-suggestions .suggestion-item:hover {
+            background-color: #FFF8F0;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #ffffff;
+            font-size: 0.7rem;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-icon.visit {
+            background-color: #8B0000;
+        }
+        .search-suggestions .suggestion-item .suggestion-icon.point {
+            background-color: #28a745;
+        }
+        .search-suggestions .suggestion-item .suggestion-icon.user {
+            background-color: #17a2b8;
+        }
+        .search-suggestions .suggestion-item .suggestion-icon.planning {
+            background-color: #ffc107;
+            color: #1a1a1a;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-info .suggestion-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.05rem;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-info .suggestion-subtitle {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.65rem;
+            color: #6c757d;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-badge {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .search-suggestions .suggestion-item .suggestion-badge.visit {
+            background-color: #fce4e4;
+            color: #8B0000;
+        }
+        .search-suggestions .suggestion-item .suggestion-badge.point {
+            background-color: #e8f5e9;
+            color: #28a745;
+        }
+        .search-suggestions .suggestion-item .suggestion-badge.user {
+            background-color: #e3f2fd;
+            color: #17a2b8;
+        }
+        .search-suggestions .suggestion-item .suggestion-badge.planning {
+            background-color: #fff8e1;
+            color: #f57c00;
+        }
+
+        .search-suggestions .suggestion-empty {
+            padding: 1.5rem 0.8rem;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .search-suggestions .suggestion-empty i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+            color: #ced4da;
+        }
+
+        .search-suggestions::-webkit-scrollbar {
+            width: 4px;
+        }
+        .search-suggestions::-webkit-scrollbar-track {
+            background: #f8f5f0;
+            border-radius: 4px;
+        }
+        .search-suggestions::-webkit-scrollbar-thumb {
+            background: #c0b8b0;
+            border-radius: 4px;
+        }
+        .search-suggestions::-webkit-scrollbar-thumb:hover {
+            background: #8B0000;
+        }
+
+        /* ==========================================================
+           CLOCHE DE NOTIFICATION (PC uniquement)
+           ========================================================== */
+        .navbar-pc .nav-right .notification-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.3rem;
+            position: relative;
+            padding: 0.25rem;
+        }
+
+        .navbar-pc .nav-right .notification-btn .badge-notif {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background-color: #dc3545;
+            color: #fff;
+            font-size: 0.5rem;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-pc .nav-right .dropdown-toggle {
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .navbar-pc .nav-right .dropdown-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .navbar-pc .nav-right .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: none;
+        }
+
+        .navbar-pc .nav-right .dropdown-item {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+        }
+
+        .navbar-pc .nav-right .dropdown-item:hover {
+            background-color: #FFF8F0;
+        }
+
+        .navbar-pc .nav-right .dropdown-item i {
+            margin-right: 0.5rem;
+        }
+
+        /* ==========================================================
+           BANDEAU HAUT MOBILE (< 768px)
+           ========================================================== */
+        .top-header-mobile {
+            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+            padding: 0.75rem 1rem 0.5rem 1rem;
+            border-radius: 0 0 1px 1px;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .top-header-mobile .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-header-mobile .back-button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            padding: 0.25rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .top-header-mobile .back-button:hover {
+            opacity: 0.8;
+        }
+
+        .top-header-mobile .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .top-header-mobile .header-center .page-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 0;
+        }
+
+        .top-header-mobile .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Menu trois points verticaux (mobile uniquement) */
+        .top-header-mobile .header-right .menu-actions {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            padding: 0.25rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .top-header-mobile .header-right .menu-actions:hover {
+            opacity: 0.8;
+        }
+
+        .top-header-mobile .header-right .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: none;
+            min-width: 160px;
+        }
+
+        .top-header-mobile .header-right .dropdown-item {
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .top-header-mobile .header-right .dropdown-item:hover {
+            background-color: #FFF8F0;
+        }
+
+        .top-header-mobile .header-right .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 18px;
+            text-align: center;
+        }
+
+        .top-header-mobile .header-right .dropdown-item.text-danger:hover {
+            background-color: #fce4e4;
+        }
+
+        .top-header-mobile .header-right .dropdown-divider {
+            margin: 0.2rem 0;
+        }
+
+        /* Cacher la cloche sur mobile pour cette page */
+        .top-header-mobile .header-right .notification-btn {
+            display: none !important;
+        }
+
+        /* ==========================================================
+           CONTENU PRINCIPAL
+           ========================================================== */
+        .main-content {
+            flex: 1;
+            padding: 1.25rem 1.25rem 80px 1.25rem;
+            background-color: #FFF8F0;
+        }
+
+        .detail-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* En-tête PC */
+        .header-pc {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .header-pc h1 {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            margin-bottom: 0;
+        }
+
+        .header-pc h1 i {
+            color: #8B0000;
+            margin-right: 0.4rem;
+        }
+
+        /* ==========================================================
+           CARTE D'INFORMATIONS
+           ========================================================== */
+        .info-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .info-card .card-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #f0ece6;
+            padding-bottom: 0.5rem;
+        }
+
+        .info-card .card-title i {
+            color: #8B0000;
+            margin-right: 0.4rem;
+        }
+
+        /* ==========================================================
+           STATUT DE LA VISITE
+           ========================================================== */
+        .visite-statut {
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .visite-statut.realisee {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .visite-statut.planifie {
+            background-color: #ffc107;
+            color: #1a1a1a;
+        }
+
+        .visite-statut.retard {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+
+        .visite-statut.encours {
+            background-color: #17a2b8;
+            color: #ffffff;
+        }
+
+        /* ==========================================================
+           GRILLE D'INFORMATIONS
+           ========================================================== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem 2rem;
+        }
+
+        .info-grid .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f8f5f0;
+        }
+
+        .info-grid .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-grid .info-item .info-label {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+            flex-shrink: 0;
+            margin-right: 1rem;
+        }
+
+        .info-grid .info-item .info-value {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: right;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        /* ==========================================================
+           PROGRESSION
+           ========================================================== */
+        .progress-container {
+            margin: 0.5rem 0;
+        }
+
+        .progress-container .progress-bar-custom {
+            width: 100%;
+            height: 8px;
+            background-color: #f0ece6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-container .progress-bar-custom .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.5s ease;
+            background: linear-gradient(90deg, #8B0000, #C9A84C);
+        }
+
+        .progress-container .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.2rem;
+        }
+
+        /* ==========================================================
+           DESCRIPTION
+           ========================================================== */
+        .description-text {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 0.25rem 0;
+        }
+
+        /* ==========================================================
+           PIÈCES JOINTES
+           ========================================================== */
+        .attachments-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .attachments-list .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #FFF8F0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.75rem;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid #f0ece6;
+        }
+
+        .attachments-list .attachment-item:hover {
+            background-color: #f0ece6;
+        }
+
+        .attachments-list .attachment-item i {
+            color: #8B0000;
+            font-size: 0.9rem;
+        }
+
+        /* ==========================================================
+        BARRE "METTRE À JOUR LE STATUT" (fixe en bas)
+        ========================================================== */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 1px solid #f0ece6;
+            padding: 0.6rem 1rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-bar .status-current-label {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .status-bar .status-value {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 16px;
+            text-transform: uppercase;
+        }
+
+        .status-bar .status-dropdown-btn {
+            background: #8B0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 30px;
+            padding: 0.4rem 1.2rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-bar .status-dropdown-btn:hover {
+            background-color: #6a0000;
+        }
+
+        .status-bar .status-dropdown-btn i {
+            font-size: 0.7rem;
+        }
+
+        .status-bar .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: none;
+            min-width: 180px;
+        }
+
+        .status-bar .dropdown-menu .dropdown-item {
+            border-radius: 8px;
+            padding: 0.4rem 0.75rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .status-bar .dropdown-menu .dropdown-item:hover {
+            background-color: #FFF8F0;
+        }
+
+        .status-bar .dropdown-menu .dropdown-item.active-status {
+            background-color: #8B0000;
+            color: #ffffff;
+        }
+
+        .status-bar .dropdown-menu .dropdown-item.active-status:hover {
+            background-color: #6a0000;
+            color: #ffffff;
+        }
+
+        /* ==========================================================
+           FOOTER PC (fond rouge)
+           ========================================================== */
+        .footer-pc {
+            background-color: #8B0000;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            flex-shrink: 0;
+            display: none;
+            margin-top: auto;
+        }
+
+        .footer-pc p {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 0;
+            opacity: 0.85;
+        }
+
+        /* ==========================================================
+           RESPONSIVE : POINT DE RUPTURE À 768px
+           ========================================================== */
+        @media (min-width: 769px) {
+            .navbar-pc {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .top-header-mobile {
+                display: none !important;
+            }
+
+            .status-bar {
+                display: none !important;
+            }
+
+            .footer-pc {
+                display: block !important;
+            }
+
+            .main-content {
+                padding: 1.5rem 2rem 2rem 2rem;
+            }
+
+            .header-pc h1 {
+                font-size: 1.6rem;
+            }
+
+            .info-card {
+                padding: 1.5rem 2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .info-grid .info-item .info-label {
+                font-size: 0.85rem;
+            }
+
+            .info-grid .info-item .info-value {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header-mobile {
+                display: block !important;
+            }
+
+            .status-bar {
+                display: flex !important;
+            }
+
+            .navbar-pc {
+                display: none !important;
+            }
+
+            .footer-pc {
+                display: none !important;
+            }
+
+            /* Cacher la barre de navigation mobile */
+            .bottom-nav-mobile {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0.75rem 1rem 80px 1rem;
+            }
+
+            .header-pc {
+                display: none !important;
+            }
+
+            .info-card {
+                padding: 1rem 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.1rem;
+            }
+
+            .info-grid .info-item {
+                padding: 0.4rem 0;
+            }
+
+            .info-grid .info-item .info-label {
+                font-size: 0.75rem;
+            }
+
+            .info-grid .info-item .info-value {
+                font-size: 0.85rem;
+            }
+
+            .status-bar {
+                padding: 0.5rem 0.75rem;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                justify-content: center;
+            }
+
+            .status-bar .status-current {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .status-bar .status-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .status-bar .status-buttons .status-btn {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.6rem;
+            }
+        }
+
+        /* ==========================================================
+           ACCESSIBILITÉ
+           ========================================================== */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid #C9A84C;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC (> 768px)
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <a class="navbar-brand" href="tableau-bord.html">
+                <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                <span>Suivi</span><span>Terrain</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
+                <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-right">
+            <!-- Barre de recherche -->
+            <div class="search-container" id="globalSearchContainer">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher... (Ctrl+K)" aria-label="Recherche globale">
+                    <kbd class="search-shortcut">Ctrl+K</kbd>
+                </div>
+                <div class="search-suggestions" id="globalSearchSuggestions"></div>
+            </div>
+
+            <!-- Cloche de notification (PC uniquement) -->
+            <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                <i class="bi bi-bell" aria-hidden="true"></i>
+                <span class="badge-notif" id="badgeNotifPC">3</span>
+            </button>
+
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE (< 768px) - AVEC FLÈCHE RETOUR + MENU 3 POINTS
+    ========================================================== -->
+    <header class="top-header-mobile">
+        <div class="header-row">
+            <button class="back-button" id="backButton" aria-label="Retour">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            </button>
+
+            <div class="header-center">
+                <span class="page-title">Détail de la visite</span>
+            </div>
+
+            <div class="header-right">
+                <!-- Menu trois points verticaux (mobile uniquement) -->
+                <div class="dropdown">
+                    <button class="menu-actions" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions">
+                        <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" id="mobileEditBtn"><i class="bi bi-pencil" aria-hidden="true"></i> Modifier</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="mobileDeleteBtn"><i class="bi bi-trash" aria-hidden="true"></i> Supprimer</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
+    <main class="main-content">
+
+        <div class="detail-container">
+
+            <!-- ==========================================================
+            EN-TÊTE PC
+            ========================================================== -->
+            <div class="header-pc">
+                <h1><i class="bi bi-calendar-check" aria-hidden="true"></i> Détail de la visite</h1>
+                <span class="visite-statut encours">En cours</span>
+            </div>
+
+            <!-- ==========================================================
+            INFORMATIONS PRINCIPALES
+            ========================================================== -->
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-info-circle" aria-hidden="true"></i> Informations</div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Titre</span>
+                        <span class="info-value">Visite commerciale - Magasin A</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Statut</span>
+                        <span class="info-value"><span class="visite-statut encours" style="font-size: 0.65rem;">En cours</span></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date</span>
+                        <span class="info-value">12 juin 2025</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Heure</span>
+                        <span class="info-value">08:00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Agent responsable</span>
+                        <span class="info-value">Zidane Fredy</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Point de vente</span>
+                        <span class="info-value">Magasin A - Centre-ville</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Priorité</span>
+                        <span class="info-value"><span class="badge bg-danger" style="font-size: 0.7rem;">Élevée</span></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Adresse</span>
+                        <span class="info-value">123 Rue de Paris, Douala</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+            PROGRESSION
+            ========================================================== -->
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-bar-chart" aria-hidden="true"></i> Progression</div>
+
+                <div class="progress-container">
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>0%</span>
+                        <span>65%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 0.3rem; font-family: 'Segoe UI', sans-serif; font-size: 0.7rem; color: #6c757d;">
+                    <span><i class="bi bi-check-circle" style="color: #28a745;"></i> Collecte de données</span>
+                    <span><i class="bi bi-check-circle" style="color: #28a745;"></i> Analyse</span>
+                    <span><i class="bi bi-clock" style="color: #ffc107;"></i> Rédaction rapport</span>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+            DESCRIPTION
+            ========================================================== -->
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-file-text" aria-hidden="true"></i> Description</div>
+                <p class="description-text">
+                    Visite périodique du magasin pour vérifier la disponibilité des produits, 
+                    discuter des besoins du client et recueillir les commandes. 
+                    Objectif : augmenter les ventes de 15% sur le trimestre.
+                </p>
+            </div>
+
+            <!-- ==========================================================
+            PIÈCES JOINTES
+            ========================================================== -->
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-paperclip" aria-hidden="true"></i> Pièces jointes (2)</div>
+
+                <div class="attachments-list">
+                    <div class="attachment-item" onclick="alert('📄 Ouverture du document : Rapport_Visite_Magasin_A.pdf')">
+                        <i class="bi bi-file-pdf" aria-hidden="true"></i>
+                        Rapport_Visite_Magasin_A.pdf
+                    </div>
+                    <div class="attachment-item" onclick="alert('📄 Ouverture du document : Photos_Visite_Magasin_A.zip')">
+                        <i class="bi bi-file-zip" aria-hidden="true"></i>
+                        Photos_Visite_Magasin_A.zip
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+            <!-- ==========================================================
+        BARRE "METTRE À JOUR LE STATUT" (fixe en bas - mobile uniquement)
+        ========================================================== -->
+        <div class="status-bar" id="statusBar">
+            
+            <div class="dropdown">
+                <button class="status-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Mettre à jour le statut <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" id="statusDropdown">
+                    <li><a class="dropdown-item status-option" data-statut="planifie" href="#">Planifié</a></li>
+                    <li><a class="dropdown-item status-option" data-statut="encours" href="#">En cours</a></li>
+                    <li><a class="dropdown-item status-option" data-statut="realisee" href="#">Réalisé</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+
+                <!-- ==========================================================
+        MODALE MODIFIER UNE VISITE
+        ========================================================== -->
+        <div class="modal fade" id="modifierVisiteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+                    <div class="modal-header" style="border-bottom: 1px solid #f0ece6; padding: 1rem 1.5rem;">
+                        <h5 class="modal-title" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #1a1a1a;">
+                            <i class="bi bi-calendar-check" style="color: #8B0000; margin-right: 0.4rem;"></i>
+                            Modifier la visite
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 1.5rem;">
+                        <div class="mb-3">
+                            <label for="editVisiteTitre" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Titre</label>
+                            <input type="text" class="form-control" id="editVisiteTitre" value="Visite commerciale - Magasin A" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="editVisitePoint" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Point de vente</label>
+                                <select class="form-select" id="editVisitePoint" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                                    <option value="Magasin A">Magasin A - Centre-ville</option>
+                                    <option value="Client B">Client B - Bonamoussadi</option>
+                                    <option value="Magasin C">Magasin C - Akwa</option>
+                                    <option value="Client D">Client D - Bépanda</option>
+                                    <option value="Magasin E">Magasin E - Total Logbaba</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="editVisiteAgent" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Agent responsable</label>
+                                <select class="form-select" id="editVisiteAgent" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                                    <option value="Zidane Fredy">Zidane Fredy</option>
+                                    <option value="Sarah Niong">Sarah Niong</option>
+                                    <option value="Jean Dupont">Jean Dupont</option>
+                                    <option value="Marie Claire">Marie Claire</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-md-6">
+                                <label for="editVisiteDate" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Date</label>
+                                <input type="date" class="form-control" id="editVisiteDate" value="2025-06-12" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="editVisiteHeure" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Heure</label>
+                                <input type="time" class="form-control" id="editVisiteHeure" value="08:00" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                            </div>
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label for="editVisitePriorite" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Priorité</label>
+                            <select class="form-select" id="editVisitePriorite" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                                <option value="basse">Basse</option>
+                                <option value="moyenne" selected>Moyenne</option>
+                                <option value="elevee">Élevée</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVisiteDescription" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Description</label>
+                            <textarea class="form-control" id="editVisiteDescription" rows="3" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif; resize: vertical;">Visite périodique du magasin pour vérifier la disponibilité des produits, discuter des besoins du client et recueillir les commandes.</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid #f0ece6; padding: 1rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+                        <button type="button" class="btn-retour" data-bs-dismiss="modal" style="background: transparent; border: 2px solid #6c757d; border-radius: 8px; color: #6c757d; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">Annuler</button>
+                        <button type="button" class="btn-enregistrer" id="saveVisiteBtn" style="background-color: #8B0000; border: none; border-radius: 8px; color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">
+                            <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    
+    <!-- ==========================================================
+    FOOTER PC (fond rouge)
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+    </footer>
+
+    <!-- ==========================================================
+    BOOTSTRAP JS
+    ========================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ==========================================================
+    SCRIPTS
+    ========================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ==========================================================
+            // FLÈCHE RETOUR (mobile)
+            // ==========================================================
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function() {
+                    window.history.back();
+                });
+            }
+
+            // ==========================================================
+            // NOTIFICATIONS (PC uniquement)
+            // ==========================================================
+            const notifBtnPC = document.getElementById('notifBtnPC');
+            if (notifBtnPC) {
+                notifBtnPC.addEventListener('click', function() {
+                    window.location.href = 'notifications.html';
+                });
+            }
+
+            // ==========================================================
+            // MENU TROIS POINTS (mobile) - Modifier
+            // ==========================================================
+            const mobileEditBtn = document.getElementById('mobileEditBtn');
+            if (mobileEditBtn) {
+                mobileEditBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'modifier-visite.html';
+                });
+            }
+
+            // ==========================================================
+            // MENU TROIS POINTS (mobile) - Supprimer
+            // ==========================================================
+            const mobileDeleteBtn = document.getElementById('mobileDeleteBtn');
+            if (mobileDeleteBtn) {
+                mobileDeleteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('⚠️ Voulez-vous vraiment supprimer cette visite ? Cette action est irréversible.')) {
+                        alert('🗑️ Visite supprimée');
+                        window.location.href = 'liste-points.html';
+                    }
+                });
+            }
+
+            // ==========================================================
+            // BARRE "METTRE À JOUR LE STATUT"
+            // ==========================================================
+            const statusBtns = document.querySelectorAll('.status-btn');
+            const statusValue = document.querySelector('.status-value');
+
+            const statutLabels = {
+                'planifie': 'Planifié',
+                'encours': 'En cours',
+                'realisee': 'Réalisé'
+            };
+
+            const statutClasses = {
+                'planifie': 'planifie',
+                'encours': 'encours',
+                'realisee': 'realisee'
+            };
+
+            statusBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    statusBtns.forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+
+                    const statut = this.dataset.statut;
+                    const label = statutLabels[statut] || statut;
+                    const cls = statutClasses[statut] || 'planifie';
+
+                    // Mettre à jour l'affichage du statut
+                    statusValue.textContent = label;
+                    statusValue.className = 'status-value visite-statut ' + cls;
+
+                    // Mettre à jour le statut dans l'en-tête PC
+                    const pcStatut = document.querySelector('.header-pc .visite-statut');
+                    if (pcStatut) {
+                        pcStatut.textContent = label;
+                        pcStatut.className = 'visite-statut ' + cls;
+                    }
+
+                    // Mettre à jour le statut dans la liste des informations (deuxième ligne)
+                    const infoStatut = document.querySelector('.info-grid .info-item:nth-child(2) .info-value');
+                    if (infoStatut) {
+                        infoStatut.innerHTML = '<span class="visite-statut ' + cls + '" style="font-size: 0.65rem;">' +
+                            label + '</span>';
+                    }
+
+                    showToast('✅ Statut mis à jour : ' + label);
+                });
+            });
+
+            // ==========================================================
+            // TOAST (notification simple)
+            // ==========================================================
+            function showToast(message) {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 100px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #1a1a1a;
+                    color: #ffffff;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 12px;
+                    font-family: 'Segoe UI', sans-serif;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                    z-index: 9999;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    max-width: 90%;
+                    text-align: center;
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                setTimeout(() => { toast.style.opacity = '1'; }, 50);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.remove(); }, 300);
+                }, 2500);
+            }
+
+            // ==========================================================
+            // RECHERCHE GÉNÉRALE
+            // ==========================================================
+            const searchInput = document.getElementById('globalSearchInput');
+            const suggestionsContainer = document.getElementById('globalSearchSuggestions');
+
+            if (searchInput && suggestionsContainer) {
+                const searchData = {
+                    visites: [
+                        { id: 1, titre: 'Visite commerciale - Magasin A', adresse: 'Centre-ville',
+                            date: '12 juin 2025', statut: 'Réalisée' },
+                        { id: 2, titre: 'Collecte de commandes - Client B', adresse: 'Bonamoussadi',
+                            date: '12 juin 2025', statut: 'En attente' },
+                    ],
+                    pointsVente: [
+                        { id: 1, nom: 'Magasin A', adresse: 'Centre-ville', categorie: 'Alimentation' },
+                        { id: 2, nom: 'Client B', adresse: 'Bonamoussadi', categorie: 'Services' },
+                    ],
+                    utilisateurs: [
+                        { id: 1, nom: 'Zidane Fredy', email: 'zidane@suiviterrain.com', role: 'Administrateur' },
+                        { id: 2, nom: 'Sarah Niong', email: 'sarah@suiviterrain.com', role: 'Agent' },
+                    ],
+                    planning: [
+                        { id: 1, date: '12 juin 2025', agent: 'Zidane', visites: 3 },
+                    ]
+                };
+
+                function performSearch(query) {
+                    const term = query.toLowerCase().trim();
+                    const results = [];
+                    if (!term || term.length < 2) return results;
+
+                    searchData.visites.forEach(v => {
+                        if (v.titre.toLowerCase().includes(term) || v.adresse.toLowerCase().includes(term)) {
+                            results.push({
+                                type: 'visit',
+                                label: v.titre,
+                                subtitle: v.adresse + ' • ' + v.date,
+                                badge: v.statut,
+                                url: 'detail-visite.html?id=' + v.id,
+                                icon: 'bi bi-calendar-event'
+                            });
+                        }
+                    });
+
+                    searchData.pointsVente.forEach(p => {
+                        if (p.nom.toLowerCase().includes(term) || p.adresse.toLowerCase().includes(term)) {
+                            results.push({
+                                type: 'point',
+                                label: p.nom,
+                                subtitle: p.adresse + ' • ' + p.categorie,
+                                badge: p.categorie,
+                                url: 'detail-point.html?id=' + p.id,
+                                icon: 'bi bi-shop'
+                            });
+                        }
+                    });
+
+                    searchData.utilisateurs.forEach(u => {
+                        if (u.nom.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)) {
+                            results.push({
+                                type: 'user',
+                                label: u.nom,
+                                subtitle: u.email + ' • ' + u.role,
+                                badge: u.role,
+                                url: 'gestion-utilisateurs.html',
+                                icon: 'bi bi-person'
+                            });
+                        }
+                    });
+
+                    searchData.planning.forEach(p => {
+                        if (p.date.toLowerCase().includes(term) || p.agent.toLowerCase().includes(term)) {
+                            results.push({
+                                type: 'planning',
+                                label: 'Planning du ' + p.date,
+                                subtitle: p.agent + ' • ' + p.visites + ' visites',
+                                badge: p.visites + ' visites',
+                                url: 'planning-visites.html?date=' + p.date,
+                                icon: 'bi bi-calendar-check'
+                            });
+                        }
+                    });
+
+                    return results;
+                }
+
+                function renderSuggestions(results) {
+                    const badges = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
+                    const icons = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
+                    const labels = { visit: 'Visites', point: 'Points de vente', user: 'Utilisateurs',
+                        planning: 'Planning' };
+
+                    if (results.length === 0) {
+                        suggestionsContainer.innerHTML = `
+                            <div class="suggestion-empty">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                                Aucun résultat trouvé
+                            </div>
+                        `;
+                        suggestionsContainer.classList.add('visible');
+                        return;
+                    }
+
+                    const grouped = { visit: [], point: [], user: [], planning: [] };
+                    results.forEach(r => { if (grouped[r.type]) grouped[r.type].push(r); });
+
+                    let html = '';
+                    for (const [type, items] of Object.entries(grouped)) {
+                        if (items.length === 0) continue;
+                        html += `<div class="suggestion-group-title">${labels[type]}</div>`;
+                        items.forEach(item => {
+                            html += `
+                                <div class="suggestion-item" data-url="${item.url}">
+                                    <div class="suggestion-icon ${icons[item.type]}">
+                                        <i class="${item.icon}" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="suggestion-info">
+                                        <div class="suggestion-title">${item.label}</div>
+                                        <div class="suggestion-subtitle">${item.subtitle}</div>
+                                    </div>
+                                    <span class="suggestion-badge ${badges[item.type]}">${item.badge}</span>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    suggestionsContainer.innerHTML = html;
+                    suggestionsContainer.classList.add('visible');
+
+                    suggestionsContainer.querySelectorAll('.suggestion-item').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const url = this.dataset.url;
+                            if (url) window.location.href = url;
+                        });
+                    });
+                }
+
+                let searchTimeout;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value;
+                    if (query.length < 2) {
+                        suggestionsContainer.classList.remove('visible');
+                        return;
+                    }
+                    searchTimeout = setTimeout(() => {
+                        const results = performSearch(query);
+                        renderSuggestions(results);
+                    }, 250);
+                });
+
+                document.addEventListener('click', function(e) {
+                    const container = document.getElementById('globalSearchContainer');
+                    if (container && !container.contains(e.target)) {
+                        suggestionsContainer.classList.remove('visible');
+                    }
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                    if (e.key === 'Escape') {
+                        suggestionsContainer.classList.remove('visible');
+                        searchInput.blur();
+                    }
+                });
+
+                let selectedIndex = -1;
+                searchInput.addEventListener('keydown', function(e) {
+                    const items = suggestionsContainer.querySelectorAll('.suggestion-item');
+                    if (items.length === 0) return;
+
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        selectedIndex = (selectedIndex + 1) % items.length;
+                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
+                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
+                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && selectedIndex < items.length) {
+                            const url = items[selectedIndex].dataset.url;
+                            if (url) window.location.href = url;
+                        }
+                    }
+                });
+            }
+
+            console.log('✅ Page Détail de la visite chargée');
+        });
+
+                // ==========================================================
+        // MODIFIER UNE VISITE
+        // ==========================================================
+
+        // Bouton "Modifier" dans la page Détail visite
+        document.getElementById('btnEditVisit').addEventListener('click', function() {
+            // Charger les données actuelles dans la modale
+            // ... (récupérer les valeurs depuis la page)
+            const modal = new bootstrap.Modal(document.getElementById('modifierVisiteModal'));
+            modal.show();
+        });
+
+        // Enregistrer les modifications
+        document.getElementById('saveVisiteBtn').addEventListener('click', function() {
+            const titre = document.getElementById('editVisiteTitre').value.trim();
+            if (!titre) {
+                showToast('⚠️ Le titre est obligatoire');
+                return;
+            }
+            showToast('✅ Visite modifiée avec succès');
+            // Mettre à jour les données dans la page
+            // ... (mettre à jour les affichages)
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modifierVisiteModal'));
+            modal.hide();
+        });
+
+    </script>
+
+</body>
+</html>
