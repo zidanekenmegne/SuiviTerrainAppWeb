@@ -1,0 +1,78 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+*
+# ================================
+# ENVIRONNEMENTS VIRTUELS
+# ================================
+venv/
+env/
+.venv/
+ENV/
+
+# ================================
+# FICHIERS PYTHON TEMPORAIRES
+# ================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# ================================
+# VARIABLES D'ENVIRONNEMENT (SECRETS)
+# ================================
+.env
+.env.local
+.env.production
+*.env
+
+# ================================
+# EDITEURS DE CODE
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ================================
+# BASE DE DONNÉES
+# ================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ================================
+# DOSSIERS NODE (pour React plus tard)
+# ================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ================================
+# DOSSIERS DE BUILD (pour React)
+# ================================
+dist/
+build/
+*.zip
+
+# ================================
+# FICHIERS DE CONFIGURATION LOCAUX
+# ================================
+config.local.py
+settings.local.py*.docx
+~.docx
+
+# Fichiers temporaires
+~$*.docx
+*.tmp
+*.log
