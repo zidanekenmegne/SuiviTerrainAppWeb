@@ -1,0 +1,104 @@
+/**
+ * Inscription - Styles specifiques
+ * Couleurs : #8B0000 (rouge bordeaux), #1a1a1a (noir)
+ */
+
+/* ===== Police Segoe UI ===== */
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== Titre SuiviTerrain ===== */
+.suivi-text {
+    color: #1a1a1a;
+}
+
+.terrain-text {
+    color: #8B0000;
+}
+
+/* ===== Carte d'inscription ===== */
+.card {
+    border-radius: 16px;
+    background-color: #ffffff;
+}
+
+/* ===== Champs de formulaire ===== */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+}
+
+.form-control {
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.form-select {
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* ===== Input group ===== */
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    background-color: #f8f9fa;
+}
+
+.input-group-text i {
+    color: #8B0000;
+}
+
+/* ===== Bouton afficher/masquer mot de passe ===== */
+#togglePassword {
+    border-radius: 0 8px 8px 0;
+    border-color: #dee2e6;
+    background-color: #ffffff;
+    color: #8B0000;
+}
+
+#togglePassword:hover {
+    background-color: #f8f9fa;
+}
+
+/* ===== Bouton S'inscrire ===== */
+.btn-inscrire {
+    background-color: #8B0000;
+    border-color: #8B0000;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-inscrire:hover {
+    background-color: #6a0000;
+    border-color: #6a0000;
+}
+
+/* ===== Lien retour connexion ===== */
+.lien-connexion {
+    color: #8B0000;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.lien-connexion:hover {
+    color: #6a0000;
+}
+
+/* ===== Message d'erreur ===== */
+#message-erreur {
+    font-size: 0.9rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .h3 {
+        font-size: 1.4rem;
+    }
+}
