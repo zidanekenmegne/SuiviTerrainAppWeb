@@ -1,0 +1,117 @@
+/**
+ * Connexion - Styles specifiques
+ * Couleurs : #8B0000 (rouge bordeaux), #1a1a1a (noir)
+ */
+
+/* ===== Police Segoe UI ===== */
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== Titre SuiviTerrain ===== */
+.suivi-text {
+    color: #1a1a1a;
+}
+
+.terrain-text {
+    color: #8B0000;
+}
+
+/* ===== Carte de connexion ===== */
+.card {
+    border-radius: 16px;
+    background-color: #ffffff;
+}
+
+/* ===== Champs de formulaire ===== */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+}
+
+.form-control {
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.form-text {
+    font-size: 0.75rem;
+}
+
+/* ===== Input group ===== */
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    background-color: #f8f9fa;
+}
+
+.input-group-text i {
+    color: #8B0000;
+}
+
+/* ===== Bouton afficher/masquer mot de passe ===== */
+#togglePassword {
+    border-radius: 0 8px 8px 0;
+    border-color: #dee2e6;
+    background-color: #ffffff;
+    color: #8B0000;
+}
+
+#togglePassword:hover {
+    background-color: #f8f9fa;
+}
+
+/* ===== Checkbox ===== */
+.form-check-input {
+    border-color: #8B0000;
+    accent-color: #8B0000;
+}
+
+/* ===== Liens ===== */
+.lien-oubli {
+    color: #8B0000;
+}
+
+.lien-oubli:hover {
+    color: #6a0000;
+}
+
+.lien-inscription {
+    color: #8B0000;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.lien-inscription:hover {
+    color: #6a0000;
+}
+
+/* ===== Bouton Se connecter ===== */
+.btn-connecter {
+    background-color: #8B0000;
+    border-color: #8B0000;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-connecter:hover {
+    background-color: #6a0000;
+    border-color: #6a0000;
+}
+
+/* ===== Message d'erreur ===== */
+#message-erreur {
+    font-size: 0.9rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .h3 {
+        font-size: 1.4rem;
+    }
+}
