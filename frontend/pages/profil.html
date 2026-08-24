@@ -4,831 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Profil - SuiviTerrain</title>
-    <meta name="description" content="Consultez et gérez votre profil SuiviTerrain.">
-    
+    <meta name="description" content="Consultez et gerez votre profil SuiviTerrain.">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==========================================================
-           STYLES GLOBAUX
-           ========================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #FFF8F0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION PC (> 768px)
-           ========================================================== */
-        .navbar-pc {
-            background-color: #8B0000;
-            padding: 0.75rem 1.5rem;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .navbar-pc .navbar-brand {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-pc .navbar-brand img {
-            height: 30px;
-        }
-
-        .navbar-pc .navbar-brand span:first-child {
-            color: #ffffff;
-        }
-
-        .navbar-pc .navbar-brand span:last-child {
-            color: #C9A84C;
-        }
-
-        .navbar-pc .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-pc .nav-links li a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .navbar-pc .nav-links li a:hover,
-        .navbar-pc .nav-links li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .navbar-pc .nav-links li a i {
-            margin-right: 0.4rem;
-        }
-
-        .navbar-pc .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-        }
-
-        .navbar-pc .nav-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .navbar-pc .nav-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle {
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-pc .nav-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        .navbar-pc .nav-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .navbar-pc .nav-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .navbar-pc .nav-right .dropdown-item i {
-            margin-right: 0.5rem;
-        }
-
-        /* ==========================================================
-           BANDEAU HAUT MOBILE (< 768px)
-           ========================================================== */
-        .top-header-mobile {
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            padding: 0.75rem 1rem 0.5rem 1rem;
-            border-radius: 0 0 1px 1px;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .top-header-mobile .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-header-mobile .menu-hamburger {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-        }
-
-        .top-header-mobile .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-center .page-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-bottom: 0;
-        }
-
-        .top-header-mobile .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .top-header-mobile .header-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Menu déroulant mobile */
-        .mobile-menu-dropdown {
-            background: #8B0000;
-            padding: 0.5rem 1rem 1rem 1rem;
-            border-radius: 0 0 20px 20px;
-            display: none;
-        }
-
-        .mobile-menu-dropdown.open {
-            display: block;
-        }
-
-        .mobile-menu-dropdown a {
-            display: block;
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.6rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-
-        .mobile-menu-dropdown a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .mobile-menu-dropdown a i {
-            margin-right: 0.5rem;
-            width: 20px;
-            text-align: center;
-        }
-
-        .mobile-menu-dropdown hr {
-            border-color: rgba(255, 255, 255, 0.15);
-            margin: 0.25rem 0;
-        }
-
-        /* ==========================================================
-           CONTENU PRINCIPAL
-           ========================================================== */
-        .main-content {
-            flex: 1;
-            padding: 1.25rem 1.25rem 5rem 1.25rem;
-            background-color: #FFF8F0;
-        }
-
-        /* ==========================================================
-           PROFIL
-           ========================================================== */
-        .profile-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .profile-header {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 1.5rem 1.5rem 1.25rem 1.5rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-            text-align: center;
-            margin-bottom: 1.25rem;
-        }
-
-        /* ==========================================================
-           AVATAR AVEC BADGE D'UPLOAD
-           ========================================================== */
-        .avatar-wrapper {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 0.75rem auto;
-            cursor: pointer;
-        }
-
-        .avatar-wrapper .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 4px solid #ffffff;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.15);
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-
-        .avatar-wrapper .avatar:hover {
-            transform: scale(1.02);
-        }
-
-        .avatar-wrapper .avatar i {
-            font-size: 3.5rem;
-            color: #ffffff;
-        }
-
-        .avatar-wrapper .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Badge de modification (crayon) */
-        .avatar-wrapper .avatar-badge {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            background: #8B0000;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-size: 0.8rem;
-            box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .avatar-wrapper .avatar-badge:hover {
-            background-color: #6a0000;
-        }
-
-        /* Input de fichier caché */
-        #avatarInput {
-            display: none;
-        }
-
-        .profile-header .profile-name {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #1a1a1a;
-            margin-bottom: 0.1rem;
-        }
-
-        .profile-header .profile-role {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #6c757d;
-            display: inline-block;
-            background: #FFF8F0;
-            padding: 0.2rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .profile-header .profile-role.admin {
-            background: #8B0000;
-            color: #ffffff;
-        }
-
-        /* ==========================================================
-           CARTES D'INFORMATIONS
-           ========================================================== */
-        .info-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 1.25rem 1.5rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-            margin-bottom: 1rem;
-        }
-
-        .info-card .card-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
-            border-bottom: 1px solid #f0ece6;
-            padding-bottom: 0.5rem;
-        }
-
-        .info-card .card-title i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid #f8f5f0;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-item .info-icon {
-            width: 32px;
-            color: #8B0000;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .info-item .info-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.75rem;
-            color: #6c757d;
-            width: 90px;
-            flex-shrink: 0;
-        }
-
-        .info-item .info-value {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            font-weight: 500;
-            flex: 1;
-            word-break: break-word;
-        }
-
-        /* ==========================================================
-           STATISTIQUES
-           ========================================================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-        }
-
-        .stats-grid .stat-item {
-            text-align: center;
-            padding: 0.5rem 0.25rem;
-            background: #FFF8F0;
-            border-radius: 12px;
-        }
-
-        .stats-grid .stat-item .stat-number {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #8B0000;
-        }
-
-        .stats-grid .stat-item .stat-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* ==========================================================
-           BOUTONS D'ACTION - EN COLONNE UNIQUEMENT SUR MOBILE
-           ========================================================== */
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 0.25rem;
-        }
-
-        .action-buttons .btn-action {
-            flex: 1;
-            min-width: 120px;
-            padding: 0.6rem 1rem;
-            border-radius: 10px;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .action-buttons .btn-action.btn-primary-red {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        .action-buttons .btn-action.btn-primary-red:hover {
-            background-color: #6a0000;
-        }
-
-        .action-buttons .btn-action.btn-outline {
-            background: transparent;
-            color: #8B0000;
-            border: 2px solid #8B0000;
-        }
-
-        .action-buttons .btn-action.btn-outline:hover {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        .action-buttons .btn-action.btn-danger {
-            background-color: #dc3545;
-            color: #ffffff;
-        }
-
-        .action-buttons .btn-action.btn-danger:hover {
-            background-color: #b02a37;
-        }
-
-        /* ==========================================================
-           FOOTER PC (fond rouge)
-           ========================================================== */
-        .footer-pc {
-            background-color: #8B0000;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            flex-shrink: 0;
-            display: none;
-            margin-top: auto;
-        }
-
-        .footer-pc p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 0;
-            opacity: 0.85;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION MOBILE (< 768px)
-           ========================================================== */
-        .bottom-nav-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #f0ece6;
-            padding: 0.4rem 0.5rem 0.6rem 0.5rem;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-mobile .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #6c757d;
-            font-size: 0.5rem;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 0.15rem 0.3rem;
-            border-radius: 8px;
-            transition: color 0.2s;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .bottom-nav-mobile .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 0.05rem;
-        }
-
-        .bottom-nav-mobile .nav-item.active {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item:hover {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item-center {
-            background: #8B0000;
-            color: #fff;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -14px;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-            transition: transform 0.2s;
-            text-decoration: none;
-        }
-
-        .bottom-nav-mobile .nav-item-center:hover {
-            transform: scale(1.05);
-            color: #fff;
-        }
-
-        .bottom-nav-mobile .nav-item-center i {
-            font-size: 1.6rem;
-            margin-bottom: 0;
-        }
-
-        /* ==========================================================
-           RESPONSIVE : POINT DE RUPTURE À 768px
-           ========================================================== */
-        @media (min-width: 769px) {
-            .navbar-pc {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .top-header-mobile {
-                display: none !important;
-            }
-
-            .bottom-nav-mobile {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: block !important;
-            }
-
-            .main-content {
-                padding: 1.5rem 2rem 2rem 2rem;
-                max-width: 900px;
-                margin: 0 auto;
-                width: 100%;
-            }
-
-            .profile-header {
-                padding: 2rem 2rem 1.75rem 2rem;
-            }
-
-            .avatar-wrapper {
-                width: 120px;
-                height: 120px;
-            }
-
-            .avatar-wrapper .avatar i {
-                font-size: 4rem;
-            }
-
-            .avatar-wrapper .avatar-badge {
-                width: 36px;
-                height: 36px;
-                font-size: 0.9rem;
-                bottom: 4px;
-                right: 4px;
-            }
-
-            .profile-header .profile-name {
-                font-size: 1.6rem;
-            }
-
-            .stats-grid .stat-item .stat-number {
-                font-size: 1.8rem;
-            }
-
-            .action-buttons .btn-action {
-                padding: 0.7rem 1.5rem;
-                font-size: 0.9rem;
-            }
-
-            /* PC : actions en ligne (comportement par défaut) */
-            .action-buttons {
-                flex-direction: row;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .top-header-mobile {
-                display: block !important;
-            }
-
-            .bottom-nav-mobile {
-                display: flex !important;
-            }
-
-            .navbar-pc {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: none !important;
-            }
-
-            .main-content {
-                padding: 0.75rem 1rem 5rem 1rem;
-            }
-
-            .profile-header {
-                padding: 1.25rem 1rem 1rem 1rem;
-            }
-
-            .avatar-wrapper {
-                width: 80px;
-                height: 80px;
-            }
-
-            .avatar-wrapper .avatar i {
-                font-size: 2.8rem;
-            }
-
-            .avatar-wrapper .avatar-badge {
-                width: 28px;
-                height: 28px;
-                font-size: 0.7rem;
-                bottom: 0px;
-                right: 0px;
-            }
-
-            .profile-header .profile-name {
-                font-size: 1.2rem;
-            }
-
-            .info-card {
-                padding: 1rem 1rem;
-            }
-
-            .info-item .info-label {
-                width: 70px;
-                font-size: 0.7rem;
-            }
-
-            .info-item .info-value {
-                font-size: 0.8rem;
-            }
-
-            .stats-grid {
-                gap: 0.5rem;
-            }
-
-            .stats-grid .stat-item .stat-number {
-                font-size: 1.2rem;
-            }
-
-            .action-buttons .btn-action {
-                font-size: 0.75rem;
-                padding: 0.5rem 0.75rem;
-                min-width: 80px;
-            }
-
-            /* MOBILE : actions en colonne (vertical) */
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .action-buttons .btn-action {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .bottom-nav-mobile .nav-item {
-                font-size: 0.45rem;
-                min-width: 32px;
-            }
-
-            .bottom-nav-mobile .nav-item i {
-                font-size: 1rem;
-            }
-
-            .bottom-nav-mobile .nav-item-center {
-                width: 44px;
-                height: 44px;
-                margin-top: -10px;
-            }
-
-            .bottom-nav-mobile .nav-item-center i {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* ==========================================================
-           ACCESSIBILITÉ
-           ========================================================== */
-        a:focus-visible,
-        button:focus-visible {
-            outline: 3px solid #C9A84C;
-            outline-offset: 2px;
-        }
-    </style>
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/profil.css">
 </head>
 <body>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
+    BARRE DE NAVIGATION PC
     ========================================================== -->
     <nav class="navbar-pc" aria-label="Navigation principale">
-        <div style="display: flex; align-items: center; gap: 2rem;">
+        <div class="navbar-left">
             <a class="navbar-brand" href="tableau-bord.html">
                 <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
-                <span>Suivi</span><span>Terrain</span>
+                <span class="brand-suivi">Suivi</span><span class="brand-terrain">Terrain</span>
             </a>
 
             <ul class="nav-links">
@@ -836,47 +34,42 @@
                 <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
                 <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
                 <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
                 <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
                 <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
             </ul>
         </div>
 
         <div class="nav-right">
-            <!-- ==========================================================
-            BARRE DE RECHERCHE GÉNÉRALE
-            ========================================================== -->
             <div class="search-container" id="globalSearchContainer">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Rechercher... " aria-label="Recherche globale">
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
                 </div>
-                <!-- Liste des suggestions -->
                 <div class="search-suggestions" id="globalSearchSuggestions"></div>
             </div>
 
-            <!-- Notification -->
             <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
                 <i class="bi bi-bell" aria-hidden="true"></i>
-                <span class="badge-notif">3</span>
+                <span class="badge-notif" id="badgeNotifPC">3</span>
             </button>
 
-            <!-- Profil -->
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
                     <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                </button>
+                <ul class="dropdown-menu" id="dropdownMenu">
                     <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- ==========================================================
-    BANDEAU HAUT MOBILE (< 768px)
+    BANDEAU HAUT MOBILE
     ========================================================== -->
     <header class="top-header-mobile">
         <div class="header-row">
@@ -891,7 +84,7 @@
             <div class="header-right">
                 <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
                     <i class="bi bi-bell" aria-hidden="true"></i>
-                    <span class="badge-notif">3</span>
+                    <span class="badge-notif" id="badgeNotifMobile">3</span>
                 </button>
             </div>
         </div>
@@ -900,12 +93,14 @@
             <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
             <a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
             <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
             <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
             <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
             <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
-            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
             <hr>
-            <a href="connexion.html" style="color: #dc3545;"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
         </div>
     </header>
 
@@ -916,9 +111,6 @@
 
         <div class="profile-container">
 
-            <!-- ==========================================================
-            EN-TÊTE PROFIL AVEC AVATAR + BADGE D'UPLOAD
-            ========================================================== -->
             <div class="profile-header">
                 <div class="avatar-wrapper" id="avatarWrapper">
                     <div class="avatar" id="avatarDisplay">
@@ -928,22 +120,18 @@
                         <i class="bi bi-camera" aria-hidden="true"></i>
                     </div>
                 </div>
-                <!-- Input caché pour l'upload -->
                 <input type="file" id="avatarInput" accept="image/png, image/jpeg, image/gif, image/webp">
 
                 <h2 class="profile-name">Zidane Fredy</h2>
                 <span class="profile-role admin">Administrateur</span>
             </div>
 
-            <!-- ==========================================================
-            STATISTIQUES
-            ========================================================== -->
             <div class="info-card">
                 <div class="card-title"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Statistiques</div>
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-number">18</div>
-                        <div class="stat-label">Visites réalisées</div>
+                        <div class="stat-label">Visites realisees</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">5</div>
@@ -956,9 +144,6 @@
                 </div>
             </div>
 
-            <!-- ==========================================================
-            INFORMATIONS PERSONNELLES
-            ========================================================== -->
             <div class="info-card">
                 <div class="card-title"><i class="bi bi-person" aria-hidden="true"></i> Informations personnelles</div>
 
@@ -976,13 +161,13 @@
 
                 <div class="info-item">
                     <span class="info-icon"><i class="bi bi-phone" aria-hidden="true"></i></span>
-                    <span class="info-label">Téléphone</span>
+                    <span class="info-label">Telephone</span>
                     <span class="info-value">+237 652 14 45 56</span>
                 </div>
 
                 <div class="info-item">
                     <span class="info-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
-                    <span class="info-label">Rôle</span>
+                    <span class="info-label">Role</span>
                     <span class="info-value">Administrateur</span>
                 </div>
 
@@ -993,9 +178,6 @@
                 </div>
             </div>
 
-            <!-- ==========================================================
-            ACTIONS - EN COLONNE SUR MOBILE UNIQUEMENT
-            ========================================================== -->
             <div class="info-card">
                 <div class="card-title"><i class="bi bi-gear" aria-hidden="true"></i> Actions</div>
                 <div class="action-buttons">
@@ -1006,135 +188,27 @@
                         <i class="bi bi-key" aria-hidden="true"></i> Changer le mot de passe
                     </button>
                     <button class="btn-action btn-danger" id="btnLogout">
-                        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion
+                        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion
                     </button>
                 </div>
             </div>
 
         </div>
-                <!-- ==========================================================
-        MODALE MODIFIER LE PROFIL
-        ========================================================== -->
-        <div class="modal fade" id="modifierProfilModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-                    <div class="modal-header" style="border-bottom: 1px solid #f0ece6; padding: 1rem 1.5rem;">
-                        <h5 class="modal-title" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #1a1a1a;">
-                            <i class="bi bi-person" style="color: #8B0000; margin-right: 0.4rem;"></i>
-                            Modifier le profil
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                    </div>
-                    <div class="modal-body" style="padding: 1.5rem;">
-                        <!-- Photo -->
-                        <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 1rem auto;">
-                            <img id="editProfilPhoto" src="../assets/images/avatar-default.png" alt="Photo de profil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #f0ece6;">
-                            <div id="editProfilPhotoBadge" style="position: absolute; bottom: 4px; right: 4px; background: #8B0000; border: 3px solid #ffffff; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s; box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);">
-                                <i class="bi bi-camera" aria-hidden="true"></i>
-                            </div>
-                            <input type="file" id="editProfilPhotoInput" accept="image/png, image/jpeg, image/gif, image/webp" style="display: none;">
-                        </div>
-
-                        <!-- Champs -->
-                        <div class="mb-3">
-                            <label for="editProfilNom" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Nom complet</label>
-                            <input type="text" class="form-control" id="editProfilNom" value="Zidane Fredy" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProfilEmail" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Email</label>
-                            <input type="email" class="form-control" id="editProfilEmail" value="zidane@suiviterrain.com" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProfilTelephone" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Téléphone</label>
-                            <input type="tel" class="form-control" id="editProfilTelephone" value="+237 652 14 45 56" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProfilZone" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Zone d'intervention</label>
-                            <input type="text" class="form-control" id="editProfilZone" value="Douala, Cameroun" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
-                        </div>
-                    </div>
-                    <div class="modal-footer" style="border-top: 1px solid #f0ece6; padding: 1rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                        <button type="button" class="btn-retour" data-bs-dismiss="modal" style="background: transparent; border: 2px solid #6c757d; border-radius: 8px; color: #6c757d; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">Annuler</button>
-                        <button type="button" class="btn-enregistrer" id="saveProfilBtn" style="background-color: #8B0000; border: none; border-radius: 8px; color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">
-                            <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-                <!-- ==========================================================
-        MODALE CHANGER LE MOT DE PASSE
-        ========================================================== -->
-        <div class="modal fade" id="changerMotPasseModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-                    <div class="modal-header" style="border-bottom: 1px solid #f0ece6; padding: 1rem 1.5rem;">
-                        <h5 class="modal-title" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #1a1a1a;">
-                            <i class="bi bi-shield-lock" style="color: #8B0000; margin-right: 0.4rem;"></i>
-                            Changer le mot de passe
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                    </div>
-                    <div class="modal-body" style="padding: 1.5rem;">
-                        <!-- Mot de passe actuel -->
-                        <div class="mb-3">
-                            <label for="currentPassword" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Mot de passe actuel</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="currentPassword" placeholder="Entrez votre mot de passe actuel" style="border-radius: 10px 0 0 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
-                                <button type="button" class="btn btn-light border" id="toggleCurrentPwd" style="border-radius: 0 10px 10px 0; border-color: #e0dcd6; background-color: #fff;">
-                                    <i class="bi bi-eye" id="currentPwdIcon" style="color: #8B0000;"></i>
-                                </button>
-                            </div>
-                            <div id="currentPwdError" class="text-danger" style="font-size: 0.75rem; margin-top: 0.2rem; display: none;">Mot de passe incorrect</div>
-                        </div>
-
-                        <!-- Nouveau mot de passe (grisé par défaut) -->
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Nouveau mot de passe</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="newPassword" placeholder="Entrez votre nouveau mot de passe" disabled style="border-radius: 10px 0 0 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif; background-color: #f8f5f0;">
-                                <button type="button" class="btn btn-light border" id="toggleNewPwd" disabled style="border-radius: 0 10px 10px 0; border-color: #e0dcd6; background-color: #f8f5f0;">
-                                    <i class="bi bi-eye" id="newPwdIcon" style="color: #6c757d;"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Confirmer mot de passe (grisé par défaut) -->
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Confirmer le mot de passe</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre nouveau mot de passe" disabled style="border-radius: 10px 0 0 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif; background-color: #f8f5f0;">
-                                <button type="button" class="btn btn-light border" id="toggleConfirmPwd" disabled style="border-radius: 0 10px 10px 0; border-color: #e0dcd6; background-color: #f8f5f0;">
-                                    <i class="bi bi-eye" id="confirmPwdIcon" style="color: #6c757d;"></i>
-                                </button>
-                            </div>
-                            <div id="confirmPwdError" class="text-danger" style="font-size: 0.75rem; margin-top: 0.2rem; display: none;">Les mots de passe ne correspondent pas</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer" style="border-top: 1px solid #f0ece6; padding: 1rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                        <button type="button" class="btn-retour" data-bs-dismiss="modal" style="background: transparent; border: 2px solid #6c757d; border-radius: 8px; color: #6c757d; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">Annuler</button>
-                        <button type="button" class="btn-enregistrer" id="savePasswordBtn" disabled style="background-color: #8B0000; border: none; border-radius: 8px; color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem; opacity: 0.5; cursor: not-allowed;">
-                            <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </main>
 
     <!-- ==========================================================
-    FOOTER PC (fond rouge)
+    FOOTER PC
     ========================================================== -->
     <footer class="footer-pc" role="contentinfo">
-        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
     </footer>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION MOBILE (< 768px)
+    BARRE DE NAVIGATION MOBILE
     ========================================================== -->
     <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
         <a href="tableau-bord.html" class="nav-item">
             <i class="bi bi-house-door" aria-hidden="true"></i>
             Accueil
@@ -1145,7 +219,7 @@
             Visites
         </a>
 
-        <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Créer une nouvelle visite">
+        <a href="#" class="nav-item-center" id="btnPlusMobile" aria-label="Action selon la page">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
 
@@ -1158,344 +232,120 @@
             <i class="bi bi-person" aria-hidden="true"></i>
             Profil
         </a>
+
     </nav>
 
     <!-- ==========================================================
-    BOOTSTRAP JS
+    MODALES
     ========================================================== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modale Modifier le profil -->
+    <div class="modal fade" id="modifierProfilModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person" aria-hidden="true"></i>
+                        Modifier le profil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="position:relative;width:120px;height:120px;margin:0 auto 1rem auto;">
+                        <img id="editProfilPhoto" src="../assets/images/avatar-default.png" alt="Photo de profil" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid #f0ece6;">
+                        <div id="editProfilPhotoBadge" style="position:absolute;bottom:4px;right:4px;background:#8B0000;border:3px solid #ffffff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:0.8rem;cursor:pointer;box-shadow:0 2px 8px rgba(139,0,0,0.3);">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </div>
+                        <input type="file" id="editProfilPhotoInput" accept="image/png, image/jpeg, image/gif, image/webp" style="display:none;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editProfilNom" class="form-label">Nom complet</label>
+                        <input type="text" class="form-control" id="editProfilNom" value="Zidane Fredy">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editProfilEmail" value="zidane@suiviterrain.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilTelephone" class="form-label">Telephone</label>
+                        <input type="tel" class="form-control" id="editProfilTelephone" value="+237 652 14 45 56">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilZone" class="form-label">Zone d'intervention</label>
+                        <input type="text" class="form-control" id="editProfilZone" value="Douala, Cameroun">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="saveProfilBtn">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Changer le mot de passe -->
+    <div class="modal fade" id="changerMotPasseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Changer le mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Entrez votre mot de passe actuel">
+                            <button type="button" class="btn btn-light border" id="toggleCurrentPwd">
+                                <i class="bi bi-eye" id="currentPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="currentPwdError" class="text-danger" style="display:none;">Mot de passe incorrect</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" placeholder="Entrez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleNewPwd" disabled>
+                                <i class="bi bi-eye" id="newPwdIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleConfirmPwd" disabled>
+                                <i class="bi bi-eye" id="confirmPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="confirmPwdError" class="text-danger" style="display:none;">Les mots de passe ne correspondent pas</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="savePasswordBtn" disabled>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ==========================================================
     SCRIPTS
     ========================================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // ==========================================================
-            // MENU HAMBURGER (mobile)
-            // ==========================================================
-            const menuBtn = document.getElementById('menuHamburger');
-            const mobileMenu = document.getElementById('mobileMenu');
-
-            if (menuBtn && mobileMenu) {
-                menuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('open');
-                    const icon = menuBtn.querySelector('i');
-                    if (mobileMenu.classList.contains('open')) {
-                        icon.className = 'bi bi-x-lg';
-                    } else {
-                        icon.className = 'bi bi-list';
-                    }
-                });
-            }
-
-            // ==========================================================
-            // NOTIFICATIONS (PC + Mobile)
-            // ==========================================================
-            const notifBtnPC = document.getElementById('notifBtnPC');
-            const notifBtnMobile = document.getElementById('notifBtnMobile');
-
-            function redirigerNotifications() {
-                window.location.href = 'notifications.html';
-            }
-
-            if (notifBtnPC) {
-                notifBtnPC.addEventListener('click', redirigerNotifications);
-            }
-            if (notifBtnMobile) {
-                notifBtnMobile.addEventListener('click', redirigerNotifications);
-            }
-
-            // ==========================================================
-            // UPLOAD DE PHOTO DE PROFIL
-            // ==========================================================
-            const avatarWrapper = document.getElementById('avatarWrapper');
-            const avatarBadge = document.getElementById('avatarBadge');
-            const avatarInput = document.getElementById('avatarInput');
-            const avatarDisplay = document.getElementById('avatarDisplay');
-
-            // Clic sur l'avatar ou le badge → ouvre le sélecteur de fichier
-            avatarWrapper.addEventListener('click', function(e) {
-                e.stopPropagation();
-                avatarInput.click();
-            });
-
-            avatarBadge.addEventListener('click', function(e) {
-                e.stopPropagation();
-                avatarInput.click();
-            });
-
-            // Gestion de l'upload
-            avatarInput.addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (file) {
-                    // Vérifier le type de fichier
-                    if (!file.type.startsWith('image/')) {
-                        alert('⚠️ Veuillez sélectionner une image (PNG, JPEG, GIF, WEBP).');
-                        this.value = '';
-                        return;
-                    }
-
-                    // Vérifier la taille (max 5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('⚠️ L\'image ne doit pas dépasser 5 Mo.');
-                        this.value = '';
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // Supprimer l'icône et ajouter l'image
-                        avatarDisplay.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = 'Photo de profil';
-                        avatarDisplay.appendChild(img);
-                        console.log('✅ Photo de profil mise à jour');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // ==========================================================
-            // ACTIONS
-            // ==========================================================
-            document.getElementById('btnEditProfil').addEventListener('click', function() {
-                window.location.href = 'modifier-profil.html';
-            });
-
-            document.getElementById('btnChangePassword').addEventListener('click', function() {
-                window.location.href = 'changer-mot-passe.html';
-            });
-
-            document.getElementById('btnLogout').addEventListener('click', function() {
-                if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-                    window.location.href = 'connexion.html';
-                }
-            });
-
-            console.log(' Page Profil chargée');
-        });
-
-                // ==========================================================
-        // MODIFIER LE PROFIL
-        // ==========================================================
-
-        // Bouton "Modifier le profil" dans la page
-        document.getElementById('btnEditProfil').addEventListener('click', function() {
-            // Charger les données actuelles dans la modale
-            document.getElementById('editProfilNom').value = 'Zidane Fredy';
-            document.getElementById('editProfilEmail').value = 'zidane@suiviterrain.com';
-            document.getElementById('editProfilTelephone').value = '+237 652 14 45 56';
-            document.getElementById('editProfilZone').value = 'Douala, Cameroun';
-            
-            const modal = new bootstrap.Modal(document.getElementById('modifierProfilModal'));
-            modal.show();
-        });
-
-        // Photo de profil
-        document.getElementById('editProfilPhotoBadge').addEventListener('click', function() {
-            document.getElementById('editProfilPhotoInput').click();
-        });
-
-        document.getElementById('editProfilPhotoInput').addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    showToast('⚠️ Veuillez sélectionner une image');
-                    this.value = '';
-                    return;
-                }
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast('⚠️ L\'image ne doit pas dépasser 5 Mo');
-                    this.value = '';
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('editProfilPhoto').src = e.target.result;
-                    // Mettre à jour la photo dans le header
-                    document.querySelector('.avatar img')?.setAttribute('src', e.target.result);
-                    showToast('✅ Photo mise à jour');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Enregistrer
-        document.getElementById('saveProfilBtn').addEventListener('click', function() {
-            const nom = document.getElementById('editProfilNom').value.trim();
-            const email = document.getElementById('editProfilEmail').value.trim();
-            const telephone = document.getElementById('editProfilTelephone').value.trim();
-            const zone = document.getElementById('editProfilZone').value.trim();
-
-            if (!nom || !email) {
-                showToast('⚠️ Le nom et l\'email sont obligatoires');
-                return;
-            }
-
-            // Mettre à jour l'affichage dans la page
-            document.querySelector('.profile-name').textContent = nom;
-            document.querySelector('.info-value').textContent = email;
-            // Mettre à jour les autres champs...
-
-            showToast('✅ Profil modifié avec succès');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modifierProfilModal'));
-            modal.hide();
-        });
-
-                // ==========================================================
-        // CHANGER LE MOT DE PASSE
-        // ==========================================================
-
-        // Ouvrir la modale
-        document.getElementById('btnChangePassword').addEventListener('click', function() {
-            // Réinitialiser les champs
-            document.getElementById('currentPassword').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-            document.getElementById('newPassword').disabled = true;
-            document.getElementById('confirmPassword').disabled = true;
-            document.getElementById('savePasswordBtn').disabled = true;
-            document.getElementById('savePasswordBtn').style.opacity = '0.5';
-            document.getElementById('savePasswordBtn').style.cursor = 'not-allowed';
-            document.getElementById('currentPwdError').style.display = 'none';
-            document.getElementById('confirmPwdError').style.display = 'none';
-            
-            const modal = new bootstrap.Modal(document.getElementById('changerMotPasseModal'));
-            modal.show();
-        });
-
-        // Toggle mot de passe actuel
-        document.getElementById('toggleCurrentPwd').addEventListener('click', function() {
-            const input = document.getElementById('currentPassword');
-            const icon = document.getElementById('currentPwdIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'bi bi-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'bi bi-eye';
-            }
-        });
-
-        // Vérification du mot de passe actuel
-        document.getElementById('currentPassword').addEventListener('input', function() {
-            const currentPwd = this.value;
-            const errorEl = document.getElementById('currentPwdError');
-            const newPwd = document.getElementById('newPassword');
-            const confirmPwd = document.getElementById('confirmPassword');
-            const toggleNew = document.getElementById('toggleNewPwd');
-            const toggleConfirm = document.getElementById('toggleConfirmPwd');
-            const saveBtn = document.getElementById('savePasswordBtn');
-
-            // Simuler la vérification (mot de passe correct = "admin123")
-            if (currentPwd === 'admin123') {
-                errorEl.style.display = 'none';
-                newPwd.disabled = false;
-                confirmPwd.disabled = false;
-                toggleNew.disabled = false;
-                toggleConfirm.disabled = false;
-                newPwd.style.backgroundColor = '#ffffff';
-                confirmPwd.style.backgroundColor = '#ffffff';
-                toggleNew.style.backgroundColor = '#ffffff';
-                toggleConfirm.style.backgroundColor = '#ffffff';
-                // Activer le bouton Enregistrer si les champs sont remplis
-                checkPasswordMatch();
-            } else if (currentPwd.length > 0) {
-                errorEl.style.display = 'block';
-                newPwd.disabled = true;
-                confirmPwd.disabled = true;
-                toggleNew.disabled = true;
-                toggleConfirm.disabled = true;
-                newPwd.style.backgroundColor = '#f8f5f0';
-                confirmPwd.style.backgroundColor = '#f8f5f0';
-                toggleNew.style.backgroundColor = '#f8f5f0';
-                toggleConfirm.style.backgroundColor = '#f8f5f0';
-                saveBtn.disabled = true;
-                saveBtn.style.opacity = '0.5';
-                saveBtn.style.cursor = 'not-allowed';
-            } else {
-                errorEl.style.display = 'none';
-                newPwd.disabled = true;
-                confirmPwd.disabled = true;
-                toggleNew.disabled = true;
-                toggleConfirm.disabled = true;
-                newPwd.style.backgroundColor = '#f8f5f0';
-                confirmPwd.style.backgroundColor = '#f8f5f0';
-                toggleNew.style.backgroundColor = '#f8f5f0';
-                toggleConfirm.style.backgroundColor = '#f8f5f0';
-                saveBtn.disabled = true;
-                saveBtn.style.opacity = '0.5';
-                saveBtn.style.cursor = 'not-allowed';
-            }
-        });
-
-        // Toggle nouveau mot de passe
-        document.getElementById('toggleNewPwd').addEventListener('click', function() {
-            const input = document.getElementById('newPassword');
-            const icon = document.getElementById('newPwdIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'bi bi-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'bi bi-eye';
-            }
-        });
-
-        // Toggle confirmation
-        document.getElementById('toggleConfirmPwd').addEventListener('click', function() {
-            const input = document.getElementById('confirmPassword');
-            const icon = document.getElementById('confirmPwdIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'bi bi-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'bi bi-eye';
-            }
-        });
-
-        // Vérification de la correspondance des mots de passe
-        function checkPasswordMatch() {
-            const newPwd = document.getElementById('newPassword').value;
-            const confirmPwd = document.getElementById('confirmPassword').value;
-            const errorEl = document.getElementById('confirmPwdError');
-            const saveBtn = document.getElementById('savePasswordBtn');
-
-            if (newPwd.length > 0 && confirmPwd.length > 0) {
-                if (newPwd === confirmPwd) {
-                    errorEl.style.display = 'none';
-                    saveBtn.disabled = false;
-                    saveBtn.style.opacity = '1';
-                    saveBtn.style.cursor = 'pointer';
-                } else {
-                    errorEl.style.display = 'block';
-                    saveBtn.disabled = true;
-                    saveBtn.style.opacity = '0.5';
-                    saveBtn.style.cursor = 'not-allowed';
-                }
-            } else {
-                errorEl.style.display = 'none';
-                saveBtn.disabled = true;
-                saveBtn.style.opacity = '0.5';
-                saveBtn.style.cursor = 'not-allowed';
-            }
-        }
-
-        document.getElementById('newPassword').addEventListener('input', checkPasswordMatch);
-        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
-
-        // Enregistrer le nouveau mot de passe
-        document.getElementById('savePasswordBtn').addEventListener('click', function() {
-            if (this.disabled) return;
-            showToast('✅ Mot de passe modifié avec succès');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('changerMotPasseModal'));
-            modal.hide();
-        });
-
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/profil.js"></script>
 
 </body>
 </html>
