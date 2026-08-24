@@ -1,0 +1,293 @@
+/**
+ * Historique des visites - Styles specifiques
+ * Version 1.0
+ * Mobile-first
+ */
+
+/* ==========================================================
+   CONTENU PRINCIPAL
+   ========================================================== */
+.main-content {
+    flex: 1 0 auto;
+    padding: 0.75rem 1rem 5rem 1rem;
+    background-color: #FFF8F0;
+    width: 100%;
+}
+
+.historique-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ==========================================================
+   EN-TETE PC (cache par defaut sur mobile)
+   ========================================================== */
+.header-pc {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.header-pc h1 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.header-pc h1 i {
+    color: #8B0000;
+    margin-right: 0.4rem;
+}
+
+/* ==========================================================
+   FILTRES
+   ========================================================== */
+.filter-bar {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-bar .filter-btn {
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid #e0dcd6;
+    background: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #6c757d;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.filter-bar .filter-btn:hover {
+    border-color: #8B0000;
+    color: #8B0000;
+}
+
+.filter-bar .filter-btn.active {
+    background-color: #8B0000;
+    border-color: #8B0000;
+    color: #ffffff;
+}
+
+/* ==========================================================
+   BARRE DE RECHERCHE
+   ========================================================== */
+.search-bar {
+    margin-bottom: 0.75rem;
+}
+
+.search-bar .search-box {
+    position: relative;
+    width: 100%;
+}
+
+.search-bar .search-box input {
+    width: 100%;
+    padding: 0.45rem 0.65rem 0.45rem 2rem;
+    border-radius: 10px;
+    border: 1px solid #e0dcd6;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.8rem;
+    background-color: #ffffff;
+    transition: border-color 0.2s;
+}
+
+.search-bar .search-box input:focus {
+    border-color: #8B0000;
+    outline: none;
+}
+
+.search-bar .search-box i {
+    position: absolute;
+    left: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+/* ==========================================================
+   LISTE DE L'HISTORIQUE (mobile-first, compact)
+   ========================================================== */
+.historique-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.historique-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.6rem 0.75rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    gap: 0.5rem;
+}
+
+.historique-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.06);
+}
+
+.historique-item .hi-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.historique-item .hi-info .hi-titre {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #1a1a1a;
+    margin-bottom: 0.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.historique-item .hi-info .hi-detail {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.65rem;
+    color: #6c757d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.historique-item .hi-info .hi-detail i {
+    margin-right: 0.2rem;
+}
+
+.historique-item .hi-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+}
+
+.historique-item .hi-actions .badge-status {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.badge-status.realisee { background-color: #28a745; color: #fff; }
+.badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
+.badge-status.retard { background-color: #dc3545; color: #fff; }
+.badge-status.encours { background-color: #17a2b8; color: #fff; }
+.badge-status.planifie { background-color: #6c757d; color: #fff; }
+
+.historique-item .hi-actions .hi-date {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    color: #adb5bd;
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   RESPONSIVE : PC (> 768px)
+   ========================================================== */
+@media (min-width: 769px) {
+
+    .main-content {
+        padding: 1.5rem 2rem 2rem 2rem;
+    }
+
+    .header-pc {
+        display: flex !important;
+    }
+
+    .header-pc h1 {
+        font-size: 1.6rem;
+    }
+
+    .filter-bar .filter-btn {
+        font-size: 0.8rem;
+        padding: 0.35rem 1.2rem;
+    }
+
+    .filter-bar {
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .search-bar .search-box input {
+        font-size: 0.95rem;
+        padding: 0.6rem 0.9rem 0.6rem 2.5rem;
+    }
+
+    .historique-item {
+        padding: 0.9rem 1.2rem;
+    }
+
+    .historique-item .hi-info .hi-titre {
+        font-size: 0.95rem;
+    }
+
+    .historique-item .hi-info .hi-detail {
+        font-size: 0.8rem;
+    }
+
+    .historique-item .hi-actions .badge-status {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.7rem;
+    }
+
+    .historique-item .hi-actions .hi-date {
+        font-size: 0.75rem;
+    }
+
+    .historique-item .hi-actions {
+        gap: 0.5rem;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE : TRES PETITS ECRANS (< 360px)
+   ========================================================== */
+@media (max-width: 360px) {
+
+    .historique-item {
+        padding: 0.4rem 0.5rem;
+    }
+
+    .historique-item .hi-info .hi-titre {
+        font-size: 0.7rem;
+    }
+
+    .historique-item .hi-info .hi-detail {
+        font-size: 0.55rem;
+    }
+
+    .historique-item .hi-actions .badge-status {
+        font-size: 0.45rem;
+        padding: 0.1rem 0.35rem;
+    }
+
+    .historique-item .hi-actions .hi-date {
+        font-size: 0.5rem;
+    }
+
+    .filter-bar .filter-btn {
+        font-size: 0.55rem;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .search-bar .search-box input {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.5rem 0.35rem 1.8rem;
+    }
+}
