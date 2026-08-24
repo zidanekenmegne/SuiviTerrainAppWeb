@@ -1,5 +1,6 @@
 /**
  * Inscription - Logique de la page
+ * Version 1.0
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -43,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var confirmPassword = document.getElementById('confirm_password').value.trim();
             var role = document.getElementById('role').value;
 
-            // Validation des champs obligatoires
             if (!nom || !email || !motdepasse || !confirmPassword) {
                 if (messageErreur) {
                     messageErreur.classList.remove('d-none');
@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Validation de l'email
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 if (messageErreur) {
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Validation de la longueur du mot de passe (minimum 6 caracteres)
             if (motdepasse.length < 6) {
                 if (messageErreur) {
                     messageErreur.classList.remove('d-none');
@@ -71,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Validation de la confirmation du mot de passe
             if (motdepasse !== confirmPassword) {
                 if (messageErreur) {
                     messageErreur.classList.remove('d-none');
@@ -80,14 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Simulation d'inscription reussie
             if (messageErreur) {
                 messageErreur.classList.add('d-none');
             }
 
-            // Afficher un message de succes et rediriger
             showToast('Compte cree avec succes !', 'success');
-            
+
             setTimeout(function() {
                 window.location.href = 'connexion.html';
             }, 1500);
