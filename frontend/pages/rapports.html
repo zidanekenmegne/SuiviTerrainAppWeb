@@ -5,1071 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rapports - SuiviTerrain</title>
     <meta name="description" content="Consultez les rapports et statistiques de vos visites SuiviTerrain.">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==========================================================
-           STYLES GLOBAUX
-           ========================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #FFF8F0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION PC (> 768px)
-           ========================================================== */
-        .navbar-pc {
-            background-color: #8B0000;
-            padding: 0.75rem 1.5rem;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .navbar-pc .navbar-brand {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-pc .navbar-brand img {
-            height: 30px;
-        }
-
-        .navbar-pc .navbar-brand span:first-child {
-            color: #ffffff;
-        }
-
-        .navbar-pc .navbar-brand span:last-child {
-            color: #C9A84C;
-        }
-
-        .navbar-pc .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-pc .nav-links li a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .navbar-pc .nav-links li a:hover,
-        .navbar-pc .nav-links li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .navbar-pc .nav-links li a i {
-            margin-right: 0.4rem;
-        }
-
-        .navbar-pc .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-        }
-
-        /* ==========================================================
-           BARRE DE RECHERCHE GÉNÉRALE (PC)
-           ========================================================== */
-        .search-container {
-            position: relative;
-            min-width: 220px;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 0.1rem 0.5rem;
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-
-        .search-input-wrapper:focus-within {
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
-        }
-
-        .search-input-wrapper i {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-right: 0.4rem;
-            transition: color 0.2s;
-        }
-
-        .search-input-wrapper:focus-within i {
-            color: #8B0000;
-        }
-
-        .search-input-wrapper input {
-            background: transparent;
-            border: none;
-            padding: 0.45rem 0.3rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #ffffff;
-            outline: none;
-            width: 100%;
-            min-width: 140px;
-        }
-
-        .search-input-wrapper input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .search-input-wrapper:focus-within input {
-            color: #1a1a1a;
-        }
-
-        .search-input-wrapper:focus-within input::placeholder {
-            color: #6c757d;
-        }
-
-        .search-shortcut {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Segoe UI', sans-serif;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .search-input-wrapper:focus-within .search-shortcut {
-            color: #6c757d;
-            background: #f0ece6;
-            border-color: #e0dcd6;
-        }
-
-        .search-suggestions {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            max-height: 320px;
-            overflow-y: auto;
-            display: none;
-            z-index: 10000;
-            padding: 0.3rem 0;
-        }
-
-        .search-suggestions.visible {
-            display: block;
-        }
-
-        .search-suggestions .suggestion-group-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0.4rem 0.8rem 0.2rem 0.8rem;
-            border-bottom: 1px solid #f0ece6;
-        }
-
-        .search-suggestions .suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 0.4rem 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.15s;
-            border-radius: 6px;
-            margin: 0.1rem 0.3rem;
-            gap: 0.6rem;
-        }
-
-        .search-suggestions .suggestion-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: #ffffff;
-            font-size: 0.7rem;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-icon.visit {
-            background-color: #8B0000;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.point {
-            background-color: #28a745;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.user {
-            background-color: #17a2b8;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.planning {
-            background-color: #ffc107;
-            color: #1a1a1a;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info .suggestion-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.05rem;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info .suggestion-subtitle {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.65rem;
-            color: #6c757d;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-badge {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.55rem;
-            font-weight: 600;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-badge.visit {
-            background-color: #fce4e4;
-            color: #8B0000;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.point {
-            background-color: #e8f5e9;
-            color: #28a745;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.user {
-            background-color: #e3f2fd;
-            color: #17a2b8;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.planning {
-            background-color: #fff8e1;
-            color: #f57c00;
-        }
-
-        .search-suggestions .suggestion-empty {
-            padding: 1.5rem 0.8rem;
-            text-align: center;
-            font-family: 'Segoe UI', sans-serif;
-            color: #6c757d;
-            font-size: 0.85rem;
-        }
-
-        .search-suggestions .suggestion-empty i {
-            display: block;
-            font-size: 2rem;
-            margin-bottom: 0.3rem;
-            color: #ced4da;
-        }
-
-        .search-suggestions::-webkit-scrollbar {
-            width: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-track {
-            background: #f8f5f0;
-            border-radius: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-thumb {
-            background: #c0b8b0;
-            border-radius: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-thumb:hover {
-            background: #8B0000;
-        }
-
-        /* ==========================================================
-           CLOCHE DE NOTIFICATION (PC uniquement)
-           ========================================================== */
-        .navbar-pc .nav-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .navbar-pc .nav-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle {
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-pc .nav-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        .navbar-pc .nav-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .navbar-pc .nav-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .navbar-pc .nav-right .dropdown-item i {
-            margin-right: 0.5rem;
-        }
-
-        /* ==========================================================
-           BANDEAU HAUT MOBILE (< 768px)
-           ========================================================== */
-        .top-header-mobile {
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            padding: 0.75rem 1rem 0.5rem 1rem;
-            border-radius: 0 0 1px 1px;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .top-header-mobile .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-header-mobile .back-button {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .top-header-mobile .back-button:hover {
-            opacity: 0.8;
-        }
-
-        .top-header-mobile .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-center .page-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-bottom: 0;
-        }
-
-        .top-header-mobile .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-right .menu-actions {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .top-header-mobile .header-right .menu-actions:hover {
-            opacity: 0.8;
-        }
-
-        .top-header-mobile .header-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.3rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-            min-width: 160px;
-        }
-
-        .top-header-mobile .header-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.4rem 0.75rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .top-header-mobile .header-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .top-header-mobile .header-right .dropdown-item i {
-            margin-right: 0.5rem;
-            width: 18px;
-            text-align: center;
-        }
-
-        .top-header-mobile .header-right .dropdown-divider {
-            margin: 0.2rem 0;
-        }
-
-        .top-header-mobile .header-right .notification-btn {
-            display: none !important;
-        }
-
-        /* ==========================================================
-           CONTENU PRINCIPAL
-           ========================================================== */
-        .main-content {
-            flex: 1;
-            padding: 1.25rem 1.25rem 5rem 1.25rem;
-            background-color: #FFF8F0;
-        }
-
-        .rapports-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* En-tête PC */
-        .header-pc {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .header-pc h1 {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .header-pc h1 i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        .header-pc .export-btn {
-            background-color: #8B0000;
-            border: none;
-            border-radius: 10px;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.85rem;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .header-pc .export-btn:hover {
-            background-color: #6a0000;
-        }
-
-        .header-pc .export-btn i {
-            margin-right: 0.4rem;
-        }
-
-        /* ==========================================================
-           FILTRES
-           ========================================================== */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            background: #ffffff;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
-            align-items: center;
-        }
-
-        .filter-bar .filter-group {
-            display: flex;
-            gap: 0.4rem;
-            flex-wrap: wrap;
-            flex: 1;
-        }
-
-        .filter-bar .filter-group .filter-btn {
-            padding: 0.25rem 0.8rem;
-            border-radius: 20px;
-            border: 1px solid #e0dcd6;
-            background: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #6c757d;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .filter-bar .filter-group .filter-btn:hover {
-            border-color: #8B0000;
-            color: #8B0000;
-        }
-
-        .filter-bar .filter-group .filter-btn.active {
-            background-color: #8B0000;
-            border-color: #8B0000;
-            color: #ffffff;
-        }
-
-        .filter-bar .filter-select {
-            padding: 0.25rem 0.6rem;
-            border-radius: 8px;
-            border: 1px solid #e0dcd6;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            background: #ffffff;
-            cursor: pointer;
-        }
-
-        .filter-bar .filter-select:focus {
-            border-color: #8B0000;
-            outline: none;
-        }
-
-        /* ==========================================================
-           INDICATEURS CLÉS
-           ========================================================== */
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .kpi-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 0.75rem 0.5rem;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
-        }
-
-        .kpi-card .kpi-number {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #1a1a1a;
-        }
-
-        .kpi-card .kpi-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .kpi-card .kpi-icon {
-            font-size: 1.2rem;
-            display: block;
-            margin-bottom: 0.1rem;
-        }
-
-        .kpi-card .kpi-icon.rouge { color: #8B0000; }
-        .kpi-card .kpi-icon.vert { color: #28a745; }
-        .kpi-card .kpi-icon.orange { color: #ffc107; }
-        .kpi-card .kpi-icon.bleu { color: #17a2b8; }
-
-        /* ==========================================================
-           GRAPHIQUES
-           ========================================================== */
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .chart-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 1rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
-        }
-
-        .chart-card .chart-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
-            border-bottom: 1px solid #f0ece6;
-            padding-bottom: 0.4rem;
-        }
-
-        .chart-card .chart-title i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        /* Barres de progression */
-        .chart-bar-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.4rem;
-        }
-
-        .chart-bar-item .bar-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            width: 80px;
-            flex-shrink: 0;
-            text-align: right;
-        }
-
-        .chart-bar-item .bar-track {
-            flex: 1;
-            height: 18px;
-            background-color: #f0ece6;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .chart-bar-item .bar-track .bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.6s ease;
-            width: 0%;
-        }
-
-        .chart-bar-item .bar-track .bar-fill.rouge { background: linear-gradient(90deg, #8B0000, #C9A84C); }
-        .chart-bar-item .bar-track .bar-fill.vert { background: linear-gradient(90deg, #28a745, #5cb85c); }
-        .chart-bar-item .bar-track .bar-fill.orange { background: linear-gradient(90deg, #ffc107, #ffca2c); }
-        .chart-bar-item .bar-track .bar-fill.bleu { background: linear-gradient(90deg, #17a2b8, #5bc0de); }
-
-        .chart-bar-item .bar-value {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            width: 35px;
-            flex-shrink: 0;
-        }
-
-        /* Points colorés pour la légende */
-        .legend-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 0.3rem;
-        }
-
-        .legend-dot.rouge { background-color: #8B0000; }
-        .legend-dot.vert { background-color: #28a745; }
-        .legend-dot.orange { background-color: #ffc107; }
-        .legend-dot.bleu { background-color: #17a2b8; }
-
-        /* ==========================================================
-           TABLEAU RÉCAPITULATIF
-           ========================================================== */
-        .tableau-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 1rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
-        }
-
-        .tableau-card .tableau-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            margin-bottom: 0.75rem;
-            border-bottom: 1px solid #f0ece6;
-            padding-bottom: 0.4rem;
-        }
-
-        .tableau-card .tableau-title i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        .table-responsive-custom {
-            overflow-x: auto;
-        }
-
-        .table-custom {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .table-custom thead th {
-            text-align: left;
-            padding: 0.4rem 0.5rem;
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            border-bottom: 2px solid #f0ece6;
-        }
-
-        .table-custom tbody td {
-            padding: 0.4rem 0.5rem;
-            font-size: 0.8rem;
-            color: #1a1a1a;
-            border-bottom: 1px solid #f8f5f0;
-        }
-
-        .table-custom tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table-custom tbody tr:hover {
-            background-color: #FFF8F0;
-        }
-
-        /* ==========================================================
-           FOOTER PC (fond rouge)
-           ========================================================== */
-        .footer-pc {
-            background-color: #8B0000;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            flex-shrink: 0;
-            display: none;
-            margin-top: auto;
-        }
-
-        .footer-pc p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 0;
-            opacity: 0.85;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION MOBILE (< 768px)
-           ========================================================== */
-        .bottom-nav-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #f0ece6;
-            padding: 0.4rem 0.5rem 0.6rem 0.5rem;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-mobile .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #6c757d;
-            font-size: 0.5rem;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 0.15rem 0.3rem;
-            border-radius: 8px;
-            transition: color 0.2s;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .bottom-nav-mobile .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 0.05rem;
-        }
-
-        .bottom-nav-mobile .nav-item.active {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item:hover {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item-center {
-            background: #8B0000;
-            color: #fff;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -14px;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-            transition: transform 0.2s;
-            text-decoration: none;
-        }
-
-        .bottom-nav-mobile .nav-item-center:hover {
-            transform: scale(1.05);
-            color: #fff;
-        }
-
-        .bottom-nav-mobile .nav-item-center i {
-            font-size: 1.6rem;
-            margin-bottom: 0;
-        }
-
-        /* ==========================================================
-           RESPONSIVE : POINT DE RUPTURE À 768px
-           ========================================================== */
-        @media (min-width: 769px) {
-            .navbar-pc {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .top-header-mobile {
-                display: none !important;
-            }
-
-            .bottom-nav-mobile {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: block !important;
-            }
-
-            .main-content {
-                padding: 1.5rem 2rem 2rem 2rem;
-            }
-
-            .header-pc h1 {
-                font-size: 1.6rem;
-            }
-
-            .kpi-row {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .kpi-card .kpi-number {
-                font-size: 1.8rem;
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .filter-bar {
-                padding: 0.75rem 1.25rem;
-            }
-
-            .chart-bar-item .bar-label {
-                width: 100px;
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .top-header-mobile {
-                display: block !important;
-            }
-
-            .bottom-nav-mobile {
-                display: flex !important;
-            }
-
-            .navbar-pc {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: none !important;
-            }
-
-            .main-content {
-                padding: 0.75rem 1rem 5rem 1rem;
-            }
-
-            .header-pc {
-                display: none !important;
-            }
-
-            .kpi-row {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-
-            .kpi-card .kpi-number {
-                font-size: 1.2rem;
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 0.5rem 0.75rem;
-                gap: 0.4rem;
-            }
-
-            .filter-bar .filter-group {
-                justify-content: center;
-            }
-
-            .filter-bar .filter-group .filter-btn {
-                font-size: 0.6rem;
-                padding: 0.2rem 0.6rem;
-            }
-
-            .filter-bar .filter-select {
-                font-size: 0.6rem;
-                padding: 0.2rem 0.5rem;
-            }
-
-            .chart-bar-item .bar-label {
-                width: 60px;
-                font-size: 0.6rem;
-            }
-
-            .chart-bar-item .bar-value {
-                font-size: 0.6rem;
-                width: 30px;
-            }
-
-            .chart-bar-item .bar-track {
-                height: 14px;
-            }
-
-            .bottom-nav-mobile .nav-item {
-                font-size: 0.45rem;
-                min-width: 32px;
-            }
-
-            .bottom-nav-mobile .nav-item i {
-                font-size: 1rem;
-            }
-
-            .bottom-nav-mobile .nav-item-center {
-                width: 44px;
-                height: 44px;
-                margin-top: -10px;
-            }
-
-            .bottom-nav-mobile .nav-item-center i {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* ==========================================================
-           ACCESSIBILITÉ
-           ========================================================== */
-        a:focus-visible,
-        button:focus-visible,
-        input:focus-visible,
-        select:focus-visible {
-            outline: 3px solid #C9A84C;
-            outline-offset: 2px;
-        }
-    </style>
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/rapports.css">
 </head>
 <body>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION PC (> 768px)
+    BARRE DE NAVIGATION PC
     ========================================================== -->
     <nav class="navbar-pc" aria-label="Navigation principale">
-        <div style="display: flex; align-items: center; gap: 2rem;">
+        <div class="navbar-left">
             <a class="navbar-brand" href="tableau-bord.html">
                 <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
-                <span>Suivi</span><span>Terrain</span>
+                <span class="brand-suivi">Suivi</span><span class="brand-terrain">Terrain</span>
             </a>
 
             <ul class="nav-links">
@@ -1077,49 +34,47 @@
                 <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
                 <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
                 <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
                 <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
                 <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
             </ul>
         </div>
 
         <div class="nav-right">
-            <!-- Barre de recherche -->
             <div class="search-container" id="globalSearchContainer">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Rechercher... (Ctrl+K)" aria-label="Recherche globale">
-                    <kbd class="search-shortcut">Ctrl+K</kbd>
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
                 </div>
                 <div class="search-suggestions" id="globalSearchSuggestions"></div>
             </div>
 
-            <!-- Cloche de notification -->
             <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
                 <i class="bi bi-bell" aria-hidden="true"></i>
                 <span class="badge-notif" id="badgeNotifPC">3</span>
             </button>
 
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
                     <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                </button>
+                <ul class="dropdown-menu" id="dropdownMenu">
                     <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- ==========================================================
-    BANDEAU HAUT MOBILE (< 768px)
+    BANDEAU HAUT MOBILE
     ========================================================== -->
     <header class="top-header-mobile">
         <div class="header-row">
-            <button class="back-button" id="backButton" aria-label="Retour">
-                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
+                <i class="bi bi-list" aria-hidden="true"></i>
             </button>
 
             <div class="header-center">
@@ -1127,16 +82,25 @@
             </div>
 
             <div class="header-right">
-                <div class="dropdown">
-                    <button class="menu-actions" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions">
-                        <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#" id="mobileRefreshBtn"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Rafraîchir</a></li>
-                        <li><a class="dropdown-item" href="#" id="mobileExportBtn"><i class="bi bi-download" aria-hidden="true"></i> Exporter</a></li>
-                    </ul>
-                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif" id="badgeNotifMobile">3</span>
+                </button>
             </div>
+        </div>
+
+        <div class="mobile-menu-dropdown" id="mobileMenu">
+            <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
+            <a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
+            <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
+            <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
+            <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
+            <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
+            <hr>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
         </div>
     </header>
 
@@ -1147,22 +111,18 @@
 
         <div class="rapports-container">
 
-            <!-- ==========================================================
-            EN-TÊTE PC
-            ========================================================== -->
             <div class="header-pc">
                 <h1><i class="bi bi-file-earmark-text" aria-hidden="true"></i> Rapports</h1>
-                <button class="export-btn" id="exportBtn"><i class="bi bi-download" aria-hidden="true"></i> Exporter</button>
+                <button class="export-btn" id="exportBtn">
+                    <i class="bi bi-download" aria-hidden="true"></i> Exporter
+                </button>
             </div>
 
-            <!-- ==========================================================
-            FILTRES
-            ========================================================== -->
             <div class="filter-bar">
                 <div class="filter-group">
                     <button class="filter-btn active" data-filter="month">Ce mois</button>
                     <button class="filter-btn" data-filter="quarter">Ce trimestre</button>
-                    <button class="filter-btn" data-filter="year">Cette année</button>
+                    <button class="filter-btn" data-filter="year">Cette annee</button>
                 </div>
                 <select class="filter-select" id="agentFilter">
                     <option value="all">Tous les agents</option>
@@ -1173,16 +133,13 @@
                 </select>
                 <select class="filter-select" id="statutFilter">
                     <option value="all">Tous les statuts</option>
-                    <option value="realisee">Réalisées</option>
+                    <option value="realisee">Realisees</option>
                     <option value="encours">En cours</option>
                     <option value="attente">En attente</option>
                     <option value="retard">En retard</option>
                 </select>
             </div>
 
-            <!-- ==========================================================
-            INDICATEURS CLÉS
-            ========================================================== -->
             <div class="kpi-row" id="kpiRow">
                 <div class="kpi-card">
                     <i class="bi bi-calendar-event kpi-icon rouge" aria-hidden="true"></i>
@@ -1192,7 +149,7 @@
                 <div class="kpi-card">
                     <i class="bi bi-check-circle kpi-icon vert" aria-hidden="true"></i>
                     <div class="kpi-number" id="totalRealisees">0</div>
-                    <div class="kpi-label">Réalisées</div>
+                    <div class="kpi-label">Realisees</div>
                 </div>
                 <div class="kpi-card">
                     <i class="bi bi-clock-history kpi-icon orange" aria-hidden="true"></i>
@@ -1202,46 +159,37 @@
                 <div class="kpi-card">
                     <i class="bi bi-graph-up-arrow kpi-icon bleu" aria-hidden="true"></i>
                     <div class="kpi-number" id="tauxReussite">0%</div>
-                    <div class="kpi-label">Taux de réussite</div>
+                    <div class="kpi-label">Taux de reussite</div>
                 </div>
             </div>
 
-            <!-- ==========================================================
-            GRAPHIQUES
-            ========================================================== -->
             <div class="charts-row">
-                <!-- Graphique : Répartition par statut -->
                 <div class="chart-card">
-                    <div class="chart-title"><i class="bi bi-pie-chart" aria-hidden="true"></i> Répartition par statut</div>
+                    <div class="chart-title"><i class="bi bi-pie-chart" aria-hidden="true"></i> Repartition par statut</div>
                     <div id="statutChart"></div>
                 </div>
-
-                <!-- Graphique : Évolution mensuelle -->
                 <div class="chart-card">
-                    <div class="chart-title"><i class="bi bi-bar-chart" aria-hidden="true"></i> Évolution mensuelle</div>
+                    <div class="chart-title"><i class="bi bi-bar-chart" aria-hidden="true"></i> Evolution mensuelle</div>
                     <div id="evolutionChart"></div>
                 </div>
             </div>
 
-            <!-- ==========================================================
-            TABLEAU RÉCAPITULATIF
-            ========================================================== -->
             <div class="tableau-card">
-                <div class="tableau-title"><i class="bi bi-table" aria-hidden="true"></i> Détail des performances</div>
+                <div class="tableau-title"><i class="bi bi-table" aria-hidden="true"></i> Detail des performances</div>
                 <div class="table-responsive-custom">
                     <table class="table-custom" id="performanceTable">
                         <thead>
                             <tr>
                                 <th>Agent</th>
                                 <th>Visites</th>
-                                <th>Réalisées</th>
+                                <th>Realisees</th>
                                 <th>En attente</th>
                                 <th>En retard</th>
-                                <th>Taux réussite</th>
+                                <th>Taux reussite</th>
                             </tr>
                         </thead>
                         <tbody id="performanceBody">
-                            <!-- Généré par JavaScript -->
+                            <!-- Genere par JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -1252,16 +200,17 @@
     </main>
 
     <!-- ==========================================================
-    FOOTER PC (fond rouge)
+    FOOTER PC
     ========================================================== -->
     <footer class="footer-pc" role="contentinfo">
-        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
     </footer>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION MOBILE (< 768px)
+    BARRE DE NAVIGATION MOBILE
     ========================================================== -->
     <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
         <a href="tableau-bord.html" class="nav-item">
             <i class="bi bi-house-door" aria-hidden="true"></i>
             Accueil
@@ -1272,7 +221,7 @@
             Visites
         </a>
 
-        <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Créer une nouvelle visite">
+        <a href="#" class="nav-item-center" id="btnPlusMobile" aria-label="Action selon la page">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
 
@@ -1285,530 +234,15 @@
             <i class="bi bi-person" aria-hidden="true"></i>
             Profil
         </a>
-    </nav>
 
-    <!-- ==========================================================
-    BOOTSTRAP JS
-    ========================================================== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </nav>
 
     <!-- ==========================================================
     SCRIPTS
     ========================================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // ==========================================================
-            // FLÈCHE RETOUR (mobile)
-            // ==========================================================
-            const backButton = document.getElementById('backButton');
-            if (backButton) {
-                backButton.addEventListener('click', function() {
-                    window.history.back();
-                });
-            }
-
-            // ==========================================================
-            // NOTIFICATIONS
-            // ==========================================================
-            const notifBtnPC = document.getElementById('notifBtnPC');
-            if (notifBtnPC) {
-                notifBtnPC.addEventListener('click', function() {
-                    window.location.href = 'notifications.html';
-                });
-            }
-
-            // ==========================================================
-            // EXPORT
-            // ==========================================================
-            function handleExport() {
-                showToast('📥 Export en cours...');
-                setTimeout(() => {
-                    showToast('✅ Export terminé ! (simulation)');
-                }, 1500);
-            }
-
-            document.getElementById('exportBtn').addEventListener('click', handleExport);
-            document.getElementById('mobileExportBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                handleExport();
-            });
-
-            document.getElementById('mobileRefreshBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                renderRapports();
-                showToast('✅ Rapports actualisés');
-            });
-
-            // ==========================================================
-            // DONNÉES
-            // ==========================================================
-            const visitesData = [
-                { titre: 'Visite commerciale - Magasin A', agent: 'Zidane Fredy', date: '2025-06-12', statut: 'realisee' },
-                { titre: 'Collecte de commandes - Client B', agent: 'Sarah Niong', date: '2025-06-11',
-                statut: 'realisee' },
-                { titre: 'Suivi des retours - Magasin C', agent: 'Zidane Fredy', date: '2025-06-10',
-                statut: 'realisee' },
-                { titre: 'Collecte de paiement - Client D', agent: 'Jean Dupont', date: '2025-06-09',
-                statut: 'realisee' },
-                { titre: 'Collecte de paiement - Magasin E', agent: 'Sarah Niong', date: '2025-06-08',
-                statut: 'retard' },
-                { titre: 'Présentation produit - Client F', agent: 'Zidane Fredy', date: '2025-06-07',
-                statut: 'realisee' },
-                { titre: 'Visite de suivi - Magasin G', agent: 'Marie Claire', date: '2025-06-05', statut: 'realisee' },
-                { titre: 'Collecte de commandes - Client H', agent: 'Jean Dupont', date: '2025-06-04',
-                statut: 'retard' },
-                { titre: 'Visite commerciale - Magasin I', agent: 'Zidane Fredy', date: '2025-06-02',
-                statut: 'realisee' },
-                { titre: 'Collecte de paiement - Client J', agent: 'Sarah Niong', date: '2025-06-01',
-                statut: 'realisee' },
-                { titre: 'Visite de prospection - Client K', agent: 'Zidane Fredy', date: '2025-05-30',
-                statut: 'attente' },
-                { titre: 'Collecte de données - Client L', agent: 'Marie Claire', date: '2025-05-28',
-                statut: 'realisee' },
-                { titre: 'Visite commerciale - Magasin M', agent: 'Jean Dupont', date: '2025-05-25',
-                statut: 'encours' },
-                { titre: 'Suivi client N', agent: 'Sarah Niong', date: '2025-05-22', statut: 'realisee' },
-                { titre: 'Visite de suivi - Magasin O', agent: 'Zidane Fredy', date: '2025-05-20', statut: 'realisee' },
-            ];
-
-            // ==========================================================
-            // FILTRES
-            // ==========================================================
-            let currentFilter = 'month';
-            let currentAgent = 'all';
-            let currentStatut = 'all';
-
-            function getFilteredData() {
-                let data = [...visitesData];
-
-                // Filtre par période
-                const now = new Date();
-                if (currentFilter === 'month') {
-                    const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                    data = data.filter(item => new Date(item.date) >= monthStart);
-                } else if (currentFilter === 'quarter') {
-                    const quarterStart = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-                    data = data.filter(item => new Date(item.date) >= quarterStart);
-                } else if (currentFilter === 'year') {
-                    const yearStart = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-                    data = data.filter(item => new Date(item.date) >= yearStart);
-                }
-
-                // Filtre par agent
-                if (currentAgent !== 'all') {
-                    data = data.filter(item => item.agent === currentAgent);
-                }
-
-                // Filtre par statut
-                if (currentStatut !== 'all') {
-                    data = data.filter(item => item.statut === currentStatut);
-                }
-
-                return data;
-            }
-
-            // ==========================================================
-            // RENDU
-            // ==========================================================
-            function renderRapports() {
-                const data = getFilteredData();
-
-                // KPI
-                const total = data.length;
-                const realisees = data.filter(d => d.statut === 'realisee').length;
-                const attente = data.filter(d => d.statut === 'attente' || d.statut === 'encours').length;
-                const taux = total > 0 ? Math.round((realisees / total) * 100) : 0;
-
-                document.getElementById('totalVisites').textContent = total;
-                document.getElementById('totalRealisees').textContent = realisees;
-                document.getElementById('totalAttente').textContent = attente;
-                document.getElementById('tauxReussite').textContent = taux + '%';
-
-                // Graphique : répartition par statut
-                renderStatutChart(data);
-
-                // Graphique : évolution mensuelle
-                renderEvolutionChart(data);
-
-                // Tableau des performances
-                renderPerformanceTable(data);
-            }
-
-            // ==========================================================
-            // GRAPHIQUE : RÉPARTITION PAR STATUT (Barres)
-            // ==========================================================
-            function renderStatutChart(data) {
-                const container = document.getElementById('statutChart');
-                const statuts = {
-                    'realisee': { label: 'Réalisées', color: 'vert', count: 0 },
-                    'encours': { label: 'En cours', color: 'bleu', count: 0 },
-                    'attente': { label: 'En attente', color: 'orange', count: 0 },
-                    'retard': { label: 'En retard', color: 'rouge', count: 0 }
-                };
-
-                data.forEach(d => {
-                    if (statuts[d.statut]) statuts[d.statut].count++;
-                });
-
-                const maxCount = Math.max(...Object.values(statuts).map(s => s.count), 1);
-
-                let html = '';
-                for (const [key, s] of Object.entries(statuts)) {
-                    const percent = Math.round((s.count / maxCount) * 100);
-                    html += `
-                        <div class="chart-bar-item">
-                            <span class="bar-label">${s.label}</span>
-                            <div class="bar-track">
-                                <div class="bar-fill ${s.color}" style="width: ${percent}%;"></div>
-                            </div>
-                            <span class="bar-value">${s.count}</span>
-                        </div>
-                    `;
-                }
-                container.innerHTML = html;
-            }
-
-            // ==========================================================
-            // GRAPHIQUE : ÉVOLUTION MENSUELLE
-            // ==========================================================
-            function renderEvolutionChart(data) {
-                const container = document.getElementById('evolutionChart');
-
-                // Grouper par mois
-                const months = {};
-                data.forEach(d => {
-                    const month = d.date.substring(0, 7);
-                    if (!months[month]) months[month] = 0;
-                    months[month]++;
-                });
-
-                const sortedMonths = Object.keys(months).sort();
-                const maxCount = Math.max(...Object.values(months), 1);
-
-                let html = '';
-                sortedMonths.forEach(month => {
-                    const label = month.substring(5, 7) + '/' + month.substring(2, 4);
-                    const percent = Math.round((months[month] / maxCount) * 100);
-                    html += `
-                        <div class="chart-bar-item">
-                            <span class="bar-label">${label}</span>
-                            <div class="bar-track">
-                                <div class="bar-fill rouge" style="width: ${percent}%;"></div>
-                            </div>
-                            <span class="bar-value">${months[month]}</span>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = html || '<p style="text-align:center;color:#6c757d;font-size:0.8rem;">Aucune donnée disponible</p>';
-            }
-
-            // ==========================================================
-            // TABLEAU DES PERFORMANCES PAR AGENT
-            // ==========================================================
-            function renderPerformanceTable(data) {
-                const tbody = document.getElementById('performanceBody');
-
-                // Agréger par agent
-                const agents = {};
-                data.forEach(d => {
-                    if (!agents[d.agent]) {
-                        agents[d.agent] = { total: 0, realisees: 0, attente: 0, retard: 0 };
-                    }
-                    agents[d.agent].total++;
-                    if (d.statut === 'realisee') agents[d.agent].realisees++;
-                    else if (d.statut === 'attente' || d.statut === 'encours') agents[d.agent].attente++;
-                    else if (d.statut === 'retard') agents[d.agent].retard++;
-                });
-
-                if (Object.keys(agents).length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align:center;padding:1.5rem 0;color:#6c757d;">
-                                Aucune donnée disponible pour cette période
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                for (const [agent, stats] of Object.entries(agents)) {
-                    const taux = stats.total > 0 ? Math.round((stats.realisees / stats.total) * 100) : 0;
-                    html += `
-                        <tr>
-                            <td><strong>${agent}</strong></td>
-                            <td>${stats.total}</td>
-                            <td style="color:#28a745;">${stats.realisees}</td>
-                            <td style="color:#ffc107;">${stats.attente}</td>
-                            <td style="color:#dc3545;">${stats.retard}</td>
-                            <td><strong>${taux}%</strong></td>
-                        </tr>
-                    `;
-                }
-                tbody.innerHTML = html;
-            }
-
-            // ==========================================================
-            // ÉVÉNEMENTS DES FILTRES
-            // ==========================================================
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter = this.dataset.filter;
-                    renderRapports();
-                });
-            });
-
-            document.getElementById('agentFilter').addEventListener('change', function() {
-                currentAgent = this.value;
-                renderRapports();
-            });
-
-            document.getElementById('statutFilter').addEventListener('change', function() {
-                currentStatut = this.value;
-                renderRapports();
-            });
-
-            // ==========================================================
-            // TOAST
-            // ==========================================================
-            function showToast(message) {
-                const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    bottom: 80px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #1a1a1a;
-                    color: #ffffff;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 12px;
-                    font-family: 'Segoe UI', sans-serif;
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                    z-index: 9999;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    max-width: 90%;
-                    text-align: center;
-                `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-
-                setTimeout(() => { toast.style.opacity = '1'; }, 50);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => { toast.remove(); }, 300);
-                }, 2500);
-            }
-
-            // ==========================================================
-            // RECHERCHE GÉNÉRALE
-            // ==========================================================
-            const searchInput = document.getElementById('globalSearchInput');
-            const suggestionsContainer = document.getElementById('globalSearchSuggestions');
-
-            if (searchInput && suggestionsContainer) {
-                const searchData = {
-                    visites: [
-                        { id: 1, titre: 'Visite commerciale - Magasin A', adresse: 'Centre-ville',
-                            date: '12 juin 2025', statut: 'Réalisée' },
-                        { id: 2, titre: 'Collecte de commandes - Client B', adresse: 'Bonamoussadi',
-                            date: '12 juin 2025', statut: 'En attente' },
-                    ],
-                    pointsVente: [
-                        { id: 1, nom: 'Magasin A', adresse: 'Centre-ville', categorie: 'Alimentation' },
-                        { id: 2, nom: 'Client B', adresse: 'Bonamoussadi', categorie: 'Services' },
-                    ],
-                    utilisateurs: [
-                        { id: 1, nom: 'Zidane Fredy', email: 'zidane@suiviterrain.com', role: 'Administrateur' },
-                        { id: 2, nom: 'Sarah Niong', email: 'sarah@suiviterrain.com', role: 'Agent' },
-                    ],
-                    planning: [
-                        { id: 1, date: '12 juin 2025', agent: 'Zidane', visites: 3 },
-                    ]
-                };
-
-                function performSearch(query) {
-                    const term = query.toLowerCase().trim();
-                    const results = [];
-                    if (!term || term.length < 2) return results;
-
-                    searchData.visites.forEach(v => {
-                        if (v.titre.toLowerCase().includes(term) || v.adresse.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'visit',
-                                label: v.titre,
-                                subtitle: v.adresse + ' • ' + v.date,
-                                badge: v.statut,
-                                url: 'detail-visite.html?id=' + v.id,
-                                icon: 'bi bi-calendar-event'
-                            });
-                        }
-                    });
-
-                    searchData.pointsVente.forEach(p => {
-                        if (p.nom.toLowerCase().includes(term) || p.adresse.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'point',
-                                label: p.nom,
-                                subtitle: p.adresse + ' • ' + p.categorie,
-                                badge: p.categorie,
-                                url: 'detail-point.html?id=' + p.id,
-                                icon: 'bi bi-shop'
-                            });
-                        }
-                    });
-
-                    searchData.utilisateurs.forEach(u => {
-                        if (u.nom.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'user',
-                                label: u.nom,
-                                subtitle: u.email + ' • ' + u.role,
-                                badge: u.role,
-                                url: 'gestion-utilisateurs.html',
-                                icon: 'bi bi-person'
-                            });
-                        }
-                    });
-
-                    searchData.planning.forEach(p => {
-                        if (p.date.toLowerCase().includes(term) || p.agent.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'planning',
-                                label: 'Planning du ' + p.date,
-                                subtitle: p.agent + ' • ' + p.visites + ' visites',
-                                badge: p.visites + ' visites',
-                                url: 'planning-visites.html?date=' + p.date,
-                                icon: 'bi bi-calendar-check'
-                            });
-                        }
-                    });
-
-                    return results;
-                }
-
-                function renderSuggestions(results) {
-                    const badges = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-                    const icons = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-                    const labels = { visit: 'Visites', point: 'Points de vente', user: 'Utilisateurs',
-                        planning: 'Planning' };
-
-                    if (results.length === 0) {
-                        suggestionsContainer.innerHTML = `
-                            <div class="suggestion-empty">
-                                <i class="bi bi-search" aria-hidden="true"></i>
-                                Aucun résultat trouvé
-                            </div>
-                        `;
-                        suggestionsContainer.classList.add('visible');
-                        return;
-                    }
-
-                    const grouped = { visit: [], point: [], user: [], planning: [] };
-                    results.forEach(r => { if (grouped[r.type]) grouped[r.type].push(r); });
-
-                    let html = '';
-                    for (const [type, items] of Object.entries(grouped)) {
-                        if (items.length === 0) continue;
-                        html += `<div class="suggestion-group-title">${labels[type]}</div>`;
-                        items.forEach(item => {
-                            html += `
-                                <div class="suggestion-item" data-url="${item.url}">
-                                    <div class="suggestion-icon ${icons[item.type]}">
-                                        <i class="${item.icon}" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="suggestion-info">
-                                        <div class="suggestion-title">${item.label}</div>
-                                        <div class="suggestion-subtitle">${item.subtitle}</div>
-                                    </div>
-                                    <span class="suggestion-badge ${badges[item.type]}">${item.badge}</span>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    suggestionsContainer.innerHTML = html;
-                    suggestionsContainer.classList.add('visible');
-
-                    suggestionsContainer.querySelectorAll('.suggestion-item').forEach(el => {
-                        el.addEventListener('click', function() {
-                            const url = this.dataset.url;
-                            if (url) window.location.href = url;
-                        });
-                    });
-                }
-
-                let searchTimeout;
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    const query = this.value;
-                    if (query.length < 2) {
-                        suggestionsContainer.classList.remove('visible');
-                        return;
-                    }
-                    searchTimeout = setTimeout(() => {
-                        const results = performSearch(query);
-                        renderSuggestions(results);
-                    }, 250);
-                });
-
-                document.addEventListener('click', function(e) {
-                    const container = document.getElementById('globalSearchContainer');
-                    if (container && !container.contains(e.target)) {
-                        suggestionsContainer.classList.remove('visible');
-                    }
-                });
-
-                document.addEventListener('keydown', function(e) {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                        e.preventDefault();
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-                    if (e.key === 'Escape') {
-                        suggestionsContainer.classList.remove('visible');
-                        searchInput.blur();
-                    }
-                });
-
-                let selectedIndex = -1;
-                searchInput.addEventListener('keydown', function(e) {
-                    const items = suggestionsContainer.querySelectorAll('.suggestion-item');
-                    if (items.length === 0) return;
-
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        selectedIndex = (selectedIndex + 1) % items.length;
-                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
-                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                    } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
-                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                    } else if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (selectedIndex >= 0 && selectedIndex < items.length) {
-                            const url = items[selectedIndex].dataset.url;
-                            if (url) window.location.href = url;
-                        }
-                    }
-                });
-            }
-
-            // ==========================================================
-            // INITIALISATION
-            // ==========================================================
-            renderRapports();
-            console.log('✅ Page Rapports chargée');
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/rapports.js"></script>
 
 </body>
 </html>
