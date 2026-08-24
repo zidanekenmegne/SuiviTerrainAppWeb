@@ -1,27 +1,25 @@
 /**
  * Footer - Styles du pied de page PC
- * Version 1.0
- * 
- * Ce fichier contient les styles du footer
- * visible uniquement sur les ecrans PC (> 768px)
+ * Version 2.0 - Mobile-first
  */
 
 /* ==========================================================
-   FOOTER PC
+   FOOTER PC (caché par défaut sur mobile)
    ========================================================== */
 .footer-pc {
-    background-color: var(--primary-red);
+    background-color: #8B0000;
     padding: 1.5rem 1rem;
     text-align: center;
     flex-shrink: 0;
     display: none;
     margin-top: auto;
+    width: 100%;
 }
 
 .footer-pc p {
-    font-family: var(--font-family);
+    font-family: 'Segoe UI', sans-serif;
     font-size: 0.85rem;
-    color: var(--text-light);
+    color: #ffffff;
     margin-bottom: 0;
     opacity: 0.8;
     letter-spacing: 0.3px;
