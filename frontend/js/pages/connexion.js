@@ -1,5 +1,6 @@
 /**
  * Connexion - Logique de la page
+ * Version 1.0
  * Identifiants de test : admin@suiviterrain.com / admin123
  */
 
