@@ -1,0 +1,906 @@
+/* ==========================================================
+   GESTION DES UTILISATEURS - SuiviTerrain
+   ========================================================== */
+
+/* ==========================================================
+   STYLES GLOBAUX
+   ========================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FFF8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION PC (> 768px)
+   ========================================================== */
+.navbar-pc {
+    background-color: #8B0000;
+    padding: 0.75rem 1.5rem;
+    display: none;
+    flex-shrink: 0;
+}
+
+.navbar-pc .navbar-pc-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.navbar-pc .navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-pc .navbar-brand {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-pc .navbar-brand img {
+    height: 30px;
+}
+
+.navbar-pc .navbar-brand span:first-child {
+    color: #ffffff;
+}
+
+.navbar-pc .navbar-brand span:last-child {
+    color: #C9A84C;
+}
+
+.navbar-pc .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-pc .nav-links li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+.navbar-pc .nav-links li a:hover,
+.navbar-pc .nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.navbar-pc .nav-links li a i {
+    margin-right: 0.4rem;
+}
+
+.navbar-pc .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-pc .nav-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.navbar-pc .nav-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-pc .nav-right .dropdown-toggle {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-pc .nav-right .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-pc .nav-right .dropdown-menu {
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: none;
+}
+
+.navbar-pc .nav-right .dropdown-item {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 500;
+}
+
+.navbar-pc .nav-right .dropdown-item:hover {
+    background-color: #FFF8F0;
+}
+
+.navbar-pc .nav-right .dropdown-item i {
+    margin-right: 0.5rem;
+}
+
+/* ==========================================================
+   RECHERCHE GLOBALE
+   ========================================================== */
+.search-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.1rem 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+
+.search-input-wrapper i {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+    transition: color 0.2s;
+}
+
+.search-input-wrapper:focus-within i {
+    color: #8B0000;
+}
+
+.search-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.3rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    color: #ffffff;
+    outline: none;
+    width: 100%;
+    min-width: 140px;
+}
+
+.search-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input-wrapper:focus-within input {
+    color: #1a1a1a;
+}
+
+.search-input-wrapper:focus-within input::placeholder {
+    color: #6c757d;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10000;
+    padding: 0.3rem 0;
+}
+
+.search-suggestions.visible {
+    display: block;
+}
+
+.search-suggestions .suggestion-empty {
+    padding: 1.5rem 0.8rem;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.search-suggestions .suggestion-empty i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+    color: #ced4da;
+}
+
+/* ==========================================================
+   BANDEAU HAUT MOBILE (< 768px)
+   ========================================================== */
+.top-header-mobile {
+    background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+    padding: 0.75rem 1rem 0.5rem 1rem;
+    border-radius: 0 0 1px 1px;
+    display: none;
+    flex-shrink: 0;
+}
+
+.top-header-mobile .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header-mobile .back-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.top-header-mobile .back-button:hover {
+    opacity: 0.8;
+}
+
+.top-header-mobile .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-header-mobile .header-center .page-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.top-header-mobile .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.top-header-mobile .header-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.top-header-mobile .header-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-header-mobile .menu-hamburger {
+    display: none !important;
+}
+
+/* ==========================================================
+   CONTENU PRINCIPAL
+   ========================================================== */
+.main-content {
+    flex: 1;
+    padding: 1.25rem 1.25rem 5rem 1.25rem;
+    background-color: #FFF8F0;
+}
+
+.header-pc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.header-pc h1 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.header-pc h1 i {
+    color: #8B0000;
+    margin-right: 0.4rem;
+}
+
+/* ==========================================================
+   ONGLETS
+   ========================================================== */
+.tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.tabs-container .tab-btn {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #6c757d;
+    background: transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.tabs-container .tab-btn:hover {
+    background-color: #FFF8F0;
+    color: #1a1a1a;
+}
+
+.tabs-container .tab-btn.active {
+    background-color: #8B0000;
+    color: #ffffff;
+}
+
+.tabs-container .tab-btn i {
+    margin-right: 0.4rem;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* ==========================================================
+   RECHERCHE
+   ========================================================== */
+.search-bar {
+    margin-bottom: 1rem;
+}
+
+.search-bar .search-box {
+    position: relative;
+    width: 100%;
+}
+
+.search-bar .search-box input {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+    border-radius: 10px;
+    border: 1px solid #e0dcd6;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    background-color: #ffffff;
+    transition: border-color 0.2s;
+}
+
+.search-bar .search-box input:focus {
+    border-color: #8B0000;
+    outline: none;
+}
+
+.search-bar .search-box i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+/* ==========================================================
+   TABLEAU DES UTILISATEURS
+   ========================================================== */
+.table-responsive-custom {
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.table-custom thead {
+    border-bottom: 2px solid #f0ece6;
+}
+
+.table-custom thead th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.table-custom thead th:hover {
+    color: #8B0000;
+}
+
+.table-custom thead th i {
+    margin-left: 0.2rem;
+    font-size: 0.6rem;
+}
+
+.table-custom tbody td {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    border-bottom: 1px solid #f8f5f0;
+    vertical-align: middle;
+}
+
+.table-custom tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #FFF8F0;
+}
+
+/* Statut */
+.badge-status {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+}
+
+.badge-status.actif {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-status.inactif {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Role */
+.badge-role {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+}
+
+.badge-role.admin {
+    background-color: #8B0000;
+    color: #fff;
+}
+
+.badge-role.agent {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+/* Menu actions (trois points verticaux) */
+.actions-dropdown .dropdown-toggle {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 1.2rem;
+    padding: 0.1rem 0.3rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.actions-dropdown .dropdown-toggle:hover {
+    color: #8B0000;
+}
+
+.actions-dropdown .dropdown-menu {
+    border-radius: 12px;
+    padding: 0.3rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: none;
+    min-width: 180px;
+}
+
+.actions-dropdown .dropdown-item {
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.actions-dropdown .dropdown-item:hover {
+    background-color: #FFF8F0;
+}
+
+.actions-dropdown .dropdown-item i {
+    margin-right: 0.5rem;
+    width: 18px;
+    text-align: center;
+}
+
+.actions-dropdown .dropdown-item.text-danger:hover {
+    background-color: #fce4e4;
+}
+
+.actions-dropdown .dropdown-divider {
+    margin: 0.2rem 0;
+}
+
+/* ==========================================================
+   FORMULAIRE D'AJOUT
+   ========================================================== */
+.form-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.form-container .form-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    margin-bottom: 1.25rem;
+}
+
+.form-container .form-title i {
+    color: #8B0000;
+    margin-right: 0.4rem;
+}
+
+.form-container .form-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+}
+
+.form-container .form-control,
+.form-container .form-select {
+    border-radius: 10px;
+    border: 1px solid #e0dcd6;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.form-container .form-control:focus,
+.form-container .form-select:focus {
+    border-color: #8B0000;
+    box-shadow: none;
+}
+
+.form-container .btn-submit {
+    background-color: #8B0000;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-container .btn-submit:hover {
+    background-color: #6a0000;
+}
+
+.form-container .btn-submit i {
+    margin-right: 0.4rem;
+}
+
+.form-container .btn-cancel {
+    background: transparent;
+    border: 2px solid #6c757d;
+    border-radius: 10px;
+    color: #6c757d;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-container .btn-cancel:hover {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+/* ==========================================================
+   FOOTER PC
+   ========================================================== */
+.footer-pc {
+    background-color: #8B0000;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    flex-shrink: 0;
+    display: none;
+    margin-top: auto;
+}
+
+.footer-pc p {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin-bottom: 0;
+    opacity: 0.85;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION MOBILE (< 768px)
+   ========================================================== */
+.bottom-nav-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #f0ece6;
+    padding: 0.4rem 0.5rem 0.6rem 0.5rem;
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+    flex-shrink: 0;
+}
+
+.bottom-nav-mobile .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #6c757d;
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 0.15rem 0.3rem;
+    border-radius: 8px;
+    transition: color 0.2s;
+    position: relative;
+    min-width: 40px;
+}
+
+.bottom-nav-mobile .nav-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.05rem;
+}
+
+.bottom-nav-mobile .nav-item.active {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item:hover {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.bottom-nav-mobile .nav-item-center:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.bottom-nav-mobile .nav-item-center i {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+    .navbar-pc {
+        display: flex !important;
+    }
+    .top-header-mobile {
+        display: none !important;
+    }
+    .bottom-nav-mobile {
+        display: none !important;
+    }
+    .footer-pc {
+        display: block !important;
+    }
+    .main-content {
+        padding: 1.5rem 2rem 2rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .header-pc h1 {
+        font-size: 1.6rem;
+    }
+    .table-custom thead th {
+        font-size: 0.8rem;
+        padding: 0.8rem 1rem;
+    }
+    .table-custom tbody td {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+    .form-container {
+        padding: 2rem;
+    }
+    .form-container .btn-submit,
+    .form-container .btn-cancel {
+        width: auto;
+    }
+    .form-container .button-group {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-header-mobile {
+        display: block !important;
+    }
+    .bottom-nav-mobile {
+        display: flex !important;
+    }
+    .navbar-pc {
+        display: none !important;
+    }
+    .footer-pc {
+        display: none !important;
+    }
+    .main-content {
+        padding: 0.75rem 1rem 5rem 1rem;
+    }
+    .header-pc {
+        display: none !important;
+    }
+    .tabs-container {
+        flex-direction: row;
+        gap: 0.3rem;
+        padding: 0.3rem;
+    }
+    .tabs-container .tab-btn {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+    .table-responsive-custom {
+        padding: 0.25rem;
+    }
+    .table-custom thead th {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.5rem;
+    }
+    .table-custom tbody td {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.5rem;
+    }
+    .badge-status,
+    .badge-role {
+        font-size: 0.5rem;
+        padding: 0.15rem 0.4rem;
+    }
+    .form-container {
+        padding: 1rem;
+    }
+    .bottom-nav-mobile .nav-item {
+        font-size: 0.45rem;
+        min-width: 32px;
+    }
+    .bottom-nav-mobile .nav-item i {
+        font-size: 1rem;
+    }
+    .bottom-nav-mobile .nav-item-center {
+        width: 44px;
+        height: 44px;
+        margin-top: -10px;
+    }
+    .bottom-nav-mobile .nav-item-center i {
+        font-size: 1.3rem;
+    }
+}
+
+/* ==========================================================
+   ACCESSIBILITE
+   ========================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid #C9A84C;
+    outline-offset: 2px;
+}
+
+/* ==========================================================
+   UTILITAIRES
+   ========================================================== */
+.text-primary-red { color: #8B0000; }
+.bg-primary-red { background-color: #8B0000; }
