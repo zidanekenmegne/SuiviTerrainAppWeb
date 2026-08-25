@@ -4,1139 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Points de vente - SuiviTerrain</title>
-    <meta name="description" content="Gérez vos points de vente et catégories SuiviTerrain.">
-    
+    <meta name="description" content="Gerez vos points de vente et categories SuiviTerrain.">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==========================================================
-           STYLES GLOBAUX
-           ========================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #FFF8F0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION PC (> 768px)
-           ========================================================== */
-        .navbar-pc {
-            background-color: #8B0000;
-            padding: 0.75rem 1.5rem;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .navbar-pc .navbar-brand {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-pc .navbar-brand img {
-            height: 30px;
-        }
-
-        .navbar-pc .navbar-brand span:first-child {
-            color: #ffffff;
-        }
-
-        .navbar-pc .navbar-brand span:last-child {
-            color: #C9A84C;
-        }
-
-        .navbar-pc .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-pc .nav-links li a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .navbar-pc .nav-links li a:hover,
-        .navbar-pc .nav-links li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .navbar-pc .nav-links li a i {
-            margin-right: 0.4rem;
-        }
-
-        .navbar-pc .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-        }
-
-        /* ==========================================================
-           BARRE DE RECHERCHE GÉNÉRALE (PC)
-           ========================================================== */
-        .search-container {
-            position: relative;
-            min-width: 220px;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 0.1rem 0.5rem;
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-
-        .search-input-wrapper:focus-within {
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
-        }
-
-        .search-input-wrapper i {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-right: 0.4rem;
-            transition: color 0.2s;
-        }
-
-        .search-input-wrapper:focus-within i {
-            color: #8B0000;
-        }
-
-        .search-input-wrapper input {
-            background: transparent;
-            border: none;
-            padding: 0.45rem 0.3rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #ffffff;
-            outline: none;
-            width: 100%;
-            min-width: 140px;
-        }
-
-        .search-input-wrapper input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .search-input-wrapper:focus-within input {
-            color: #1a1a1a;
-        }
-
-        .search-input-wrapper:focus-within input::placeholder {
-            color: #6c757d;
-        }
-
-        .search-shortcut {
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Segoe UI', sans-serif;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .search-input-wrapper:focus-within .search-shortcut {
-            color: #6c757d;
-            background: #f0ece6;
-            border-color: #e0dcd6;
-        }
-
-        .search-suggestions {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            max-height: 320px;
-            overflow-y: auto;
-            display: none;
-            z-index: 10000;
-            padding: 0.3rem 0;
-        }
-
-        .search-suggestions.visible {
-            display: block;
-        }
-
-        .search-suggestions .suggestion-group-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0.4rem 0.8rem 0.2rem 0.8rem;
-            border-bottom: 1px solid #f0ece6;
-        }
-
-        .search-suggestions .suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 0.4rem 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.15s;
-            border-radius: 6px;
-            margin: 0.1rem 0.3rem;
-            gap: 0.6rem;
-        }
-
-        .search-suggestions .suggestion-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: #ffffff;
-            font-size: 0.7rem;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-icon.visit {
-            background-color: #8B0000;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.point {
-            background-color: #28a745;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.user {
-            background-color: #17a2b8;
-        }
-        .search-suggestions .suggestion-item .suggestion-icon.planning {
-            background-color: #ffc107;
-            color: #1a1a1a;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info .suggestion-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.05rem;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-info .suggestion-subtitle {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.65rem;
-            color: #6c757d;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-badge {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.55rem;
-            font-weight: 600;
-            padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-
-        .search-suggestions .suggestion-item .suggestion-badge.visit {
-            background-color: #fce4e4;
-            color: #8B0000;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.point {
-            background-color: #e8f5e9;
-            color: #28a745;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.user {
-            background-color: #e3f2fd;
-            color: #17a2b8;
-        }
-        .search-suggestions .suggestion-item .suggestion-badge.planning {
-            background-color: #fff8e1;
-            color: #f57c00;
-        }
-
-        .search-suggestions .suggestion-empty {
-            padding: 1.5rem 0.8rem;
-            text-align: center;
-            font-family: 'Segoe UI', sans-serif;
-            color: #6c757d;
-            font-size: 0.85rem;
-        }
-
-        .search-suggestions .suggestion-empty i {
-            display: block;
-            font-size: 2rem;
-            margin-bottom: 0.3rem;
-            color: #ced4da;
-        }
-
-        .search-suggestions::-webkit-scrollbar {
-            width: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-track {
-            background: #f8f5f0;
-            border-radius: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-thumb {
-            background: #c0b8b0;
-            border-radius: 4px;
-        }
-        .search-suggestions::-webkit-scrollbar-thumb:hover {
-            background: #8B0000;
-        }
-
-        /* ==========================================================
-           CLOCHE DE NOTIFICATION (PC uniquement)
-           ========================================================== */
-        .navbar-pc .nav-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .navbar-pc .nav-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle {
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-pc .nav-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        .navbar-pc .nav-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .navbar-pc .nav-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .navbar-pc .nav-right .dropdown-item i {
-            margin-right: 0.5rem;
-        }
-
-        /* ==========================================================
-           BANDEAU HAUT MOBILE (< 768px)
-           ========================================================== */
-        .top-header-mobile {
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            padding: 0.75rem 1rem 0.5rem 1rem;
-            border-radius: 0 0 1px 1px;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .top-header-mobile .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-header-mobile .back-button {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .top-header-mobile .back-button:hover {
-            opacity: 0.8;
-        }
-
-        .top-header-mobile .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-center .page-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-bottom: 0;
-        }
-
-        .top-header-mobile .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-right .menu-actions {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .top-header-mobile .header-right .menu-actions:hover {
-            opacity: 0.8;
-        }
-
-        .top-header-mobile .header-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.3rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-            min-width: 160px;
-        }
-
-        .top-header-mobile .header-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.4rem 0.75rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .top-header-mobile .header-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .top-header-mobile .header-right .dropdown-item i {
-            margin-right: 0.5rem;
-            width: 18px;
-            text-align: center;
-        }
-
-        .top-header-mobile .header-right .dropdown-divider {
-            margin: 0.2rem 0;
-        }
-
-        .top-header-mobile .header-right .notification-btn {
-            display: none !important;
-        }
-
-        /* ==========================================================
-           CONTENU PRINCIPAL
-           ========================================================== */
-        .main-content {
-            flex: 1;
-            padding: 1.25rem 1.25rem 5rem 1.25rem;
-            background-color: #FFF8F0;
-        }
-
-        .points-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* En-tête PC */
-        .header-pc {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .header-pc h1 {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .header-pc h1 i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        /* ==========================================================
-           ONGLETS
-           ========================================================== */
-        .tabs-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.4rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-        }
-
-        .tabs-container .tab-btn {
-            flex: 1;
-            padding: 0.6rem 1rem;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #6c757d;
-            background: transparent;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .tabs-container .tab-btn:hover {
-            background-color: #FFF8F0;
-            color: #1a1a1a;
-        }
-
-        .tabs-container .tab-btn.active {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        .tabs-container .tab-btn i {
-            margin-right: 0.4rem;
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        /* ==========================================================
-           RECHERCHE
-           ========================================================== */
-        .search-bar {
-            margin-bottom: 1rem;
-        }
-
-        .search-bar .search-box {
-            position: relative;
-            width: 100%;
-        }
-
-        .search-bar .search-box input {
-            width: 100%;
-            padding: 0.5rem 0.75rem 0.5rem 2.2rem;
-            border-radius: 10px;
-            border: 1px solid #e0dcd6;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            background-color: #ffffff;
-            transition: border-color 0.2s;
-        }
-
-        .search-bar .search-box input:focus {
-            border-color: #8B0000;
-            outline: none;
-        }
-
-        .search-bar .search-box i {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
-        }
-
-        /* ==========================================================
-           TABLEAU DES POINTS
-           ========================================================== */
-        .table-responsive-custom {
-            overflow-x: auto;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-        }
-
-        .table-custom {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .table-custom thead {
-            border-bottom: 2px solid #f0ece6;
-        }
-
-        .table-custom thead th {
-            text-align: left;
-            padding: 0.6rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .table-custom tbody td {
-            padding: 0.6rem 0.75rem;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            border-bottom: 1px solid #f8f5f0;
-            vertical-align: middle;
-        }
-
-        .table-custom tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table-custom tbody tr:hover {
-            background-color: #FFF8F0;
-        }
-
-        .table-custom .btn-detail {
-            background: #8B0000;
-            border: none;
-            border-radius: 6px;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.7rem;
-            padding: 0.25rem 0.8rem;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .table-custom .btn-detail:hover {
-            background-color: #6a0000;
-        }
-
-        .categorie-pastille {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            vertical-align: middle;
-            margin-right: 0.3rem;
-        }
-
-        /* ==========================================================
-           MODALE DÉTAIL POINT
-           ========================================================== */
-        .modal-photo-wrapper {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 1rem auto;
-        }
-
-        .modal-photo-wrapper .photo-point {
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-            object-fit: cover;
-            background: #f0ece6;
-            border: 2px solid #f0ece6;
-        }
-
-        .modal-photo-wrapper .photo-badge {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            background: #8B0000;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
-        }
-
-        .modal-photo-wrapper .photo-badge:hover {
-            background-color: #6a0000;
-        }
-
-        #photoInput {
-            display: none;
-        }
-
-        .modal-body .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid #f8f5f0;
-        }
-
-        .modal-body .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .modal-body .info-row .info-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-
-        .modal-body .info-row .info-value {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            font-weight: 500;
-            text-align: right;
-            flex: 1;
-            margin-left: 1rem;
-            word-break: break-word;
-        }
-
-        .modal-body .info-row .info-value input,
-        .modal-body .info-row .info-value select {
-            width: 100%;
-            padding: 0.3rem 0.5rem;
-            border-radius: 6px;
-            border: 1px solid #e0dcd6;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            background-color: #ffffff;
-        }
-
-        .modal-body .info-row .info-value input:focus,
-        .modal-body .info-row .info-value select:focus {
-            border-color: #8B0000;
-            outline: none;
-        }
-
-        .modal-body .info-row .info-value input:disabled,
-        .modal-body .info-row .info-value select:disabled {
-            background-color: #f8f5f0;
-            border: none;
-            color: #1a1a1a;
-            font-weight: 500;
-            padding: 0.3rem 0;
-        }
-
-        .modal-footer .btn-modifier {
-            background-color: #8B0000;
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.5rem;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .modal-footer .btn-modifier:hover {
-            background-color: #6a0000;
-        }
-
-        .modal-footer .btn-retour {
-            background: transparent;
-            border: 2px solid #6c757d;
-            border-radius: 8px;
-            color: #6c757d;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .modal-footer .btn-retour:hover {
-            background-color: #6c757d;
-            color: #ffffff;
-        }
-
-        .modal-footer .btn-enregistrer {
-            background-color: #28a745;
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.5rem;
-            transition: background-color 0.2s;
-            cursor: pointer;
-        }
-
-        .modal-footer .btn-enregistrer:hover {
-            background-color: #1e7e34;
-        }
-
-        .modal-footer .btn-annuler {
-            background: transparent;
-            border: 2px solid #dc3545;
-            border-radius: 8px;
-            color: #dc3545;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .modal-footer .btn-annuler:hover {
-            background-color: #dc3545;
-            color: #ffffff;
-        }
-
-        /* ==========================================================
-           CATÉGORIES
-           ========================================================== */
-        .categories-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .categories-actions .btn-cat {
-            padding: 0.3rem 1rem;
-            border-radius: 8px;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.75rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .categories-actions .btn-cat.btn-ajouter {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        .categories-actions .btn-cat.btn-ajouter:hover {
-            background-color: #6a0000;
-        }
-
-        .categories-actions .btn-cat.btn-modifier-cat {
-            background: transparent;
-            border: 2px solid #8B0000;
-            color: #8B0000;
-        }
-
-        .categories-actions .btn-cat.btn-modifier-cat:hover {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        /* ==========================================================
-           FOOTER PC (fond rouge)
-           ========================================================== */
-        .footer-pc {
-            background-color: #8B0000;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            flex-shrink: 0;
-            display: none;
-            margin-top: auto;
-        }
-
-        .footer-pc p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 0;
-            opacity: 0.85;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION MOBILE (< 768px)
-           ========================================================== */
-        .bottom-nav-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #f0ece6;
-            padding: 0.4rem 0.5rem 0.6rem 0.5rem;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-mobile .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #6c757d;
-            font-size: 0.5rem;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 0.15rem 0.3rem;
-            border-radius: 8px;
-            transition: color 0.2s;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .bottom-nav-mobile .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 0.05rem;
-        }
-
-        .bottom-nav-mobile .nav-item.active {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item:hover {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item-center {
-            background: #8B0000;
-            color: #fff;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -14px;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-            transition: transform 0.2s;
-            text-decoration: none;
-        }
-
-        .bottom-nav-mobile .nav-item-center:hover {
-            transform: scale(1.05);
-            color: #fff;
-        }
-
-        .bottom-nav-mobile .nav-item-center i {
-            font-size: 1.6rem;
-            margin-bottom: 0;
-        }
-
-        /* ==========================================================
-           RESPONSIVE
-           ========================================================== */
-        @media (min-width: 769px) {
-            .navbar-pc {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .top-header-mobile {
-                display: none !important;
-            }
-            .bottom-nav-mobile {
-                display: none !important;
-            }
-            .footer-pc {
-                display: block !important;
-            }
-            .main-content {
-                padding: 1.5rem 2rem 2rem 2rem;
-            }
-            .header-pc h1 {
-                font-size: 1.6rem;
-            }
-            .modal-photo-wrapper {
-                width: 180px;
-                height: 180px;
-            }
-            .modal-photo-wrapper .photo-badge {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .top-header-mobile {
-                display: block !important;
-            }
-            .bottom-nav-mobile {
-                display: flex !important;
-            }
-            .navbar-pc {
-                display: none !important;
-            }
-            .footer-pc {
-                display: none !important;
-            }
-            .main-content {
-                padding: 0.75rem 1rem 5rem 1rem;
-            }
-            .header-pc {
-                display: none !important;
-            }
-            .tabs-container {
-                flex-direction: row;
-                gap: 0.3rem;
-                padding: 0.3rem;
-            }
-            .tabs-container .tab-btn {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.6rem;
-            }
-            .table-custom thead th {
-                font-size: 0.6rem;
-                padding: 0.4rem 0.4rem;
-            }
-            .table-custom tbody td {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.4rem;
-            }
-            .table-custom .btn-detail {
-                font-size: 0.6rem;
-                padding: 0.15rem 0.5rem;
-            }
-            .modal-photo-wrapper {
-                width: 120px;
-                height: 120px;
-            }
-            .modal-photo-wrapper .photo-badge {
-                width: 30px;
-                height: 30px;
-                font-size: 0.7rem;
-            }
-            .modal-body .info-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.2rem;
-            }
-            .modal-body .info-row .info-value {
-                text-align: left;
-                margin-left: 0;
-                width: 100%;
-            }
-            .modal-footer {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                justify-content: center;
-            }
-            .modal-footer .btn-modifier,
-            .modal-footer .btn-retour,
-            .modal-footer .btn-enregistrer,
-            .modal-footer .btn-annuler {
-                width: 100%;
-                justify-content: center;
-            }
-            .bottom-nav-mobile .nav-item {
-                font-size: 0.45rem;
-                min-width: 32px;
-            }
-            .bottom-nav-mobile .nav-item i {
-                font-size: 1rem;
-            }
-            .bottom-nav-mobile .nav-item-center {
-                width: 44px;
-                height: 44px;
-                margin-top: -10px;
-            }
-            .bottom-nav-mobile .nav-item-center i {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* ==========================================================
-           ACCESSIBILITÉ
-           ========================================================== */
-        a:focus-visible,
-        button:focus-visible,
-        input:focus-visible,
-        select:focus-visible {
-            outline: 3px solid #C9A84C;
-            outline-offset: 2px;
-        }
-    </style>
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/points-vente.css">
 </head>
 <body>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION PC (> 768px)
+    BARRE DE NAVIGATION PC
     ========================================================== -->
     <nav class="navbar-pc" aria-label="Navigation principale">
-        <div style="display: flex; align-items: center; gap: 2rem;">
+        <div class="navbar-left">
             <a class="navbar-brand" href="tableau-bord.html">
                 <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
-                <span>Suivi</span><span>Terrain</span>
+                <span class="brand-suivi">Suivi</span><span class="brand-terrain">Terrain</span>
             </a>
 
             <ul class="nav-links">
                 <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
-                <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
                 <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
                 <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
                 <li><a href="points-vente.html" class="active"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
@@ -1149,8 +44,7 @@
             <div class="search-container" id="globalSearchContainer">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Rechercher... (Ctrl+K)" aria-label="Recherche globale">
-                    <kbd class="search-shortcut">Ctrl+K</kbd>
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
                 </div>
                 <div class="search-suggestions" id="globalSearchSuggestions"></div>
             </div>
@@ -1161,26 +55,26 @@
             </button>
 
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
                     <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                </button>
+                <ul class="dropdown-menu" id="dropdownMenu">
                     <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- ==========================================================
-    BANDEAU HAUT MOBILE (< 768px)
+    BANDEAU HAUT MOBILE
     ========================================================== -->
     <header class="top-header-mobile">
         <div class="header-row">
-            <button class="back-button" id="backButton" aria-label="Retour">
-                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
+                <i class="bi bi-list" aria-hidden="true"></i>
             </button>
 
             <div class="header-center">
@@ -1188,15 +82,25 @@
             </div>
 
             <div class="header-right">
-                <div class="dropdown">
-                    <button class="menu-actions" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions">
-                        <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#" id="mobileRefreshBtn"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Rafraîchir</a></li>
-                    </ul>
-                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif" id="badgeNotifMobile">3</span>
+                </button>
             </div>
+        </div>
+
+        <div class="mobile-menu-dropdown" id="mobileMenu">
+            <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
+            <a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
+            <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
+            <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
+            <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
+            <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
+            <hr>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
         </div>
     </header>
 
@@ -1207,34 +111,30 @@
 
         <div class="points-container">
 
-            <!-- En-tête PC -->
             <div class="header-pc">
                 <h1><i class="bi bi-shop" aria-hidden="true"></i> Points de vente</h1>
             </div>
 
-            <!-- Onglets -->
             <div class="tabs-container">
                 <button class="tab-btn active" data-tab="tab-points" id="tabPointsBtn">
                     <i class="bi bi-shop" aria-hidden="true"></i> Points de vente
                 </button>
                 <button class="tab-btn" data-tab="tab-categories" id="tabCategoriesBtn">
-                    <i class="bi bi-tags" aria-hidden="true"></i> Catégories
+                    <i class="bi bi-tags" aria-hidden="true"></i> Categories
                 </button>
             </div>
 
-            <!-- ==========================================================
-            PANNEAU 1 : POINTS DE VENTE
-            ========================================================== -->
+            <!-- PANNEAU 1 : POINTS DE VENTE -->
             <div class="tab-panel active" id="tab-points">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-                    <div class="search-bar" style="flex: 1; min-width: 180px; margin-bottom: 0;">
+                <div class="points-header">
+                    <div class="search-bar">
                         <div class="search-box">
                             <i class="bi bi-search" aria-hidden="true"></i>
                             <input type="text" id="searchPoint" placeholder="Rechercher un point de vente...">
                         </div>
                     </div>
-                    <button class="btn btn-primary-red" id="btnAjouterPoint" style="background-color: #8B0000; color: #fff; border: none; border-radius: 8px; padding: 0.4rem 1rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background-color 0.2s;">
+                    <button class="btn-ajouter" id="btnAjouterPoint">
                         <i class="bi bi-plus-circle" aria-hidden="true"></i> Ajouter
                     </button>
                 </div>
@@ -1244,22 +144,20 @@
                         <thead>
                             <tr>
                                 <th>Nom</th>
-                                <th>Catégorie</th>
-                                <th>Contact</th>
-                                <th>Adresse</th>
+                                <th>Categorie</th>
+                                <th class="col-contact">Contact</th>
+                                <th class="col-adresse">Adresse</th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="pointsTableBody">
-                            <!-- Généré par JavaScript -->
+                            <!-- Genere par JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- ==========================================================
-            PANNEAU 2 : CATÉGORIES
-            ========================================================== -->
+            <!-- PANNEAU 2 : CATEGORIES -->
             <div class="tab-panel" id="tab-categories">
 
                 <div class="table-responsive-custom">
@@ -1272,15 +170,11 @@
                             </tr>
                         </thead>
                         <tbody id="categoriesTableBody">
-                            <!-- Généré par JavaScript -->
+                            <!-- Genere par JavaScript -->
                         </tbody>
                     </table>
                 </div>
 
-                <div class="categories-actions">
-                    <button class="btn-cat btn-ajouter" id="btnAjouterCategorie"><i class="bi bi-plus-circle" aria-hidden="true"></i> Ajouter</button>
-                    <button class="btn-cat btn-modifier-cat" id="btnModifierCategorie"><i class="bi bi-pencil" aria-hidden="true"></i> Modifier</button>
-                </div>
             </div>
 
         </div>
@@ -1288,27 +182,28 @@
     </main>
 
     <!-- ==========================================================
-    FOOTER PC (fond rouge)
+    FOOTER PC
     ========================================================== -->
     <footer class="footer-pc" role="contentinfo">
-        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
     </footer>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION MOBILE (< 768px)
+    BARRE DE NAVIGATION MOBILE
     ========================================================== -->
     <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
         <a href="tableau-bord.html" class="nav-item">
             <i class="bi bi-house-door" aria-hidden="true"></i>
             Accueil
         </a>
 
-        <a href="liste-points.html" class="nav-item">
+        <a href="liste-visites.html" class="nav-item">
             <i class="bi bi-list-ul" aria-hidden="true"></i>
             Visites
         </a>
 
-        <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Créer une nouvelle visite">
+        <a href="#" class="nav-item-center" id="btnPlusMobile" aria-label="Action selon l'onglet">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
 
@@ -1321,23 +216,25 @@
             <i class="bi bi-person" aria-hidden="true"></i>
             Profil
         </a>
+
     </nav>
 
     <!-- ==========================================================
-    MODALE DÉTAIL POINT
+    MODALES
     ========================================================== -->
+
+    <!-- Modale Detail Point -->
     <div class="modal fade" id="detailPointModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-                <div class="modal-header" style="border-bottom: 1px solid #f0ece6; padding: 1rem 1.5rem;">
-                    <h5 class="modal-title" id="detailModalTitle" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #1a1a1a;">
-                        <i class="bi bi-shop" style="color: #8B0000; margin-right: 0.4rem;"></i>
-                        Détail du point de vente
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shop" aria-hidden="true"></i>
+                        <span id="detailModalTitle">Detail du point de vente</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
-                <div class="modal-body" style="padding: 1.5rem;">
-                    <!-- Photo -->
+                <div class="modal-body">
                     <div class="modal-photo-wrapper">
                         <img class="photo-point" id="detailPhoto" src="" alt="Photo du point de vente">
                         <div class="photo-badge" id="photoBadge" aria-label="Changer la photo">
@@ -1345,41 +242,79 @@
                         </div>
                         <input type="file" id="photoInput" accept="image/png, image/jpeg, image/gif, image/webp">
                     </div>
-
-                    <!-- Informations -->
-                    <div id="detailInfoContainer">
-                        <!-- Généré par JavaScript -->
-                    </div>
+                    <div id="detailInfoContainer"></div>
                 </div>
-                <div class="modal-footer" style="border-top: 1px solid #f0ece6; padding: 1rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                    <!-- Généré par JavaScript -->
+                <div class="modal-footer" id="detailModalFooter">
+                    <!-- Genere par JavaScript -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================================
-    MODALE CATÉGORIE
-    ========================================================== -->
-    <div class="modal fade" id="categorieModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-                <div class="modal-header" style="border-bottom: 1px solid #f0ece6; padding: 1rem 1.5rem;">
-                    <h5 class="modal-title" id="categorieModalTitle" style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #1a1a1a;">
-                        <i class="bi bi-tags" style="color: #8B0000; margin-right: 0.4rem;"></i>
-                        <span id="categorieModalLabel">Ajouter une catégorie</span>
+    <!-- Modale Ajouter Point -->
+    <div class="modal fade" id="ajouterPointModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                        Ajouter un point de vente
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
-                <div class="modal-body" style="padding: 1.5rem;">
-                    <input type="hidden" id="categorieEditId">
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label for="categorieNom" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Nom de la catégorie</label>
-                        <input type="text" class="form-control" id="categorieNom" placeholder="Ex: Alimentation" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                        <label for="ajoutNom" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="ajoutNom" placeholder="Entrez le nom du point">
                     </div>
                     <div class="mb-3">
-                        <label for="categorieCouleur" class="form-label" style="font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 0.85rem;">Couleur</label>
-                        <select class="form-select" id="categorieCouleur" style="border-radius: 10px; border: 1px solid #e0dcd6; font-family: 'Segoe UI', sans-serif;">
+                        <label for="ajoutCategorie" class="form-label">Categorie</label>
+                        <select class="form-select" id="ajoutCategorie">
+                            <option value="Alimentation">Alimentation</option>
+                            <option value="Services">Services</option>
+                            <option value="Vetement">Vetement</option>
+                            <option value="Electronique">Electronique</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ajoutContact" class="form-label">Contact</label>
+                        <input type="text" class="form-control" id="ajoutContact" placeholder="Entrez le contact">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ajoutAdresse" class="form-label">Adresse</label>
+                        <input type="text" class="form-control" id="ajoutAdresse" placeholder="Entrez l'adresse">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" id="btnAjoutAnnuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="btnAjoutEnregistrer">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Categorie -->
+    <div class="modal fade" id="categorieModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-tags" aria-hidden="true"></i>
+                        <span id="categorieModalLabel">Ajouter une categorie</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="categorieEditId">
+                    <div class="mb-3">
+                        <label for="categorieNom" class="form-label">Nom de la categorie</label>
+                        <input type="text" class="form-control" id="categorieNom" placeholder="Ex: Alimentation">
+                    </div>
+                    <div class="mb-3">
+                        <label for="categorieCouleur" class="form-label">Couleur</label>
+                        <select class="form-select" id="categorieCouleur">
                             <option value="#28a745">Vert</option>
                             <option value="#007bff">Bleu</option>
                             <option value="#ffc107">Jaune</option>
@@ -1393,9 +328,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer" style="border-top: 1px solid #f0ece6; padding: 1rem 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                    <button type="button" class="btn-retour" data-bs-dismiss="modal" style="background: transparent; border: 2px solid #6c757d; border-radius: 8px; color: #6c757d; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">Annuler</button>
-                    <button type="button" class="btn-enregistrer" id="categorieSaveBtn" style="background-color: #8B0000; border: none; border-radius: 8px; color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 600; padding: 0.4rem 1.2rem;">
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="categorieSaveBtn">
                         <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
                     </button>
                 </div>
@@ -1404,756 +339,11 @@
     </div>
 
     <!-- ==========================================================
-    BOOTSTRAP JS
-    ========================================================== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- ==========================================================
     SCRIPTS
     ========================================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // ==========================================================
-            // FLÈCHE RETOUR (mobile)
-            // ==========================================================
-            const backButton = document.getElementById('backButton');
-            if (backButton) {
-                backButton.addEventListener('click', function() {
-                    window.history.back();
-                });
-            }
-
-            // ==========================================================
-            // NOTIFICATIONS
-            // ==========================================================
-            const notifBtnPC = document.getElementById('notifBtnPC');
-            if (notifBtnPC) {
-                notifBtnPC.addEventListener('click', function() {
-                    window.location.href = 'notifications.html';
-                });
-            }
-
-            // ==========================================================
-            // RAFFRAÎCHIR (mobile)
-            // ==========================================================
-            document.getElementById('mobileRefreshBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                renderPoints();
-                renderCategories();
-                showToast('✅ Données actualisées');
-            });
-
-            // ==========================================================
-            // DONNÉES
-            // ==========================================================
-            let pointsData = [
-                { id: 1, nom: 'Magasin A', categorie: 'Alimentation', contact: '+237 612 34 56 78',
-                    adresse: 'Centre-ville', latitude: 4.051056, longitude: 9.767869, photo: '' },
-                { id: 2, nom: 'Client B', categorie: 'Services', contact: '+237 698 54 32 10',
-                    adresse: 'Bonamoussadi', latitude: 4.058300, longitude: 9.738600, photo: '' },
-                { id: 3, nom: 'Magasin C', categorie: 'Vêtement', contact: '+237 677 88 99 00',
-                    adresse: 'Akwa', latitude: 4.045600, longitude: 9.692300, photo: '' },
-                { id: 4, nom: 'Client D', categorie: 'Alimentation', contact: '+237 699 12 34 56',
-                    adresse: 'Bépanda', latitude: 4.062100, longitude: 9.713500, photo: '' },
-                { id: 5, nom: 'Magasin E', categorie: 'Électronique', contact: '+237 655 78 90 12',
-                    adresse: 'Total Logbaba', latitude: 4.040200, longitude: 9.727800, photo: '' },
-                { id: 6, nom: 'Client F', categorie: 'Services', contact: '+237 688 45 67 89',
-                    adresse: 'Makape', latitude: 4.075400, longitude: 9.750100, photo: '' },
-                { id: 7, nom: 'Magasin G', categorie: 'Alimentation', contact: '+237 622 33 44 55',
-                    adresse: 'Bonapriso', latitude: 4.068900, longitude: 9.771200, photo: '' },
-                { id: 8, nom: 'Client H', categorie: 'Services', contact: '+237 677 11 22 33',
-                    adresse: 'Makepe', latitude: 4.083000, longitude: 9.729500, photo: '' },
-                { id: 9, nom: 'Magasin I', categorie: 'Électronique', contact: '+237 699 88 77 66',
-                    adresse: 'Kotto', latitude: 4.052800, longitude: 9.688400, photo: '' },
-                { id: 10, nom: 'Client J', categorie: 'Vêtement', contact: '+237 655 44 33 22',
-                    adresse: 'Mbangue', latitude: 4.061700, longitude: 9.698900, photo: '' }
-            ];
-
-            let categoriesData = [
-                { id: 1, nom: 'Alimentation', couleur: '#28a745' },
-                { id: 2, nom: 'Services', couleur: '#007bff' },
-                { id: 3, nom: 'Vêtement', couleur: '#ffc107' },
-                { id: 4, nom: 'Électronique', couleur: '#dc3545' }
-            ];
-
-            let nextPointId = 11;
-            let nextCategorieId = 5;
-
-            let currentDetailPointId = null;
-            let isEditing = false;
-
-            // ==========================================================
-            // FONCTIONS
-            // ==========================================================
-            function getCategorieName(id) {
-                const cat = categoriesData.find(c => c.id === id);
-                return cat ? cat.nom : 'Non catégorisé';
-            }
-
-            function getCategorieColor(id) {
-                const cat = categoriesData.find(c => c.id === id);
-                return cat ? cat.couleur : '#6c757d';
-            }
-
-            function getCategorieIdByName(nom) {
-                const cat = categoriesData.find(c => c.nom === nom);
-                return cat ? cat.id : null;
-            }
-
-            function getPointsByCategorie(categorieId) {
-                const catName = categoriesData.find(c => c.id === categorieId)?.nom;
-                return pointsData.filter(p => p.categorie === catName);
-            }
-
-            // ==========================================================
-            // RENDU : POINTS DE VENTE
-            // ==========================================================
-            function renderPoints() {
-                const tbody = document.getElementById('pointsTableBody');
-                const searchTerm = document.getElementById('searchPoint')?.value.toLowerCase().trim() || '';
-
-                let filtered = pointsData;
-                if (searchTerm) {
-                    filtered = pointsData.filter(p =>
-                        p.nom.toLowerCase().includes(searchTerm) ||
-                        p.adresse.toLowerCase().includes(searchTerm) ||
-                        p.categorie.toLowerCase().includes(searchTerm)
-                    );
-                }
-
-                if (filtered.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 2rem 0; color: #6c757d;">
-                                <i class="bi bi-inbox" style="display: block; font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                                Aucun point de vente trouvé
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                filtered.forEach(p => {
-                    const color = getCategorieColorByName(p.categorie);
-                    html += `
-                        <tr>
-                            <td><strong>${p.nom}</strong></td>
-                            <td><span class="categorie-pastille" style="background-color: ${color};"></span> ${p.categorie}</td>
-                            <td>${p.contact}</td>
-                            <td>${p.adresse}</td>
-                            <td style="text-align: center;">
-                                <button class="btn-detail" data-id="${p.id}">Détail</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = html;
-
-                // Événements des boutons Détail
-                document.querySelectorAll('.btn-detail').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const id = parseInt(this.dataset.id);
-                        openDetailModal(id);
-                    });
-                });
-            }
-
-            function getCategorieColorByName(nom) {
-                const cat = categoriesData.find(c => c.nom === nom);
-                return cat ? cat.couleur : '#6c757d';
-            }
-
-            // ==========================================================
-            // RENDU : CATÉGORIES
-            // ==========================================================
-            function renderCategories() {
-                const tbody = document.getElementById('categoriesTableBody');
-
-                if (categoriesData.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="3" style="text-align: center; padding: 2rem 0; color: #6c757d;">
-                                <i class="bi bi-tags" style="display: block; font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                                Aucune catégorie créée
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                categoriesData.forEach(c => {
-                    const count = pointsData.filter(p => p.categorie === c.nom).length;
-                    html += `
-                        <tr>
-                            <td><strong>${c.nom}</strong></td>
-                            <td><span class="categorie-pastille" style="background-color: ${c.couleur};"></span></td>
-                            <td>${count}</td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = html;
-            }
-
-            // ==========================================================
-            // MODALE DÉTAIL POINT
-            // ==========================================================
-            function openDetailModal(id) {
-                const point = pointsData.find(p => p.id === id);
-                if (!point) return;
-
-                currentDetailPointId = id;
-                isEditing = false;
-
-                // Photo
-                const photoEl = document.getElementById('detailPhoto');
-                if (point.photo) {
-                    photoEl.src = point.photo;
-                } else {
-                    photoEl.src = 'data:image/svg+xml,' + encodeURIComponent(
-                        '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="#f0ece6"/><text x="100" y="110" text-anchor="middle" font-family="sans-serif" font-size="40" fill="#6c757d">🏪</text></svg>'
-                    );
-                }
-
-                // Informations
-                const container = document.getElementById('detailInfoContainer');
-                const color = getCategorieColorByName(point.categorie);
-                const categoriesOptions = categoriesData.map(c =>
-                    `<option value="${c.nom}" ${c.nom === point.categorie ? 'selected' : ''}>${c.nom}</option>`
-                ).join('');
-
-                container.innerHTML = `
-                    <div class="info-row">
-                        <span class="info-label">Nom</span>
-                        <span class="info-value"><input type="text" id="editNom" value="${point.nom}" disabled></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Catégorie</span>
-                        <span class="info-value">
-                            <select id="editCategorie" disabled>
-                                ${categoriesOptions}
-                            </select>
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Contact</span>
-                        <span class="info-value"><input type="text" id="editContact" value="${point.contact}" disabled></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Adresse</span>
-                        <span class="info-value"><input type="text" id="editAdresse" value="${point.adresse}" disabled></span>
-                    </div>
-                `;
-
-                // Footer
-                const footer = document.querySelector('#detailPointModal .modal-footer');
-                footer.innerHTML = `
-                    <button type="button" class="btn-retour" data-bs-dismiss="modal"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour</button>
-                    <button type="button" class="btn-modifier" id="btnModifierPoint"><i class="bi bi-pencil" aria-hidden="true"></i> Modifier</button>
-                `;
-
-                // Ouvrir la modale
-                const modal = new bootstrap.Modal(document.getElementById('detailPointModal'));
-                modal.show();
-
-                // Événement Modifier
-                document.getElementById('btnModifierPoint').addEventListener('click', function() {
-                    enableEditing(point);
-                });
-            }
-
-            function enableEditing(point) {
-                if (isEditing) return;
-                isEditing = true;
-
-                // Activer les champs
-                document.getElementById('editNom').disabled = false;
-                document.getElementById('editCategorie').disabled = false;
-                document.getElementById('editContact').disabled = false;
-                document.getElementById('editAdresse').disabled = false;
-
-                // Changer le footer
-                const footer = document.querySelector('#detailPointModal .modal-footer');
-                footer.innerHTML = `
-                    <button type="button" class="btn-annuler" id="btnAnnulerEdit"><i class="bi bi-x-circle" aria-hidden="true"></i> Annuler</button>
-                    <button type="button" class="btn-enregistrer" id="btnEnregistrerEdit"><i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer</button>
-                `;
-
-                // Annuler
-                document.getElementById('btnAnnulerEdit').addEventListener('click', function() {
-                    isEditing = false;
-                    // Recharger les données du point
-                    const refreshed = pointsData.find(p => p.id === point.id);
-                    if (refreshed) {
-                        document.getElementById('editNom').value = refreshed.nom;
-                        document.getElementById('editCategorie').value = refreshed.categorie;
-                        document.getElementById('editContact').value = refreshed.contact;
-                        document.getElementById('editAdresse').value = refreshed.adresse;
-                    }
-                    document.getElementById('editNom').disabled = true;
-                    document.getElementById('editCategorie').disabled = true;
-                    document.getElementById('editContact').disabled = true;
-                    document.getElementById('editAdresse').disabled = true;
-
-                    // Revenir au footer normal
-                    footer.innerHTML = `
-                        <button type="button" class="btn-retour" data-bs-dismiss="modal"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour</button>
-                        <button type="button" class="btn-modifier" id="btnModifierPoint"><i class="bi bi-pencil" aria-hidden="true"></i> Modifier</button>
-                    `;
-                    document.getElementById('btnModifierPoint').addEventListener('click', function() {
-                        enableEditing(refreshed);
-                    });
-                });
-
-                // Enregistrer
-                document.getElementById('btnEnregistrerEdit').addEventListener('click', function() {
-                    const nom = document.getElementById('editNom').value.trim();
-                    const categorie = document.getElementById('editCategorie').value;
-                    const contact = document.getElementById('editContact').value.trim();
-                    const adresse = document.getElementById('editAdresse').value.trim();
-
-                    if (!nom) {
-                        showToast('⚠️ Le nom est obligatoire');
-                        return;
-                    }
-
-                    const pointToUpdate = pointsData.find(p => p.id === point.id);
-                    if (pointToUpdate) {
-                        pointToUpdate.nom = nom;
-                        pointToUpdate.categorie = categorie;
-                        pointToUpdate.contact = contact || 'Non renseigné';
-                        pointToUpdate.adresse = adresse || 'Non renseigné';
-                    }
-
-                    showToast('✅ Point de vente modifié avec succès');
-                    renderPoints();
-                    renderCategories();
-
-                    // Fermer la modale
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('detailPointModal'));
-                    modal.hide();
-                });
-            }
-
-            // ==========================================================
-            // PHOTO
-            // ==========================================================
-            document.getElementById('photoBadge').addEventListener('click', function() {
-                document.getElementById('photoInput').click();
-            });
-
-            document.getElementById('photoInput').addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    if (!file.type.startsWith('image/')) {
-                        showToast('⚠️ Veuillez sélectionner une image');
-                        this.value = '';
-                        return;
-                    }
-                    if (file.size > 5 * 1024 * 1024) {
-                        showToast('⚠️ L\'image ne doit pas dépasser 5 Mo');
-                        this.value = '';
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById('detailPhoto').src = e.target.result;
-                        // Mettre à jour les données
-                        if (currentDetailPointId) {
-                            const point = pointsData.find(p => p.id === currentDetailPointId);
-                            if (point) {
-                                point.photo = e.target.result;
-                            }
-                        }
-                        showToast('✅ Photo mise à jour');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // ==========================================================
-            // AJOUTER POINT
-            // ==========================================================
-            document.getElementById('btnAjouterPoint').addEventListener('click', function() {
-                // Créer un point vide pour l'ajout
-                const newPoint = {
-                    id: nextPointId++,
-                    nom: 'Nouveau point',
-                    categorie: categoriesData.length > 0 ? categoriesData[0].nom : 'Non catégorisé',
-                    contact: 'Non renseigné',
-                    adresse: 'Non renseigné',
-                    latitude: 4.051056,
-                    longitude: 9.767869,
-                    photo: ''
-                };
-                pointsData.push(newPoint);
-                renderPoints();
-                renderCategories();
-                showToast('✅ Nouveau point créé');
-                // Ouvrir le détail pour le modifier
-                openDetailModal(newPoint.id);
-            });
-
-            // ==========================================================
-            // CATÉGORIES - AJOUTER / MODIFIER
-            // ==========================================================
-            let categorieEditMode = false;
-            let categorieEditId = null;
-
-            document.getElementById('btnAjouterCategorie').addEventListener('click', function() {
-                categorieEditMode = false;
-                categorieEditId = null;
-                document.getElementById('categorieModalLabel').textContent = 'Ajouter une catégorie';
-                document.getElementById('categorieNom').value = '';
-                document.getElementById('categorieCouleur').value = '#28a745';
-                document.getElementById('categorieEditId').value = '';
-                const modal = new bootstrap.Modal(document.getElementById('categorieModal'));
-                modal.show();
-            });
-
-            document.getElementById('btnModifierCategorie').addEventListener('click', function() {
-                // Vérifier qu'il y a des catégories
-                if (categoriesData.length === 0) {
-                    showToast('⚠️ Aucune catégorie à modifier');
-                    return;
-                }
-
-                // Sélectionner la première catégorie (ou afficher une liste)
-                const cat = categoriesData[0];
-                categorieEditMode = true;
-                categorieEditId = cat.id;
-                document.getElementById('categorieModalLabel').textContent = 'Modifier la catégorie';
-                document.getElementById('categorieNom').value = cat.nom;
-                document.getElementById('categorieCouleur').value = cat.couleur;
-                document.getElementById('categorieEditId').value = cat.id;
-                const modal = new bootstrap.Modal(document.getElementById('categorieModal'));
-                modal.show();
-
-                // Pour une meilleure UX, on pourrait ouvrir une liste de sélection
-                // mais pour simplifier, on modifie la première
-            });
-
-            document.getElementById('categorieSaveBtn').addEventListener('click', function() {
-                const nom = document.getElementById('categorieNom').value.trim();
-                const couleur = document.getElementById('categorieCouleur').value;
-
-                if (!nom) {
-                    showToast('⚠️ Le nom de la catégorie est obligatoire');
-                    return;
-                }
-
-                if (categorieEditMode && categorieEditId) {
-                    // Modifier
-                    const cat = categoriesData.find(c => c.id === categorieEditId);
-                    if (cat) {
-                        const oldNom = cat.nom;
-                        cat.nom = nom;
-                        cat.couleur = couleur;
-                        // Mettre à jour les points associés
-                        pointsData.forEach(p => {
-                            if (p.categorie === oldNom) {
-                                p.categorie = nom;
-                            }
-                        });
-                        showToast('✅ Catégorie modifiée avec succès');
-                    }
-                } else {
-                    // Ajouter
-                    // Vérifier si la catégorie existe déjà
-                    if (categoriesData.some(c => c.nom === nom)) {
-                        showToast('⚠️ Cette catégorie existe déjà');
-                        return;
-                    }
-                    categoriesData.push({
-                        id: nextCategorieId++,
-                        nom: nom,
-                        couleur: couleur
-                    });
-                    showToast('✅ Catégorie ajoutée avec succès');
-                }
-
-                const modal = bootstrap.Modal.getInstance(document.getElementById('categorieModal'));
-                modal.hide();
-                renderPoints();
-                renderCategories();
-            });
-
-            // ==========================================================
-            // RECHERCHE
-            // ==========================================================
-            document.getElementById('searchPoint').addEventListener('input', function() {
-                renderPoints();
-            });
-
-            // ==========================================================
-            // ONGLETS
-            // ==========================================================
-            const tabPointsBtn = document.getElementById('tabPointsBtn');
-            const tabCategoriesBtn = document.getElementById('tabCategoriesBtn');
-            const tabPoints = document.getElementById('tab-points');
-            const tabCategories = document.getElementById('tab-categories');
-
-            tabPointsBtn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                tabPoints.classList.add('active');
-            });
-
-            tabCategoriesBtn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                tabCategories.classList.add('active');
-                renderCategories();
-            });
-
-            // ==========================================================
-            // TOAST
-            // ==========================================================
-            function showToast(message) {
-                const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    bottom: 80px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #1a1a1a;
-                    color: #ffffff;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 12px;
-                    font-family: 'Segoe UI', sans-serif;
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                    z-index: 9999;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    max-width: 90%;
-                    text-align: center;
-                `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-
-                setTimeout(() => { toast.style.opacity = '1'; }, 50);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => { toast.remove(); }, 300);
-                }, 2500);
-            }
-
-            // ==========================================================
-            // RECHERCHE GÉNÉRALE (placeholder)
-            // ==========================================================
-            const searchInput = document.getElementById('globalSearchInput');
-            const suggestionsContainer = document.getElementById('globalSearchSuggestions');
-
-            if (searchInput && suggestionsContainer) {
-                const searchData = {
-                    visites: [
-                        { id: 1, titre: 'Visite commerciale - Magasin A', adresse: 'Centre-ville',
-                            date: '12 juin 2025', statut: 'Réalisée' },
-                        { id: 2, titre: 'Collecte de commandes - Client B', adresse: 'Bonamoussadi',
-                            date: '12 juin 2025', statut: 'En attente' },
-                    ],
-                    pointsVente: [
-                        { id: 1, nom: 'Magasin A', adresse: 'Centre-ville', categorie: 'Alimentation' },
-                        { id: 2, nom: 'Client B', adresse: 'Bonamoussadi', categorie: 'Services' },
-                    ],
-                    utilisateurs: [
-                        { id: 1, nom: 'Zidane Fredy', email: 'zidane@suiviterrain.com', role: 'Administrateur' },
-                        { id: 2, nom: 'Sarah Niong', email: 'sarah@suiviterrain.com', role: 'Agent' },
-                    ],
-                    planning: [
-                        { id: 1, date: '12 juin 2025', agent: 'Zidane', visites: 3 },
-                    ]
-                };
-
-                function performSearch(query) {
-                    const term = query.toLowerCase().trim();
-                    const results = [];
-                    if (!term || term.length < 2) return results;
-
-                    searchData.visites.forEach(v => {
-                        if (v.titre.toLowerCase().includes(term) || v.adresse.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'visit',
-                                label: v.titre,
-                                subtitle: v.adresse + ' • ' + v.date,
-                                badge: v.statut,
-                                url: 'detail-visite.html?id=' + v.id,
-                                icon: 'bi bi-calendar-event'
-                            });
-                        }
-                    });
-
-                    searchData.pointsVente.forEach(p => {
-                        if (p.nom.toLowerCase().includes(term) || p.adresse.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'point',
-                                label: p.nom,
-                                subtitle: p.adresse + ' • ' + p.categorie,
-                                badge: p.categorie,
-                                url: 'points-vente.html',
-                                icon: 'bi bi-shop'
-                            });
-                        }
-                    });
-
-                    searchData.utilisateurs.forEach(u => {
-                        if (u.nom.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'user',
-                                label: u.nom,
-                                subtitle: u.email + ' • ' + u.role,
-                                badge: u.role,
-                                url: 'gestion-utilisateurs.html',
-                                icon: 'bi bi-person'
-                            });
-                        }
-                    });
-
-                    searchData.planning.forEach(p => {
-                        if (p.date.toLowerCase().includes(term) || p.agent.toLowerCase().includes(term)) {
-                            results.push({
-                                type: 'planning',
-                                label: 'Planning du ' + p.date,
-                                subtitle: p.agent + ' • ' + p.visites + ' visites',
-                                badge: p.visites + ' visites',
-                                url: 'planning-visites.html?date=' + p.date,
-                                icon: 'bi bi-calendar-check'
-                            });
-                        }
-                    });
-
-                    return results;
-                }
-
-                function renderSuggestions(results) {
-                    const badges = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-                    const icons = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-                    const labels = { visit: 'Visites', point: 'Points de vente', user: 'Utilisateurs',
-                        planning: 'Planning' };
-
-                    if (results.length === 0) {
-                        suggestionsContainer.innerHTML = `
-                            <div class="suggestion-empty">
-                                <i class="bi bi-search" aria-hidden="true"></i>
-                                Aucun résultat trouvé
-                            </div>
-                        `;
-                        suggestionsContainer.classList.add('visible');
-                        return;
-                    }
-
-                    const grouped = { visit: [], point: [], user: [], planning: [] };
-                    results.forEach(r => { if (grouped[r.type]) grouped[r.type].push(r); });
-
-                    let html = '';
-                    for (const [type, items] of Object.entries(grouped)) {
-                        if (items.length === 0) continue;
-                        html += `<div class="suggestion-group-title">${labels[type]}</div>`;
-                        items.forEach(item => {
-                            html += `
-                                <div class="suggestion-item" data-url="${item.url}">
-                                    <div class="suggestion-icon ${icons[item.type]}">
-                                        <i class="${item.icon}" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="suggestion-info">
-                                        <div class="suggestion-title">${item.label}</div>
-                                        <div class="suggestion-subtitle">${item.subtitle}</div>
-                                    </div>
-                                    <span class="suggestion-badge ${badges[item.type]}">${item.badge}</span>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    suggestionsContainer.innerHTML = html;
-                    suggestionsContainer.classList.add('visible');
-
-                    suggestionsContainer.querySelectorAll('.suggestion-item').forEach(el => {
-                        el.addEventListener('click', function() {
-                            const url = this.dataset.url;
-                            if (url) window.location.href = url;
-                        });
-                    });
-                }
-
-                let searchTimeout;
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    const query = this.value;
-                    if (query.length < 2) {
-                        suggestionsContainer.classList.remove('visible');
-                        return;
-                    }
-                    searchTimeout = setTimeout(() => {
-                        const results = performSearch(query);
-                        renderSuggestions(results);
-                    }, 250);
-                });
-
-                document.addEventListener('click', function(e) {
-                    const container = document.getElementById('globalSearchContainer');
-                    if (container && !container.contains(e.target)) {
-                        suggestionsContainer.classList.remove('visible');
-                    }
-                });
-
-                document.addEventListener('keydown', function(e) {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                        e.preventDefault();
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-                    if (e.key === 'Escape') {
-                        suggestionsContainer.classList.remove('visible');
-                        searchInput.blur();
-                    }
-                });
-
-                let selectedIndex = -1;
-                searchInput.addEventListener('keydown', function(e) {
-                    const items = suggestionsContainer.querySelectorAll('.suggestion-item');
-                    if (items.length === 0) return;
-
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        selectedIndex = (selectedIndex + 1) % items.length;
-                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
-                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                    } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-                        items.forEach((el, i) => el.style.background = i === selectedIndex ? '#FFF8F0' : '');
-                        if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                    } else if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (selectedIndex >= 0 && selectedIndex < items.length) {
-                            const url = items[selectedIndex].dataset.url;
-                            if (url) window.location.href = url;
-                        }
-                    }
-                });
-            }
-
-            // ==========================================================
-            // INITIALISATION
-            // ==========================================================
-            renderPoints();
-            renderCategories();
-
-            console.log('✅ Page Points de vente chargée');
-            console.log('🏪 ' + pointsData.length + ' points de vente');
-            console.log('🏷️ ' + categoriesData.length + ' catégories');
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/points-vente.js"></script>
 
 </body>
 </html>
