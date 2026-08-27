@@ -767,6 +767,21 @@ body {
     text-decoration: none;
 }
 
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
 .bottom-nav-mobile .nav-item-center:hover {
     transform: scale(1.05);
     color: #fff;

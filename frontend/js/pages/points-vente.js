@@ -1,22 +1,103 @@
-/**
- * Points de vente - Logique de la page
- * Version 1.0
- */
+// ==========================================================
+// POINTS DE VENTE - SuiviTerrain
+// Version 1.0
+// ==========================================================
 
 document.addEventListener('DOMContentLoaded', function() {
 
     // ==========================================================
-    // 1. NOTIFICATIONS (Mobile)
+    // 1. MENU HAMBURGER (mobile)
     // ==========================================================
-    var notifBtnMobile = document.getElementById('notifBtnMobile');
-    if (notifBtnMobile) {
-        notifBtnMobile.addEventListener('click', function() {
-            window.location.href = 'notifications.html';
+    var menuBtn = document.getElementById('menuHamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            var icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('open')) {
+                icon.className = 'bi bi-x-lg';
+            } else {
+                icon.className = 'bi bi-list';
+            }
         });
     }
 
     // ==========================================================
-    // 2. DONNEES
+    // 2. DROPDOWN PROFIL (PC)
+    // ==========================================================
+    var userDropdown = document.getElementById('userDropdown');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+
+    if (userDropdown && dropdownMenu) {
+        userDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (dropdownMenu.classList.contains('show') &&
+                !dropdownMenu.contains(e.target) &&
+                e.target !== userDropdown) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+
+    // ==========================================================
+    // 3. NOTIFICATIONS (PC + Mobile)
+    // ==========================================================
+    var notifBtnPC = document.getElementById('notifBtnPC');
+    var notifBtnMobile = document.getElementById('notifBtnMobile');
+
+    function redirigerNotifications() {
+        window.location.href = 'notifications.html';
+    }
+
+    if (notifBtnPC) {
+        notifBtnPC.addEventListener('click', redirigerNotifications);
+    }
+    if (notifBtnMobile) {
+        notifBtnMobile.addEventListener('click', redirigerNotifications);
+    }
+
+    // ==========================================================
+    // 4. BOUTON D'ACTION CONTEXTUEL (mobile) - ACTIF
+    // ==========================================================
+    var btnAction = document.getElementById('btnActionMobile');
+
+    function updateActionButton() {
+        if (!btnAction) return;
+
+        var currentTab = getCurrentTab();
+        var label = 'Action';
+        var action = null;
+
+        if (currentTab === 'tab-points') {
+            label = 'Ajouter un point de vente';
+            action = openAjouterPointModal;
+        } else if (currentTab === 'tab-categories') {
+            label = 'Ajouter une categorie';
+            action = function() { openCategorieModal(null); };
+        }
+
+        btnAction.style.opacity = '1';
+        btnAction.style.cursor = 'pointer';
+        btnAction.style.pointerEvents = 'auto';
+        btnAction.setAttribute('aria-label', label);
+        btnAction.title = label;
+
+        btnAction.replaceWith(btnAction.cloneNode(true));
+        var newBtn = document.getElementById('btnActionMobile');
+
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (action) action();
+        });
+    }
+
+    // ==========================================================
+    // 5. DONNEES
     // ==========================================================
     var pointsData = [
         { id: 1, nom: 'Magasin A', categorie: 'Alimentation', contact: '+237 612 34 56 78',
@@ -52,9 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var nextCategorieId = 5;
     var currentDetailPointId = null;
     var isEditing = false;
+    var categorieEditMode = false;
+    var categorieEditId = null;
 
     // ==========================================================
-    // 3. FONCTIONS
+    // 6. FONCTIONS
     // ==========================================================
     function getCategorieColorByName(nom) {
         var cat = categoriesData.find(function(c) { return c.nom === nom; });
@@ -67,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 4. RENDU : POINTS DE VENTE
+    // 7. RENDU : POINTS DE VENTE
     // ==========================================================
     function renderPoints() {
         var tbody = document.getElementById('pointsTableBody');
@@ -113,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 5. RENDU : CATEGORIES (avec bouton Modifier par ligne)
+    // 8. RENDU : CATEGORIES
     // ==========================================================
     function renderCategories() {
         var tbody = document.getElementById('categoriesTableBody');
@@ -139,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 6. MODALE DETAIL POINT
+    // 9. MODALE DETAIL POINT
     // ==========================================================
     function openDetailModal(id) {
         var point = pointsData.find(function(p) { return p.id === id; });
@@ -306,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 7. PHOTO
+    // 10. PHOTO
     // ==========================================================
     document.getElementById('photoBadge').addEventListener('click', function() {
         document.getElementById('photoInput').click();
@@ -342,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==========================================================
-    // 8. MODALE AJOUTER POINT
+    // 11. MODALE AJOUTER POINT
     // ==========================================================
     function openAjouterPointModal() {
         document.getElementById('ajoutNom').value = '';
@@ -392,21 +475,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==========================================================
-    // 9. CATEGORIES - OUVERTURE MODALE
+    // 12. CATEGORIES - OUVERTURE MODALE
     // ==========================================================
     function openCategorieModal(id) {
         if (id) {
             var cat = categoriesData.find(function(c) { return c.id === id; });
             if (!cat) return;
-            var categorieEditMode = true;
-            var categorieEditId = id;
+            categorieEditMode = true;
+            categorieEditId = id;
             document.getElementById('categorieModalLabel').textContent = 'Modifier la categorie';
             document.getElementById('categorieNom').value = cat.nom;
             document.getElementById('categorieCouleur').value = cat.couleur;
             document.getElementById('categorieEditId').value = id;
         } else {
-            var categorieEditMode = false;
-            var categorieEditId = null;
+            categorieEditMode = false;
+            categorieEditId = null;
             document.getElementById('categorieModalLabel').textContent = 'Ajouter une categorie';
             document.getElementById('categorieNom').value = '';
             document.getElementById('categorieCouleur').value = '#28a745';
@@ -417,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 10. CATEGORIES - SAUVEGARDE
+    // 13. CATEGORIES - SAUVEGARDE
     // ==========================================================
     document.getElementById('categorieSaveBtn').addEventListener('click', function() {
         var nom = document.getElementById('categorieNom').value.trim();
@@ -461,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==========================================================
-    // 11. RECHERCHE
+    // 14. RECHERCHE
     // ==========================================================
     var searchInput = document.getElementById('searchPoint');
     if (searchInput) {
@@ -471,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 12. ONGLETS
+    // 15. ONGLETS
     // ==========================================================
     var tabPointsBtn = document.getElementById('tabPointsBtn');
     var tabCategoriesBtn = document.getElementById('tabCategoriesBtn');
@@ -483,7 +566,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
         this.classList.add('active');
         tabPoints.classList.add('active');
-        updatePlusButton();
+        updateActionButton();
     });
 
     tabCategoriesBtn.addEventListener('click', function() {
@@ -492,60 +575,11 @@ document.addEventListener('DOMContentLoaded', function() {
         this.classList.add('active');
         tabCategories.classList.add('active');
         renderCategories();
-        updatePlusButton();
+        updateActionButton();
     });
 
     // ==========================================================
-    // 13. BOUTON "+" MOBILE
-    // ==========================================================
-    function updatePlusButton() {
-        var btnPlus = document.getElementById('btnPlusMobile');
-        if (!btnPlus) return;
-
-        var currentTab = getCurrentTab();
-        var label = 'Action';
-        var action = null;
-
-        if (currentTab === 'tab-points') {
-            label = 'Ajouter un point de vente';
-            action = openAjouterPointModal;
-        } else if (currentTab === 'tab-categories') {
-            label = 'Ajouter une categorie';
-            action = function() { openCategorieModal(null); };
-        }
-
-        btnPlus.setAttribute('aria-label', label);
-        btnPlus.title = label;
-
-        var newBtn = btnPlus.cloneNode(true);
-        btnPlus.parentNode.replaceChild(newBtn, btnPlus);
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (action) action();
-        });
-        newBtn.id = 'btnPlusMobile';
-    }
-
-    updatePlusButton();
-
-    // ==========================================================
-    // 14. TOAST
-    // ==========================================================
-    function showToast(message) {
-        var toast = document.createElement('div');
-        toast.style.cssText =
-            'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#ffffff;padding:0.75rem 1.5rem;border-radius:12px;font-family:Segoe UI,sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:9999;opacity:0;transition:opacity 0.3s ease;max-width:90%;text-align:center;';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.style.opacity = '1'; }, 50);
-        setTimeout(function() {
-            toast.style.opacity = '0';
-            setTimeout(function() { toast.remove(); }, 300);
-        }, 2500);
-    }
-
-    // ==========================================================
-    // 15. RECHERCHE GENERALE (placeholder)
+    // 16. RECHERCHE GLOBALE
     // ==========================================================
     var searchInputGlobal = document.getElementById('globalSearchInput');
     var suggestionsContainer = document.getElementById('globalSearchSuggestions');
@@ -738,10 +772,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 16. INITIALISATION
+    // 17. TOAST
+    // ==========================================================
+    function showToast(message) {
+        var toast = document.createElement('div');
+        toast.style.cssText =
+            'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#ffffff;padding:0.75rem 1.5rem;border-radius:12px;font-family:Segoe UI,sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:9999;opacity:0;transition:opacity 0.3s ease;max-width:90%;text-align:center;';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.style.opacity = '1'; }, 50);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 2500);
+    }
+
+    // ==========================================================
+    // 18. INITIALISATION
     // ==========================================================
     renderPoints();
     renderCategories();
+    updateActionButton();
 
     console.log('Page Points de vente chargee');
     console.log(pointsData.length + ' points de vente');

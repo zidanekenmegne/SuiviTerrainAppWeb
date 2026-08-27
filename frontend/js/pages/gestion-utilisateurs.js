@@ -32,6 +32,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
+    // BOUTON D'ACTION CONTEXTUEL (mobile)
+    // ==========================================================
+    var btnAction = document.getElementById('btnActionMobile');
+
+    function updateActionButton() {
+        // Page actuelle : Gestion des utilisateurs
+        // Action : Ajouter un utilisateur (basculer vers l'onglet Ajout)
+        btnAction.style.opacity = '1';
+        btnAction.style.cursor = 'pointer';
+        btnAction.style.pointerEvents = 'auto';
+        btnAction.setAttribute('aria-label', 'Ajouter un utilisateur');
+
+        // Supprimer les anciens ecouteurs
+        btnAction.replaceWith(btnAction.cloneNode(true));
+        var newBtn = document.getElementById('btnActionMobile');
+
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Basculer vers l'onglet Ajouter
+            var tabAjoutBtn = document.getElementById('tabAjoutBtn');
+            if (tabAjoutBtn) {
+                tabAjoutBtn.click();
+            }
+        });
+    }
+
+    // ==========================================================
     // DONNEES FACTICES DES UTILISATEURS
     // ==========================================================
     var users = [
@@ -292,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================================
     // INITIALISATION
     // ==========================================================
+    updateActionButton();
     renderTable();
 
     console.log('Page Gestion des utilisateurs chargee');

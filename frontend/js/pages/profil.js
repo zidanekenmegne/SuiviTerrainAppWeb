@@ -582,3 +582,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('Page Profil chargee');
 });
+
+// ==========================================================
+// MENU HAMBURGER (mobile)
+// ==========================================================
+var menuBtn = document.getElementById('menuHamburger');
+var mobileMenu = document.getElementById('mobileMenu');
+
+if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', function() {
+        // 1. Ajoute ou retire la classe "open" sur le menu déroulant
+        mobileMenu.classList.toggle('open');
+
+        // 2. Change l'icône (hamburger ↔ croix)
+        var icon = menuBtn.querySelector('i');
+        if (mobileMenu.classList.contains('open')) {
+            icon.className = 'bi bi-x-lg';   // Croix
+        } else {
+            icon.className = 'bi bi-list';   // Hamburger
+        }
+    });
+}

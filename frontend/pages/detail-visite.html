@@ -967,7 +967,7 @@
 
             <ul class="nav-links">
                 <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
-                <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
                 <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
                 <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
                 <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
@@ -980,8 +980,7 @@
             <div class="search-container" id="globalSearchContainer">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Rechercher... (Ctrl+K)" aria-label="Recherche globale">
-                    <kbd class="search-shortcut">Ctrl+K</kbd>
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
                 </div>
                 <div class="search-suggestions" id="globalSearchSuggestions"></div>
             </div>
@@ -1301,7 +1300,7 @@
                     e.preventDefault();
                     if (confirm('⚠️ Voulez-vous vraiment supprimer cette visite ? Cette action est irréversible.')) {
                         alert('🗑️ Visite supprimée');
-                        window.location.href = 'liste-points.html';
+                        window.location.href = 'liste-visites.html';
                     }
                 });
             }

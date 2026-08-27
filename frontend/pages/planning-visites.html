@@ -13,924 +13,68 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <style>
-        /* ==========================================================
-           STYLES GLOBAUX
-           ========================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #FFF8F0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION PC (> 768px)
-           ========================================================== */
-        .navbar-pc {
-            background-color: #8B0000;
-            padding: 0.75rem 1.5rem;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .navbar-pc .navbar-brand {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-pc .navbar-brand img {
-            height: 30px;
-        }
-
-        .navbar-pc .navbar-brand span:first-child {
-            color: #ffffff;
-        }
-
-        .navbar-pc .navbar-brand span:last-child {
-            color: #C9A84C;
-        }
-
-        .navbar-pc .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-pc .nav-links li a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .navbar-pc .nav-links li a:hover,
-        .navbar-pc .nav-links li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .navbar-pc .nav-links li a i {
-            margin-right: 0.4rem;
-        }
-
-        .navbar-pc .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-        }
-
-        .navbar-pc .nav-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .navbar-pc .nav-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle {
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-pc .nav-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        .navbar-pc .nav-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .navbar-pc .nav-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .navbar-pc .nav-right .dropdown-item i {
-            margin-right: 0.5rem;
-        }
-
-        /* ==========================================================
-           BANDEAU HAUT MOBILE (< 768px)
-           ========================================================== */
-        .top-header-mobile {
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            padding: 0.75rem 1rem 0.5rem 1rem;
-            border-radius: 0 0 1px 1px;
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .top-header-mobile .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Flèche retour (remplace le hamburger) */
-        .top-header-mobile .back-button {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .top-header-mobile .back-button:hover {
-            opacity: 0.8;
-        }
-
-        .top-header-mobile .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-center .page-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-bottom: 0;
-        }
-
-        .top-header-mobile .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .top-header-mobile .header-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .top-header-mobile .header-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Plus de menu hamburger sur mobile (remplacé par flèche) */
-        .top-header-mobile .menu-hamburger {
-            display: none !important;
-        }
-
-        /* ==========================================================
-           CONTENU PRINCIPAL
-           ========================================================== */
-        .main-content {
-            flex: 1;
-            padding: 1.25rem 1.25rem 1rem 1.25rem;
-            background-color: #FFF8F0;
-        }
-
-        /* En-tête PC */
-        .header-pc {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .header-pc h1 {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .header-pc h1 i {
-            color: #8B0000;
-            margin-right: 0.4rem;
-        }
-
-        /* ==========================================================
-           CONTROLES CALENDRIER
-           ========================================================== */
-        .calendar-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .calendar-controls .month-year {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #1a1a1a;
-        }
-
-        .calendar-controls .nav-buttons {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .calendar-controls .nav-buttons button {
-            background: #ffffff;
-            border: 1px solid #e0dcd6;
-            border-radius: 8px;
-            padding: 0.4rem 0.8rem;
-            color: #1a1a1a;
-            font-size: 1rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .calendar-controls .nav-buttons button:hover {
-            background-color: #8B0000;
-            color: #ffffff;
-            border-color: #8B0000;
-        }
-
-        .calendar-controls .nav-buttons .date-picker-btn {
-            background: #ffffff;
-            border: 1px solid #e0dcd6;
-            border-radius: 8px;
-            padding: 0.4rem 0.8rem;
-            color: #1a1a1a;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .calendar-controls .nav-buttons .date-picker-btn:hover {
-            border-color: #8B0000;
-            color: #8B0000;
-        }
-
-        /* ==========================================================
-           CALENDRIER GRILLE (PC) - HAUTEUR RÉDUITE À 1/3
-           ========================================================== */
-        .calendar-grid {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 0.75rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-            margin-bottom: 1.25rem;
-            display: none;
-        }
-
-        .calendar-grid .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-bottom: 0.25rem;
-            padding-bottom: 0.25rem;
-            border-bottom: 1px solid #f0ece6;
-        }
-
-        .calendar-grid .days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.15rem;
-        }
-
-        .calendar-grid .days .day-cell {
-            aspect-ratio: 1 / 0.9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0.2rem 0.05rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            background: #ffffff;
-            min-height: 36px;
-            position: relative;
-        }
-
-        .calendar-grid .days .day-cell:hover {
-            background-color: #FFF8F0;
-        }
-
-        .calendar-grid .days .day-cell .day-number {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            margin-bottom: 0.05rem;
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .calendar-grid .days .day-cell .day-number.other-month {
-            color: #ced4da;
-        }
-
-        /* Aujourd'hui : cercle rouge foncé (#8B0000) */
-        .calendar-grid .days .day-cell .day-number.today {
-            background-color: #8B0000;
-            color: #ffffff;
-        }
-
-        /* Jour sélectionné (cliqué) : cercle rouge clair */
-        .calendar-grid .days .day-cell .day-number.selected {
-            background-color: #e8a0a0;
-            color: #1a1a1a;
-        }
-
-        /* Si aujourd'hui ET sélectionné : priorité au sélectionné (rouge clair) */
-        .calendar-grid .days .day-cell .day-number.today.selected {
-            background-color: #e8a0a0;
-            color: #1a1a1a;
-        }
-
-        .calendar-grid .days .day-cell .day-events {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.1rem;
-        }
-
-        .calendar-grid .days .day-cell .day-events .event-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-        }
-
-        .event-dot.realise { background-color: #28a745; }
-        .event-dot.attente { background-color: #ffc107; }
-        .event-dot.retard { background-color: #dc3545; }
-        .event-dot.encours { background-color: #17a2b8; }
-
-        .calendar-grid .days .day-cell .day-event-count {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.5rem;
-            color: #6c757d;
-            margin-top: 0.02rem;
-        }
-
-        /* ==========================================================
-           LISTE DES VISITES DU JOUR (PC)
-           ========================================================== */
-        .visites-day-list {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 1rem 1rem 0.5rem 1rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-        }
-
-        .visites-day-list .day-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .visites-day-list .day-header h3 {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .visites-day-list .day-header .day-date {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .visite-item {
-            padding: 0.6rem 0.75rem;
-            border-bottom: 1px solid #f0ece6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.15s;
-            border-radius: 8px;
-            margin-bottom: 0.2rem;
-        }
-
-        .visite-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .visite-item .visite-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .visite-item .visite-info .visite-titre {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #1a1a1a;
-            margin-bottom: 0.05rem;
-        }
-
-        .visite-item .visite-info .visite-detail {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.7rem;
-            color: #6c757d;
-        }
-
-        .visite-item .visite-info .visite-detail i {
-            margin-right: 0.2rem;
-        }
-
-        .visite-item .badge-status {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.55rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            margin-left: 0.5rem;
-        }
-
-        .badge-status.realise { background-color: #28a745; color: #fff; }
-        .badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
-        .badge-status.retard { background-color: #dc3545; color: #fff; }
-        .badge-status.encours { background-color: #17a2b8; color: #fff; }
-
-        /* ==========================================================
-           MOBILE : PLANNING (strictement conforme à maquette)
-           ========================================================== */
-        .planning-mobile {
-            display: none;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .planning-mobile .mobile-date-selector {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.5rem 0.75rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-        }
-
-        .planning-mobile .mobile-date-selector button {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #8B0000;
-            padding: 0.25rem 0.5rem;
-            cursor: pointer;
-        }
-
-        .planning-mobile .mobile-date-selector .mobile-date-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-        }
-
-        .planning-mobile .mobile-day-list {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.5rem 0.75rem;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-        }
-
-        .planning-mobile .mobile-day-list .mobile-day-header {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #f0ece6;
-            margin-bottom: 0.5rem;
-        }
-
-        .planning-mobile .mobile-visite-item {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #f0ece6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .planning-mobile .mobile-visite-item:last-child {
-            border-bottom: none;
-        }
-
-        .planning-mobile .mobile-visite-item .mv-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .planning-mobile .mobile-visite-item .mv-info .mv-titre {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #1a1a1a;
-            margin-bottom: 0.05rem;
-        }
-
-        .planning-mobile .mobile-visite-item .mv-info .mv-detail {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.65rem;
-            color: #6c757d;
-        }
-
-        .planning-mobile .mobile-visite-item .mv-info .mv-detail i {
-            margin-right: 0.2rem;
-        }
-
-        .planning-mobile .mobile-visite-item .badge-status {
-            font-size: 0.5rem;
-            padding: 0.15rem 0.4rem;
-        }
-
-        /* ==========================================================
-           FOOTER PC (fond rouge)
-           ========================================================== */
-        .footer-pc {
-            background-color: #8B0000;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            flex-shrink: 0;
-            display: none;
-            margin-top: auto;
-        }
-
-        .footer-pc p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 0;
-            opacity: 0.85;
-        }
-
-        /* ==========================================================
-           BARRE DE NAVIGATION MOBILE (< 768px)
-           ========================================================== */
-        .bottom-nav-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #f0ece6;
-            padding: 0.4rem 0.5rem 0.6rem 0.5rem;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-mobile .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #6c757d;
-            font-size: 0.5rem;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 0.15rem 0.3rem;
-            border-radius: 8px;
-            transition: color 0.2s;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .bottom-nav-mobile .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 0.05rem;
-        }
-
-        .bottom-nav-mobile .nav-item.active {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item:hover {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item-center {
-            background: #8B0000;
-            color: #fff;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -14px;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-            transition: transform 0.2s;
-            text-decoration: none;
-        }
-
-        .bottom-nav-mobile .nav-item-center:hover {
-            transform: scale(1.05);
-            color: #fff;
-        }
-
-        .bottom-nav-mobile .nav-item-center i {
-            font-size: 1.6rem;
-            margin-bottom: 0;
-        }
-
-        /* ==========================================================
-           RESPONSIVE : POINT DE RUPTURE À 768px
-           ========================================================== */
-        @media (min-width: 769px) {
-            .navbar-pc {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .top-header-mobile {
-                display: none !important;
-            }
-
-            .bottom-nav-mobile {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: block !important;
-            }
-
-            .calendar-grid {
-                display: block !important;
-            }
-
-            .planning-mobile {
-                display: none !important;
-            }
-
-            .main-content {
-                padding: 1.5rem 2rem 1.5rem 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
-                width: 100%;
-            }
-
-            .header-pc h1 {
-                font-size: 1.6rem;
-            }
-
-            .calendar-controls .month-year {
-                font-size: 1.3rem;
-            }
-
-            .visite-item .visite-info .visite-titre {
-                font-size: 0.95rem;
-            }
-
-            .visite-item .visite-info .visite-detail {
-                font-size: 0.8rem;
-            }
-
-            /* Hauteur réduite des cellules sur PC */
-            .calendar-grid .days .day-cell {
-                min-height: 36px;
-                aspect-ratio: 1 / 0.7;
-            }
-
-            .calendar-grid .days .day-cell .day-number {
-                font-size: 0.85rem;
-                width: 26px;
-                height: 26px;
-            }
-
-            .calendar-grid .days .day-cell .day-events .event-dot {
-                width: 5px;
-                height: 5px;
-            }
-
-            .calendar-grid .days .day-cell .day-event-count {
-                font-size: 0.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .top-header-mobile {
-                display: block !important;
-            }
-
-            .bottom-nav-mobile {
-                display: flex !important;
-            }
-
-            .navbar-pc {
-                display: none !important;
-            }
-
-            .footer-pc {
-                display: none !important;
-            }
-
-            .calendar-grid {
-                display: none !important;
-            }
-
-            .planning-mobile {
-                display: flex !important;
-            }
-
-            .main-content {
-                padding: 0.75rem 1rem 5rem 1rem;
-            }
-
-            .header-pc {
-                display: none !important;
-            }
-
-            .visites-day-list {
-                display: none !important;
-            }
-
-            .bottom-nav-mobile .nav-item {
-                font-size: 0.45rem;
-                min-width: 32px;
-            }
-
-            .bottom-nav-mobile .nav-item i {
-                font-size: 1rem;
-            }
-
-            .bottom-nav-mobile .nav-item-center {
-                width: 44px;
-                height: 44px;
-                margin-top: -10px;
-            }
-
-            .bottom-nav-mobile .nav-item-center i {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* ==========================================================
-           ACCESSIBILITÉ
-           ========================================================== */
-        a:focus-visible,
-        button:focus-visible,
-        input:focus-visible {
-            outline: 3px solid #C9A84C;
-            outline-offset: 2px;
-        }
-    </style>
+    <!-- CSS de la page -->
+    <link rel="stylesheet" href="../css/pages/planning-visites.css">
 </head>
 <body>
 
-<!-- ==========================================================
-BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
-========================================================== -->
-<nav class="navbar-pc" aria-label="Navigation principale">
-    <div style="display: flex; align-items: center; gap: 2rem;">
-        <a class="navbar-brand" href="tableau-bord.html">
-            <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
-            <span>Suivi</span><span>Terrain</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
-            <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
-            <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
-            <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
-            <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
-            <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
-        </ul>
-    </div>
-
-    <div class="nav-right">
-        <!-- ==========================================================
-        BARRE DE RECHERCHE GÉNÉRALE
-        ========================================================== -->
-        <div class="search-container" id="globalSearchContainer">
-            <div class="search-input-wrapper">
-                <i class="bi bi-search" aria-hidden="true"></i>
-                <input type="text" id="globalSearchInput" placeholder="Rechercher... " aria-label="Recherche globale">
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC (> 768px)
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-pc-inner">
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="tableau-bord.html">
+                    <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                    <span>Suivi</span><span>Terrain</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                    <li><a href="planning-visites.html" class="active"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                    <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                    <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                    <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                    <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+                </ul>
             </div>
-            <!-- Liste des suggestions -->
-            <div class="search-suggestions" id="globalSearchSuggestions"></div>
+            <div class="nav-right">
+                <div class="search-container" id="globalSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                    </div>
+                    <div class="search-suggestions" id="globalSearchSuggestions"></div>
+                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <!-- Notification -->
-        <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
-            <i class="bi bi-bell" aria-hidden="true"></i>
-            <span class="badge-notif">3</span>
-        </button>
-
-        <!-- Profil -->
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    </nav>
 
     <!-- ==========================================================
-    BANDEAU HAUT MOBILE (< 768px) - AVEC FLÈCHE RETOUR
+    BANDEAU HAUT MOBILE (< 768px)
     ========================================================== -->
     <header class="top-header-mobile">
         <div class="header-row">
-            <!-- Flèche retour (remplace le hamburger) -->
             <button class="back-button" id="backButton" aria-label="Retour">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </button>
-
             <div class="header-center">
                 <span class="page-title">Planning des visites</span>
             </div>
-
             <div class="header-right">
                 <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
                     <i class="bi bi-bell" aria-hidden="true"></i>
@@ -945,16 +89,11 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
     ========================================================== -->
     <main class="main-content">
 
-        <!-- ==========================================================
-        EN-TÊTE PC
-        ========================================================== -->
         <div class="header-pc">
             <h1><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning des visites</h1>
         </div>
 
-        <!-- ==========================================================
-        CONTROLES CALENDRIER
-        ========================================================== -->
+        <!-- Contrôles calendrier -->
         <div class="calendar-controls">
             <span class="month-year" id="monthYearDisplay">Juin 2025</span>
             <div class="nav-buttons">
@@ -968,35 +107,25 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
             </div>
         </div>
 
-        <!-- ==========================================================
-        CALENDRIER GRILLE (PC)
-        ========================================================== -->
+        <!-- Calendrier grille (PC) -->
         <div class="calendar-grid" id="calendarGrid">
             <div class="weekdays">
                 <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span>
                 <span>Ven</span><span>Sam</span><span>Dim</span>
             </div>
-            <div class="days" id="daysGrid">
-                <!-- Généré par JavaScript -->
-            </div>
+            <div class="days" id="daysGrid"></div>
         </div>
 
-        <!-- ==========================================================
-        LISTE DES VISITES DU JOUR (PC) - TITRE AVEC JOUR EN TOUTES LETTRES
-        ========================================================== -->
+        <!-- Liste des visites du jour (PC) -->
         <div class="visites-day-list" id="dayVisitesList">
             <div class="day-header">
                 <h3 id="dayVisitesTitle">Visites du jour</h3>
                 <span class="day-date" id="selectedDateDisplay"></span>
             </div>
-            <div id="dayVisitesContainer">
-                <!-- Généré par JavaScript -->
-            </div>
+            <div id="dayVisitesContainer"></div>
         </div>
 
-        <!-- ==========================================================
-        PLANNING MOBILE
-        ========================================================== -->
+        <!-- Planning mobile -->
         <div class="planning-mobile" id="planningMobile">
             <div class="mobile-date-selector">
                 <button id="prevDayMobile" aria-label="Jour précédent"><i class="bi bi-chevron-left"></i></button>
@@ -1005,16 +134,14 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
             </div>
             <div class="mobile-day-list" id="mobileDayList">
                 <div class="mobile-day-header" id="mobileDayTitle">Visites du jour</div>
-                <div id="mobileVisitesContainer">
-                    <!-- Généré par JavaScript -->
-                </div>
+                <div id="mobileVisitesContainer"></div>
             </div>
         </div>
 
     </main>
 
     <!-- ==========================================================
-    FOOTER PC (fond rouge)
+    FOOTER PC
     ========================================================== -->
     <footer class="footer-pc" role="contentinfo">
         <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
@@ -1028,24 +155,21 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
             <i class="bi bi-house-door" aria-hidden="true"></i>
             Accueil
         </a>
-
-        <a href="liste-points.html" class="nav-item">
+        <a href="liste-visites.html" class="nav-item">
             <i class="bi bi-list-ul" aria-hidden="true"></i>
             Visites
         </a>
-
         <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Créer une nouvelle visite">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
-
         <a href="points-vente.html" class="nav-item">
             <i class="bi bi-shop" aria-hidden="true"></i>
             Points de vente
         </a>
-
         <a href="profil.html" class="nav-item">
             <i class="bi bi-person" aria-hidden="true"></i>
-            Profil        </a>
+            Profil
+        </a>
     </nav>
 
     <!-- ==========================================================
@@ -1053,290 +177,8 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
     ========================================================== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ==========================================================
-    SCRIPTS
-    ========================================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // ==========================================================
-            // RETOUR (mobile)
-            // ==========================================================
-            const backButton = document.getElementById('backButton');
-            if (backButton) {
-                backButton.addEventListener('click', function() {
-                    window.history.back();
-                });
-            }
-
-            // ==========================================================
-            // NOTIFICATIONS (PC + Mobile)
-            // ==========================================================
-            const notifBtnPC = document.getElementById('notifBtnPC');
-            const notifBtnMobile = document.getElementById('notifBtnMobile');
-
-            function redirigerNotifications() {
-                window.location.href = 'notifications.html';
-            }
-
-            if (notifBtnPC) {
-                notifBtnPC.addEventListener('click', redirigerNotifications);
-            }
-            if (notifBtnMobile) {
-                notifBtnMobile.addEventListener('click', redirigerNotifications);
-            }
-
-            // ==========================================================
-            // DONNÉES FACTICES
-            // ==========================================================
-            const visitesData = [
-                { id: 1, titre: 'Visite commerciale - Magasin A', adresse: 'Centre-ville', date: '2025-06-12', heure: '08:00', statut: 'realise', agent: 'Zidane' },
-                { id: 2, titre: 'Collecte de commandes - Client B', adresse: 'Bonamoussadi', date: '2025-06-12', heure: '10:30', statut: 'attente', agent: 'Zidane' },
-                { id: 3, titre: 'Suivi des retours - Magasin C', adresse: 'Akwa', date: '2025-06-12', heure: '13:00', statut: 'retard', agent: 'Zidane' },
-                { id: 4, titre: 'Collecte de paiement - Client D', adresse: 'Bépanda', date: '2025-06-13', heure: '09:00', statut: 'realise', agent: 'Zidane' },
-                { id: 5, titre: 'Collecte de paiement - Magasin E', adresse: 'Total Logbaba', date: '2025-06-13', heure: '11:00', statut: 'attente', agent: 'Zidane' },
-                { id: 6, titre: 'Présentation produit - Client F', adresse: 'Makape', date: '2025-06-14', heure: '15:00', statut: 'encours', agent: 'Zidane' },
-                { id: 7, titre: 'Visite de suivi - Magasin G', adresse: 'Bonapriso', date: '2025-06-15', heure: '09:30', statut: 'realise', agent: 'Zidane' },
-                { id: 8, titre: 'Collecte de commandes - Client H', adresse: 'Makepe', date: '2025-06-15', heure: '14:00', statut: 'attente', agent: 'Zidane' },
-                { id: 9, titre: 'Visite commerciale - Magasin I', adresse: 'Kotto', date: '2025-06-16', heure: '10:00', statut: 'encours', agent: 'Zidane' },
-                { id: 10, titre: 'Collecte de paiement - Client J', adresse: 'Mbangue', date: '2025-06-17', heure: '11:30', statut: 'retard', agent: 'Zidane' },
-            ];
-
-            // ==========================================================
-            // CALENDRIER
-            // ==========================================================
-            let currentDate = new Date();
-            let selectedDate = new Date();
-
-            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-
-            function formatDate(date) {
-                const d = new Date(date);
-                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            }
-
-            function formatDisplayDate(date) {
-                const d = new Date(date);
-                const dayOfWeek = dayNames[d.getDay() === 0 ? 6 : d.getDay() - 1];
-                return dayOfWeek + ' ' + d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
-            }
-
-            function getVisitesForDate(dateStr) {
-                return visitesData.filter(v => v.date === dateStr);
-            }
-
-            function renderCalendar(year, month) {
-                const grid = document.getElementById('daysGrid');
-                const display = document.getElementById('monthYearDisplay');
-                display.textContent = monthNames[month] + ' ' + year;
-
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-                const daysInMonth = lastDay.getDate();
-                const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-                let html = '';
-                const todayStr = formatDate(new Date());
-                const selectedStr = formatDate(selectedDate);
-
-                // Jours du mois précédent
-                for (let i = startDay - 1; i >= 0; i--) {
-                    const day = daysInPrevMonth - i;
-                    html += `<div class="day-cell">
-                        <span class="day-number other-month">${day}</span>
-                    </div>`;
-                }
-
-                // Jours du mois courant
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const dateObj = new Date(year, month, i);
-                    const dateStr = formatDate(dateObj);
-                    const isToday = dateStr === todayStr;
-                    const isSelected = dateStr === selectedStr;
-                    const visites = getVisitesForDate(dateStr);
-
-                    let dotHtml = '';
-                    const statuts = visites.map(v => v.statut);
-                    const uniqueStatuts = [...new Set(statuts)];
-                    uniqueStatuts.forEach(s => {
-                        dotHtml += `<span class="event-dot ${s}"></span>`;
-                    });
-
-                    const countHtml = visites.length > 0 ? `<span class="day-event-count">${visites.length}</span>` : '';
-
-                    let dayClass = 'day-number';
-                    if (isToday) dayClass += ' today';
-                    if (isSelected) dayClass += ' selected';
-
-                    html += `<div class="day-cell" data-date="${dateStr}" onclick="selectDate('${dateStr}')">
-                        <span class="${dayClass}">${i}</span>
-                        <div class="day-events">${dotHtml}</div>
-                        ${countHtml}
-                    </div>`;
-                }
-
-                // Jours du mois suivant
-                const totalCells = startDay + daysInMonth;
-                const remainingCells = 7 - (totalCells % 7);
-                if (remainingCells < 7) {
-                    for (let i = 1; i <= remainingCells; i++) {
-                        html += `<div class="day-cell">
-                            <span class="day-number other-month">${i}</span>
-                        </div>`;
-                    }
-                }
-
-                grid.innerHTML = html;
-
-                // Mettre à jour la liste des visites du jour
-                updateDayVisites(selectedStr);
-                updateMobilePlanning(selectedStr);
-            }
-
-            function updateDayVisites(dateStr) {
-                const container = document.getElementById('dayVisitesContainer');
-                const display = document.getElementById('selectedDateDisplay');
-                const title = document.getElementById('dayVisitesTitle');
-
-                // Titre : "Visites du [jour en toutes lettres] [date]"
-                const displayDate = formatDisplayDate(dateStr);
-                title.textContent = 'Visites du ' + displayDate;
-                display.textContent = '';
-
-                const visites = getVisitesForDate(dateStr);
-
-                if (visites.length === 0) {
-                    container.innerHTML = `<p class="text-muted text-center py-3" style="font-family: 'Segoe UI', sans-serif; font-size: 0.9rem;">Aucune visite prévue ce jour.</p>`;
-                    return;
-                }
-
-                let html = '';
-                visites.forEach(v => {
-                    const statutLabel = v.statut.charAt(0).toUpperCase() + v.statut.slice(1);
-                    html += `
-                        <div class="visite-item" onclick="window.location.href='detail-visite.html'">
-                            <div class="visite-info">
-                                <p class="visite-titre">${v.titre}</p>
-                                <p class="visite-detail">
-                                    <i class="bi bi-geo-alt" aria-hidden="true"></i> ${v.adresse} &bull;
-                                    <i class="bi bi-clock" aria-hidden="true"></i> ${v.heure} &bull;
-                                    <i class="bi bi-person" aria-hidden="true"></i> ${v.agent}
-                                </p>
-                            </div>
-                            <span class="badge-status ${v.statut}">${statutLabel}</span>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            }
-
-            function updateMobilePlanning(dateStr) {
-                const label = document.getElementById('mobileDateLabel');
-                const container = document.getElementById('mobileVisitesContainer');
-                const title = document.getElementById('mobileDayTitle');
-
-                // Titre : "Visites du [jour en toutes lettres] [date]"
-                const displayDate = formatDisplayDate(dateStr);
-                title.textContent = 'Visites du ' + displayDate;
-                label.textContent = displayDate;
-
-                const visites = getVisitesForDate(dateStr);
-
-                if (visites.length === 0) {
-                    container.innerHTML = `<p class="text-muted text-center py-2" style="font-family: 'Segoe UI', sans-serif; font-size: 0.8rem;">Aucune visite prévue</p>`;
-                    return;
-                }
-
-                let html = '';
-                visites.forEach(v => {
-                    const statutLabel = v.statut.charAt(0).toUpperCase() + v.statut.slice(1);
-                    html += `
-                        <div class="mobile-visite-item" onclick="window.location.href='detail-visite.html'">
-                            <div class="mv-info">
-                                <p class="mv-titre">${v.titre}</p>
-                                <p class="mv-detail">
-                                    <i class="bi bi-clock" aria-hidden="true"></i> ${v.heure} &bull; ${v.agent}
-                                </p>
-                            </div>
-                            <span class="badge-status ${v.statut}">${statutLabel}</span>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            }
-
-            window.selectDate = function(dateStr) {
-                selectedDate = new Date(dateStr + 'T00:00:00');
-                renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
-            };
-
-            // ==========================================================
-            // NAVIGATION CALENDRIER
-            // ==========================================================
-            document.getElementById('prevMonth').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-            });
-
-            document.getElementById('nextMonth').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-            });
-
-            document.getElementById('todayBtn').addEventListener('click', function() {
-                const today = new Date();
-                currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-            });
-
-            document.getElementById('datePickerBtn').addEventListener('click', function() {
-                document.getElementById('datePicker').showPicker ? document.getElementById('datePicker').showPicker() : document.getElementById('datePicker').click();
-            });
-
-            document.getElementById('datePicker').addEventListener('change', function() {
-                const val = this.value;
-                if (val) {
-                    const parts = val.split('-');
-                    const year = parseInt(parts[0]);
-                    const month = parseInt(parts[1]) - 1;
-                    const day = parseInt(parts[2]);
-                    currentDate = new Date(year, month, 1);
-                    selectedDate = new Date(year, month, day);
-                    renderCalendar(year, month);
-                }
-            });
-
-            // ==========================================================
-            // NAVIGATION MOBILE (JOURS)
-            // ==========================================================
-            document.getElementById('prevDayMobile').addEventListener('click', function() {
-                const newDate = new Date(selectedDate);
-                newDate.setDate(newDate.getDate() - 1);
-                selectedDate = newDate;
-                renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
-            });
-
-            document.getElementById('nextDayMobile').addEventListener('click', function() {
-                const newDate = new Date(selectedDate);
-                newDate.setDate(newDate.getDate() + 1);
-                selectedDate = newDate;
-                renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
-            });
-
-            // ==========================================================
-            // INITIALISATION
-            // ==========================================================
-            const today = new Date();
-            currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
-            selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
-
-            console.log(' Page Planning des visites chargée');
-        });
-    </script>
+    <!-- JavaScript de la page -->
+    <script src="../js/pages/planning-visites.js"></script>
 
 </body>
 </html>

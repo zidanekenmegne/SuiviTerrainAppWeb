@@ -1,38 +1,106 @@
-/**
- * Parametres - Logique de la page
- * Version 1.0
- */
+// ==========================================================
+// PARAMETRES - SuiviTerrain
+// Version 1.0
+// ==========================================================
 
 document.addEventListener('DOMContentLoaded', function() {
 
     // ==========================================================
-    // 1. BOUTON "+" MOBILE
+    // 1. MENU HAMBURGER (mobile)
     // ==========================================================
-    var btnPlus = document.getElementById('btnPlusMobile');
-    if (btnPlus) {
-        btnPlus.style.opacity = '0.5';
-        btnPlus.style.cursor = 'default';
-        btnPlus.style.pointerEvents = 'none';
-        btnPlus.setAttribute('aria-label', 'Aucune action disponible');
-        btnPlus.title = 'Aucune action disponible';
-        btnPlus.addEventListener('click', function(e) {
+    var menuBtn = document.getElementById('menuHamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            var icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('open')) {
+                icon.className = 'bi bi-x-lg';
+            } else {
+                icon.className = 'bi bi-list';
+            }
+        });
+    }
+
+    // ==========================================================
+    // 2. DROPDOWN PROFIL (PC)
+    // ==========================================================
+    var userDropdown = document.getElementById('userDropdown');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+
+    if (userDropdown && dropdownMenu) {
+        userDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (dropdownMenu.classList.contains('show') &&
+                !dropdownMenu.contains(e.target) &&
+                e.target !== userDropdown) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+
+    // ==========================================================
+    // 3. NOTIFICATIONS (PC + Mobile)
+    // ==========================================================
+    var notifBtnPC = document.getElementById('notifBtnPC');
+    var notifBtnMobile = document.getElementById('notifBtnMobile');
+
+    function redirigerNotifications() {
+        window.location.href = 'notifications.html';
+    }
+
+    if (notifBtnPC) {
+        notifBtnPC.addEventListener('click', redirigerNotifications);
+    }
+    if (notifBtnMobile) {
+        notifBtnMobile.addEventListener('click', redirigerNotifications);
+    }
+
+    // ==========================================================
+    // 4. BOUTON D'ACTION CONTEXTUEL (mobile) - GRISE
+    // ==========================================================
+    var btnAction = document.getElementById('btnActionMobile');
+
+    function updateActionButton() {
+        // Page Parametres : AUCUNE ACTION D'AJOUT
+        btnAction.style.opacity = '0.4';
+        btnAction.style.cursor = 'not-allowed';
+        btnAction.style.pointerEvents = 'none';
+        btnAction.setAttribute('aria-label', 'Aucune action disponible sur cette page');
+
+        // Supprimer les anciens ecouteurs
+        btnAction.replaceWith(btnAction.cloneNode(true));
+        var newBtn = document.getElementById('btnActionMobile');
+
+        newBtn.addEventListener('click', function(e) {
             e.preventDefault();
             showToast('Aucune action disponible sur cette page');
         });
     }
 
     // ==========================================================
-    // 2. NOTIFICATIONS (Mobile)
+    // 5. TOAST
     // ==========================================================
-    var notifBtnMobile = document.getElementById('notifBtnMobile');
-    if (notifBtnMobile) {
-        notifBtnMobile.addEventListener('click', function() {
-            window.location.href = 'notifications.html';
-        });
+    function showToast(message) {
+        var toast = document.createElement('div');
+        toast.style.cssText =
+            'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#ffffff;padding:0.75rem 1.5rem;border-radius:12px;font-family:Segoe UI,sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:9999;opacity:0;transition:opacity 0.3s ease;max-width:90%;text-align:center;';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.style.opacity = '1'; }, 50);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 2500);
     }
 
     // ==========================================================
-    // 3. DECONNEXION
+    // 6. DECONNEXION
     // ==========================================================
     window.handleLogout = function() {
         if (confirm('Etes-vous sur de vouloir vous deconnecter ?')) {
@@ -41,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // ==========================================================
-    // 4. TOGGLES
+    // 7. TOGGLES
     // ==========================================================
     var notifToggle = document.getElementById('notifToggle');
     var offlineToggle = document.getElementById('offlineToggle');
@@ -61,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 5. CHANGER LE MOT DE PASSE
+    // 8. CHANGER LE MOT DE PASSE
     // ==========================================================
     var btnChangePassword = document.getElementById('btnChangePassword');
     if (btnChangePassword) {
@@ -238,23 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 6. TOAST
-    // ==========================================================
-    function showToast(message) {
-        var toast = document.createElement('div');
-        toast.style.cssText =
-            'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#ffffff;padding:0.75rem 1.5rem;border-radius:12px;font-family:Segoe UI,sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:9999;opacity:0;transition:opacity 0.3s ease;max-width:90%;text-align:center;';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.style.opacity = '1'; }, 50);
-        setTimeout(function() {
-            toast.style.opacity = '0';
-            setTimeout(function() { toast.remove(); }, 300);
-        }, 2500);
-    }
-
-    // ==========================================================
-    // 7. RECHERCHE GENERALE (placeholder)
+    // 9. RECHERCHE GLOBALE
     // ==========================================================
     var searchInputGlobal = document.getElementById('globalSearchInput');
     var suggestionsContainer = document.getElementById('globalSearchSuggestions');
@@ -445,6 +497,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // ==========================================================
+    // 10. INITIALISATION
+    // ==========================================================
+    updateActionButton();
 
     console.log('Page Parametres chargee');
 });

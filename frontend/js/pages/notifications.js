@@ -1,228 +1,95 @@
-/**
- * Notifications - Logique de la page
- * Version 1.0
- */
+// ==========================================================
+// NOTIFICATIONS - SuiviTerrain
+// Version 1.0
+// ==========================================================
 
 document.addEventListener('DOMContentLoaded', function() {
 
     // ==========================================================
-    // 1. BOUTON "+" MOBILE
+    // 1. MENU HAMBURGER (mobile)
+    // ==========================================================
+    var menuBtn = document.getElementById('menuHamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            var icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('open')) {
+                icon.className = 'bi bi-x-lg';
+            } else {
+                icon.className = 'bi bi-list';
+            }
+        });
+    }
+
+    // ==========================================================
+    // 2. DROPDOWN PROFIL (PC)
+    // ==========================================================
+    var userDropdown = document.getElementById('userDropdown');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+
+    if (userDropdown && dropdownMenu) {
+        userDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = dropdownMenu.classList.contains('show');
+            dropdownMenu.classList.toggle('show');
+        });
+
+        // Fermer le dropdown quand on clique ailleurs
+        document.addEventListener('click', function(e) {
+            if (dropdownMenu.classList.contains('show') &&
+                !dropdownMenu.contains(e.target) &&
+                e.target !== userDropdown) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+
+    // ==========================================================
+    // 3. NOTIFICATIONS (PC + Mobile) - Redirection vers la page actuelle
+    // ==========================================================
+    var notifBtnPC = document.getElementById('notifBtnPC');
+    var notifBtnMobile = document.getElementById('notifBtnMobile');
+
+    // Les boutons de notification sur la page "Notifications" ne font rien
+    // car on est déjà sur la page, mais on peut les désactiver ou les griser
+
+    function handleNotifClick() {
+        // On est déjà sur la page notifications, on peut afficher un toast
+        showToast('Vous êtes déjà sur la page des notifications');
+    }
+
+    if (notifBtnPC) {
+        notifBtnPC.addEventListener('click', handleNotifClick);
+    }
+    if (notifBtnMobile) {
+        notifBtnMobile.addEventListener('click', handleNotifClick);
+    }
+
+    // ==========================================================
+    // 4. BOUTON D'ACTION CONTEXTUEL (mobile) - GRISE
     // ==========================================================
     var btnPlus = document.getElementById('btnPlusMobile');
-    if (btnPlus) {
-        btnPlus.style.opacity = '0.5';
-        btnPlus.style.cursor = 'default';
+
+    function updateActionButton() {
+        // Page Notifications : AUCUNE ACTION D'AJOUT
+        btnPlus.style.opacity = '0.4';
+        btnPlus.style.cursor = 'not-allowed';
         btnPlus.style.pointerEvents = 'none';
-        btnPlus.setAttribute('aria-label', 'Aucune action disponible');
-        btnPlus.title = 'Aucune action disponible';
-        btnPlus.addEventListener('click', function(e) {
+        btnPlus.setAttribute('aria-label', 'Aucune action disponible sur cette page');
+
+        btnPlus.replaceWith(btnPlus.cloneNode(true));
+        var newBtn = document.getElementById('btnPlusMobile');
+
+        newBtn.addEventListener('click', function(e) {
             e.preventDefault();
             showToast('Aucune action disponible sur cette page');
         });
     }
 
     // ==========================================================
-    // 2. NOTIFICATIONS (Mobile)
-    // ==========================================================
-    var notifBtnMobile = document.getElementById('notifBtnMobile');
-    if (notifBtnMobile) {
-        notifBtnMobile.addEventListener('click', function() {
-            window.location.href = 'notifications.html';
-        });
-    }
-
-    // ==========================================================
-    // 3. DONNEES FACTICES
-    // ==========================================================
-    var notifications = [
-        { id: 1, type: 'visite', icon: 'bi bi-calendar-check', iconClass: 'visite',
-            title: 'Nouvelle visite assignee',
-            text: 'Vous avez une nouvelle visite : Evaluation des sols - Champ Ouest, Parcelle 7',
-            date: 'il y a 2 heures', read: false, url: 'detail-visite.html' },
-        { id: 2, type: 'rapport', icon: 'bi bi-file-text', iconClass: 'rapport',
-            title: 'Rapport soumis',
-            text: 'Jean Dupont a soumis le rapport de la visite du 12 juin 2025',
-            date: 'il y a 4 heures', read: false, url: 'rapport.html' },
-        { id: 3, type: 'alerte', icon: 'bi bi-exclamation-triangle', iconClass: 'alerte',
-            title: 'Visite en retard',
-            text: 'La visite de suivi client B est en retard de 2 heures',
-            date: 'il y a 5 heures', read: false, url: 'detail-visite.html' },
-        { id: 4, type: 'info', icon: 'bi bi-info-circle', iconClass: 'info',
-            title: 'Mise a jour disponible',
-            text: 'Une nouvelle version de l\'application est disponible (v2.1.0)',
-            date: 'hier a 10:30', read: true, url: '#' },
-        { id: 5, type: 'systeme', icon: 'bi bi-gear', iconClass: 'systeme',
-            title: 'Maintenance planifiee',
-            text: 'Le serveur sera en maintenance le 15 juin 2025 de 02:00 a 04:00',
-            date: 'hier a 08:15', read: true, url: '#' },
-        { id: 6, type: 'visite', icon: 'bi bi-calendar-check', iconClass: 'visite',
-            title: 'Visite realisee',
-            text: 'La visite commerciale Magasin A a ete marquee comme realisee',
-            date: 'avant-hier a 16:45', read: true, url: 'detail-visite.html' },
-        { id: 7, type: 'rapport', icon: 'bi bi-file-text', iconClass: 'rapport',
-            title: 'Rapport en attente',
-            text: 'Vous avez 3 rapports en attente de validation',
-            date: 'avant-hier a 09:20', read: true, url: 'rapports.html' },
-        { id: 8, type: 'alerte', icon: 'bi bi-exclamation-triangle', iconClass: 'alerte',
-            title: 'Probleme de connexion',
-            text: 'Le mode hors ligne est active, certaines donnees sont en attente de synchronisation',
-            date: '3 jours', read: true, url: 'hors-ligne.html' }
-    ];
-
-    // ==========================================================
-    // 4. MISE A JOUR DU BADGE
-    // ==========================================================
-    function updateBadge() {
-        var unreadCount = 0;
-        for (var i = 0; i < notifications.length; i++) {
-            if (!notifications[i].read) {
-                unreadCount++;
-            }
-        }
-        var badges = document.querySelectorAll('.badge-notif');
-        badges.forEach(function(badge) {
-            if (unreadCount === 0) {
-                badge.style.display = 'none';
-            } else {
-                badge.style.display = 'flex';
-                badge.textContent = unreadCount;
-            }
-        });
-    }
-
-    // ==========================================================
-    // 5. MISE A JOUR DU BOUTON "TOUT MARQUER COMME LU"
-    // ==========================================================
-    function updateMarkAllButton() {
-        var btn = document.getElementById('markAllBtn');
-        var unreadCount = 0;
-        for (var i = 0; i < notifications.length; i++) {
-            if (!notifications[i].read) {
-                unreadCount++;
-            }
-        }
-        if (unreadCount === 0) {
-            btn.disabled = true;
-            btn.textContent = 'Tout est lu';
-        } else {
-            btn.disabled = false;
-            btn.textContent = 'Tout marquer comme lu (' + unreadCount + ')';
-        }
-        updateBadge();
-    }
-
-    // ==========================================================
-    // 6. AFFICHAGE DES NOTIFICATIONS
-    // ==========================================================
-    var container = document.getElementById('notificationsList');
-    var currentFilter = 'all';
-
-    function renderNotifications(filter) {
-        var filtered = [];
-        if (filter === 'unread') {
-            filtered = notifications.filter(function(n) { return !n.read; });
-        } else if (filter === 'read') {
-            filtered = notifications.filter(function(n) { return n.read; });
-        } else {
-            filtered = notifications.slice();
-        }
-
-        if (filtered.length === 0) {
-            container.innerHTML =
-                '<div style="text-align:center;padding:3rem 1rem;color:#6c757d;">' +
-                '<i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:0.5rem;color:#ced4da;"></i>' +
-                '<p style="font-family:Segoe UI,sans-serif;font-size:0.9rem;">' +
-                (filter === 'all' ? 'Aucune notification' :
-                    filter === 'unread' ? 'Aucune notification non lue' :
-                    'Aucune notification lue') +
-                '</p>' +
-                '</div>';
-            updateMarkAllButton();
-            return;
-        }
-
-        var html = '';
-        filtered.forEach(function(n) {
-            var unreadClass = n.read ? '' : 'unread';
-            html +=
-                '<div class="notification-item ' + unreadClass + '" data-id="' + n.id + '">' +
-                '<div class="notif-icon ' + n.iconClass + '">' +
-                '<i class="' + n.icon + '" aria-hidden="true"></i>' +
-                '</div>' +
-                '<div class="notif-content">' +
-                '<div class="notif-title">' + n.title + '</div>' +
-                '<div class="notif-text">' + n.text + '</div>' +
-                '<div class="notif-date"><i class="bi bi-clock" aria-hidden="true"></i> ' + n.date + '</div>' +
-                '</div>' +
-                '<div class="notif-action">' +
-                (!n.read ? '<button class="btn-mark-read" data-id="' + n.id + '">Marquer comme lu</button>' : '') +
-                '</div>' +
-                '</div>';
-        });
-
-        container.innerHTML = html;
-
-        document.querySelectorAll('.btn-mark-read').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var id = parseInt(this.dataset.id);
-                var notif = notifications.find(function(n) { return n.id === id; });
-                if (notif) {
-                    notif.read = true;
-                    renderNotifications(currentFilter);
-                    updateMarkAllButton();
-                }
-            });
-        });
-
-        document.querySelectorAll('.notification-item').forEach(function(item) {
-            item.addEventListener('click', function() {
-                var id = parseInt(this.dataset.id);
-                var notif = notifications.find(function(n) { return n.id === id; });
-                if (notif) {
-                    if (!notif.read) {
-                        notif.read = true;
-                        renderNotifications(currentFilter);
-                        updateMarkAllButton();
-                    }
-                    if (notif.url && notif.url !== '#') {
-                        window.location.href = notif.url;
-                    }
-                }
-            });
-        });
-
-        updateMarkAllButton();
-    }
-
-    // ==========================================================
-    // 7. BOUTON "TOUT MARQUER COMME LU"
-    // ==========================================================
-    document.getElementById('markAllBtn').addEventListener('click', function() {
-        var unread = notifications.filter(function(n) { return !n.read; });
-        if (unread.length === 0) return;
-
-        if (confirm('Marquer les ' + unread.length + ' notification(s) non lue(s) comme lues ?')) {
-            notifications.forEach(function(n) { n.read = true; });
-            renderNotifications(currentFilter);
-            updateMarkAllButton();
-        }
-    });
-
-    // ==========================================================
-    // 8. FILTRES
-    // ==========================================================
-    document.querySelectorAll('.filter-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-            this.classList.add('active');
-            currentFilter = this.dataset.filter;
-            renderNotifications(currentFilter);
-        });
-    });
-
-    // ==========================================================
-    // 9. TOAST
+    // 5. TOAST
     // ==========================================================
     function showToast(message) {
         var toast = document.createElement('div');
@@ -238,195 +105,147 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 10. RECHERCHE GENERALE (placeholder)
+    // 6. DONNEES FACTICES DES NOTIFICATIONS
     // ==========================================================
-    var searchInputGlobal = document.getElementById('globalSearchInput');
-    var suggestionsContainer = document.getElementById('globalSearchSuggestions');
+    var notificationsData = [
+        { id: 1, type: 'visite', title: 'Nouvelle visite planifiée', text: 'Visite commerciale - Magasin A prévue demain à 08:00',
+            date: 'Il y a 5 minutes', unread: true },
+        { id: 2, type: 'rapport', title: 'Rapport disponible', text: 'Le rapport de la semaine dernière est disponible',
+            date: 'Il y a 2 heures', unread: true },
+        { id: 3, type: 'alerte', title: 'Visite en retard', text: 'Collecte de paiement - Client D est en retard',
+            date: 'Il y a 1 jour', unread: true },
+        { id: 4, type: 'info', title: 'Mise à jour système', text: 'Nouvelle version de SuiviTerrain disponible',
+            date: 'Il y a 2 jours', unread: false },
+        { id: 5, type: 'systeme', title: 'Synchronisation réussie', text: 'Toutes les données ont été synchronisées',
+            date: 'Il y a 3 jours', unread: false },
+        { id: 6, type: 'visite', title: 'Visite annulée', text: 'Visite commerciale - Magasin C a été annulée',
+            date: 'Il y a 4 jours', unread: false },
+        { id: 7, type: 'alerte', title: 'Agent absent', text: 'Sarah Niong est indisponible aujourd\'hui',
+            date: 'Il y a 5 jours', unread: false },
+        { id: 8, type: 'rapport', title: 'Rapport mensuel', text: 'Le rapport du mois de mai est prêt à être consulté',
+            date: 'Il y a 6 jours', unread: false }
+    ];
 
-    if (searchInputGlobal && suggestionsContainer) {
-        var searchData = {
-            visites: [
-                { id: 1, titre: 'Visite commerciale - Magasin A', adresse: 'Centre-ville',
-                    date: '12 juin 2025', statut: 'Realisee' },
-                { id: 2, titre: 'Collecte de commandes - Client B', adresse: 'Bonamoussadi',
-                    date: '12 juin 2025', statut: 'En attente' },
-            ],
-            pointsVente: [
-                { id: 1, nom: 'Magasin A', adresse: 'Centre-ville', categorie: 'Alimentation' },
-                { id: 2, nom: 'Client B', adresse: 'Bonamoussadi', categorie: 'Services' },
-            ],
-            utilisateurs: [
-                { id: 1, nom: 'Zidane Fredy', email: 'zidane@suiviterrain.com', role: 'Administrateur' },
-                { id: 2, nom: 'Sarah Niong', email: 'sarah@suiviterrain.com', role: 'Agent' },
-            ],
-            planning: [
-                { id: 1, date: '12 juin 2025', agent: 'Zidane', visites: 3 },
-            ]
-        };
+    var currentFilter = 'all';
 
-        function performSearch(query) {
-            var term = query.toLowerCase().trim();
-            var results = [];
-            if (!term || term.length < 2) return results;
+    // ==========================================================
+    // 7. AFFICHAGE DES NOTIFICATIONS
+    // ==========================================================
+    function renderNotifications(filter) {
+        var container = document.getElementById('notificationsList');
+        if (!container) return;
 
-            searchData.visites.forEach(function(v) {
-                if (v.titre.toLowerCase().includes(term) || v.adresse.toLowerCase().includes(term)) {
-                    results.push({
-                        type: 'visit',
-                        label: v.titre,
-                        subtitle: v.adresse + ' • ' + v.date,
-                        badge: v.statut,
-                        url: 'detail-visite.html?id=' + v.id,
-                        icon: 'bi bi-calendar-event'
-                    });
-                }
-            });
+        var filtered = notificationsData;
 
-            searchData.pointsVente.forEach(function(p) {
-                if (p.nom.toLowerCase().includes(term) || p.adresse.toLowerCase().includes(term)) {
-                    results.push({
-                        type: 'point',
-                        label: p.nom,
-                        subtitle: p.adresse + ' • ' + p.categorie,
-                        badge: p.categorie,
-                        url: 'points-vente.html',
-                        icon: 'bi bi-shop'
-                    });
-                }
-            });
-
-            searchData.utilisateurs.forEach(function(u) {
-                if (u.nom.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)) {
-                    results.push({
-                        type: 'user',
-                        label: u.nom,
-                        subtitle: u.email + ' • ' + u.role,
-                        badge: u.role,
-                        url: 'gestion-utilisateurs.html',
-                        icon: 'bi bi-person'
-                    });
-                }
-            });
-
-            searchData.planning.forEach(function(p) {
-                if (p.date.toLowerCase().includes(term) || p.agent.toLowerCase().includes(term)) {
-                    results.push({
-                        type: 'planning',
-                        label: 'Planning du ' + p.date,
-                        subtitle: p.agent + ' • ' + p.visites + ' visites',
-                        badge: p.visites + ' visites',
-                        url: 'planning-visites.html?date=' + p.date,
-                        icon: 'bi bi-calendar-check'
-                    });
-                }
-            });
-
-            return results;
+        if (filter === 'unread') {
+            filtered = notificationsData.filter(function(n) { return n.unread === true; });
+        } else if (filter === 'read') {
+            filtered = notificationsData.filter(function(n) { return n.unread === false; });
         }
 
-        function renderSuggestions(results) {
-            var badges = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-            var icons = { visit: 'visit', point: 'point', user: 'user', planning: 'planning' };
-            var labels = { visit: 'Visites', point: 'Points de vente', user: 'Utilisateurs',
-                planning: 'Planning' };
-
-            if (results.length === 0) {
-                suggestionsContainer.innerHTML =
-                    '<div class="suggestion-empty"><i class="bi bi-search" aria-hidden="true"></i>Aucun resultat trouve</div>';
-                suggestionsContainer.classList.add('visible');
-                return;
-            }
-
-            var grouped = { visit: [], point: [], user: [], planning: [] };
-            results.forEach(function(r) { if (grouped[r.type]) grouped[r.type].push(r); });
-
-            var html = '';
-            for (var type in grouped) {
-                var items = grouped[type];
-                if (items.length === 0) continue;
-                html += '<div class="suggestion-group-title">' + labels[type] + '</div>';
-                items.forEach(function(item) {
-                    html +=
-                        '<div class="suggestion-item" data-url="' + item.url + '">' +
-                        '<div class="suggestion-icon ' + icons[item.type] + '">' +
-                        '<i class="' + item.icon + '" aria-hidden="true"></i>' +
-                        '</div>' +
-                        '<div class="suggestion-info">' +
-                        '<div class="suggestion-title">' + item.label + '</div>' +
-                        '<div class="suggestion-subtitle">' + item.subtitle + '</div>' +
-                        '</div>' +
-                        '<span class="suggestion-badge ' + badges[item.type] + '">' + item.badge +
-                        '</span>' +
-                        '</div>';
-                });
-            }
-
-            suggestionsContainer.innerHTML = html;
-            suggestionsContainer.classList.add('visible');
-
-            suggestionsContainer.querySelectorAll('.suggestion-item').forEach(function(el) {
-                el.addEventListener('click', function() {
-                    var url = this.dataset.url;
-                    if (url) window.location.href = url;
-                });
-            });
+        if (filtered.length === 0) {
+            container.innerHTML =
+                '<div style="text-align:center;padding:2rem 0;color:#6c757d;font-family:Segoe UI,sans-serif;">' +
+                '<i class="bi bi-inbox" style="display:block;font-size:2.5rem;margin-bottom:0.5rem;color:#ced4da;"></i>' +
+                'Aucune notification' +
+                '</div>';
+            return;
         }
 
-        var searchTimeout;
-        searchInputGlobal.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            var query = this.value;
-            if (query.length < 2) {
-                suggestionsContainer.classList.remove('visible');
-                return;
-            }
-            searchTimeout = setTimeout(function() {
-                var results = performSearch(query);
-                renderSuggestions(results);
-            }, 250);
+        var html = '';
+        filtered.forEach(function(n) {
+            var unreadClass = n.unread ? 'unread' : '';
+            var iconMap = {
+                'visite': 'bi bi-calendar-event',
+                'rapport': 'bi bi-file-text',
+                'alerte': 'bi bi-exclamation-triangle',
+                'info': 'bi bi-info-circle',
+                'systeme': 'bi bi-gear'
+            };
+            var icon = iconMap[n.type] || 'bi bi-bell';
+
+            html +=
+                '<div class="notification-item ' + unreadClass + '" data-id="' + n.id + '">' +
+                '<div class="notif-icon ' + n.type + '"><i class="' + icon + '" aria-hidden="true"></i></div>' +
+                '<div class="notif-content">' +
+                '<div class="notif-title">' + n.title + '</div>' +
+                '<div class="notif-text">' + n.text + '</div>' +
+                '<div class="notif-date">' + n.date + '</div>' +
+                '</div>' +
+                (n.unread ? '<div class="notif-action"><button class="btn-mark-read" data-id="' + n.id + '">Marquer comme lu</button></div>' :
+                    '') +
+                '</div>';
         });
 
-        document.addEventListener('click', function(e) {
-            var container = document.getElementById('globalSearchContainer');
-            if (container && !container.contains(e.target)) {
-                suggestionsContainer.classList.remove('visible');
-            }
-        });
+        container.innerHTML = html;
 
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                searchInputGlobal.focus();
-                searchInputGlobal.select();
-            }
-            if (e.key === 'Escape') {
-                suggestionsContainer.classList.remove('visible');
-                searchInputGlobal.blur();
-            }
-        });
-
-        var selectedIndex = -1;
-        searchInputGlobal.addEventListener('keydown', function(e) {
-            var items = suggestionsContainer.querySelectorAll('.suggestion-item');
-            if (items.length === 0) return;
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                selectedIndex = (selectedIndex + 1) % items.length;
-                items.forEach(function(el, i) { el.style.background = i === selectedIndex ? '#FFF8F0' : ''; });
-                if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-                items.forEach(function(el, i) { el.style.background = i === selectedIndex ? '#FFF8F0' : ''; });
-                if (selectedIndex >= 0) items[selectedIndex].scrollIntoView({ block: 'nearest' });
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (selectedIndex >= 0 && selectedIndex < items.length) {
-                    var url = items[selectedIndex].dataset.url;
-                    if (url) window.location.href = url;
+        // Evenements pour marquer comme lu
+        container.querySelectorAll('.btn-mark-read').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var id = parseInt(this.dataset.id);
+                var notif = notificationsData.find(function(n) { return n.id === id; });
+                if (notif) {
+                    notif.unread = false;
+                    renderNotifications(currentFilter);
+                    updateBadge();
+                    showToast('Notification marquee comme lue');
                 }
+            });
+        });
+    }
+
+    // ==========================================================
+    // 8. BADGE DE NOTIFICATION (mise a jour)
+    // ==========================================================
+    function updateBadge() {
+        var count = notificationsData.filter(function(n) { return n.unread === true; }).length;
+        var badges = document.querySelectorAll('.badge-notif');
+        badges.forEach(function(badge) {
+            badge.textContent = count;
+            if (count === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'flex';
             }
+        });
+
+        // Mettre a jour le bouton "Tout marquer comme lu"
+        var markAllBtn = document.getElementById('markAllBtn');
+        if (markAllBtn) {
+            markAllBtn.textContent = 'Tout marquer comme lu (' + count + ')';
+            markAllBtn.disabled = count === 0;
+        }
+    }
+
+    // ==========================================================
+    // 9. FILTRES
+    // ==========================================================
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    if (filterBtns.length > 0) {
+        filterBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderNotifications(currentFilter);
+            });
+        });
+    }
+
+    // ==========================================================
+    // 10. TOUT MARQUER COMME LU
+    // ==========================================================
+    var markAllBtn = document.getElementById('markAllBtn');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function() {
+            if (this.disabled) return;
+            notificationsData.forEach(function(n) {
+                n.unread = false;
+            });
+            renderNotifications(currentFilter);
+            updateBadge();
+            showToast('Toutes les notifications ont ete marquees comme lues');
         });
     }
 
@@ -435,5 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================================================
     renderNotifications('all');
     updateBadge();
+    updateActionButton();
+
     console.log('Page Notifications chargee');
+    console.log(notificationsData.length + ' notifications');
 });

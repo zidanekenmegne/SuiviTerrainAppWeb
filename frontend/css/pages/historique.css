@@ -1,8 +1,12 @@
-/**
- * Historique des visites - Styles specifiques
- * Version 1.0
- * Mobile-first
- */
+/* ==========================================================
+   HISTORIQUE - SuiviTerrain
+   Version 1.0 - Mobile-first
+   ========================================================== */
+
+/* ==========================================================
+   IMPORT DES STYLES GLOBAUX
+   ========================================================== */
+@import url('../style.css');
 
 /* ==========================================================
    CONTENU PRINCIPAL
@@ -10,7 +14,7 @@
 .main-content {
     flex: 1 0 auto;
     padding: 0.75rem 1rem 5rem 1rem;
-    background-color: #FFF8F0;
+    background-color: var(--background-cream);
     width: 100%;
 }
 
@@ -20,7 +24,7 @@
 }
 
 /* ==========================================================
-   EN-TETE PC (cache par defaut sur mobile)
+   EN-TÊTE PC (visible > 768px)
    ========================================================== */
 .header-pc {
     display: none;
@@ -30,15 +34,15 @@
 }
 
 .header-pc h1 {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: var(--font-family);
     font-weight: 700;
     font-size: 1.3rem;
-    color: #1a1a1a;
+    color: var(--text-dark);
     margin-bottom: 0;
 }
 
 .header-pc h1 i {
-    color: #8B0000;
+    color: var(--primary-red);
     margin-right: 0.4rem;
 }
 
@@ -56,28 +60,27 @@
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
     border: 1px solid #e0dcd6;
-    background: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
+    background: var(--white);
     font-size: 0.6rem;
     font-weight: 600;
-    color: #6c757d;
+    color: var(--text-gray);
     transition: all 0.2s;
     cursor: pointer;
 }
 
 .filter-bar .filter-btn:hover {
-    border-color: #8B0000;
-    color: #8B0000;
+    border-color: var(--primary-red);
+    color: var(--primary-red);
 }
 
 .filter-bar .filter-btn.active {
-    background-color: #8B0000;
+    background-color: #8B0000;  /* Fond rouge */
     border-color: #8B0000;
-    color: #ffffff;
+    color: #ffffff; 
 }
 
 /* ==========================================================
-   BARRE DE RECHERCHE
+   RECHERCHE
    ========================================================== */
 .search-bar {
     margin-bottom: 0.75rem;
@@ -93,14 +96,13 @@
     padding: 0.45rem 0.65rem 0.45rem 2rem;
     border-radius: 10px;
     border: 1px solid #e0dcd6;
-    font-family: 'Segoe UI', sans-serif;
     font-size: 0.8rem;
-    background-color: #ffffff;
+    background-color: var(--white);
     transition: border-color 0.2s;
 }
 
 .search-bar .search-box input:focus {
-    border-color: #8B0000;
+    border-color: var(--primary-red);
     outline: none;
 }
 
@@ -109,11 +111,11 @@
     left: 0.65rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: var(--text-gray);
 }
 
 /* ==========================================================
-   LISTE DE L'HISTORIQUE (mobile-first, compact)
+   LISTE DE L'HISTORIQUE
    ========================================================== */
 .historique-list {
     display: flex;
@@ -122,8 +124,8 @@
 }
 
 .historique-item {
-    background: #ffffff;
-    border-radius: 12px;
+    background: var(--white);
+    border-radius: var(--radius-md);
     padding: 0.6rem 0.75rem;
     box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
     display: flex;
@@ -145,10 +147,9 @@
 }
 
 .historique-item .hi-info .hi-titre {
-    font-family: 'Segoe UI', sans-serif;
     font-weight: 600;
     font-size: 0.8rem;
-    color: #1a1a1a;
+    color: var(--text-dark);
     margin-bottom: 0.05rem;
     white-space: nowrap;
     overflow: hidden;
@@ -156,9 +157,8 @@
 }
 
 .historique-item .hi-info .hi-detail {
-    font-family: 'Segoe UI', sans-serif;
     font-size: 0.65rem;
-    color: #6c757d;
+    color: var(--text-gray);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -176,118 +176,575 @@
 }
 
 .historique-item .hi-actions .badge-status {
-    font-family: 'Segoe UI', sans-serif;
     font-size: 0.5rem;
-    font-weight: 600;
     padding: 0.15rem 0.4rem;
-    border-radius: 20px;
+}
+
+.historique-item .hi-actions .hi-date {
+    font-size: 0.6rem;
+    color: var(--text-light);
     white-space: nowrap;
 }
 
-.badge-status.realisee { background-color: #28a745; color: #fff; }
-.badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
-.badge-status.retard { background-color: #dc3545; color: #fff; }
-.badge-status.encours { background-color: #17a2b8; color: #fff; }
-.badge-status.planifie { background-color: #6c757d; color: #fff; }
+.badge-status.realisee { border-radius: 8px; background-color: #28a745; color: #fff; }
+.badge-status.attente   { border-radius: 8px; background-color: #ffc107; color: #1a1a1a; }
+.badge-status.retard    { border-radius: 8px; background-color: #dc3545; color: #fff; }
+.badge-status.planifie  { border-radius: 8px; background-color: #6c757d; color: #fff; }
 
-.historique-item .hi-actions .hi-date {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 0.6rem;
-    color: #adb5bd;
-    white-space: nowrap;
+/* ==========================================================
+   BARRE DE NAVIGATION PC
+   ========================================================== */
+.navbar-pc {
+    background-color: var(--primary-red);
+    padding: 0.75rem 1.5rem;
+    display: none;
+    flex-shrink: 0;
+}
+
+.navbar-pc .navbar-pc-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.navbar-pc .navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-pc .navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-pc .navbar-brand img {
+    height: 30px;
+}
+
+.navbar-pc .navbar-brand .first-word {
+    color: white;
+}
+
+.navbar-pc .navbar-brand span:last-child {
+    color: #C9A84C;
+}
+
+.navbar-pc .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+
+.navbar-pc .nav-links li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+.navbar-pc .nav-links li a:hover,
+.navbar-pc .nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+}
+
+.navbar-pc .nav-links li a i {
+    margin-right: 0.4rem;
+}
+
+.navbar-pc .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+}
+
+.navbar-pc .nav-right .notification-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.navbar-pc .nav-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    /* background-color: var(--status-retard); */
+    background-color: #dc3545;
+    color: var(--white);
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-pc .nav-right .dropdown-toggle {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-pc .nav-right .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-pc .nav-right .dropdown-menu {
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: none;
+}
+
+.navbar-pc .nav-right .dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.navbar-pc .nav-right .dropdown-item:hover {
+    background-color: var(--background-cream);
+}
+
+.navbar-pc .nav-right .dropdown-item i {
+    margin-right: 0.5rem;
 }
 
 /* ==========================================================
-   RESPONSIVE : PC (> 768px)
+   RECHERCHE GLOBALE
+   ========================================================== */
+.search-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 0.1rem 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+
+.search-input-wrapper i {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+    transition: color 0.2s;
+}
+
+.search-input-wrapper:focus-within i {
+    color: var(--primary-red);
+}
+
+.search-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.3rem;
+    font-size: 0.85rem;
+    color: var(--white);
+    outline: none;
+    width: 100%;
+    min-width: 140px;
+}
+
+.search-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input-wrapper:focus-within input {
+    color: var(--text-dark);
+}
+
+.search-input-wrapper:focus-within input::placeholder {
+    color: var(--text-gray);
+}
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10000;
+    padding: 0.3rem 0;
+}
+
+.search-suggestions.visible {
+    display: block;
+}
+
+/* ==========================================================
+   BANDEAU HAUT MOBILE
+   ========================================================== */
+.top-header-mobile {
+    background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+    padding: 0.75rem 1rem 0.5rem 1rem;
+    border-radius: 0 0 1px 1px;
+    display: none;
+    flex-shrink: 0;
+}
+
+.top-header-mobile .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header-mobile .menu-hamburger {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+}
+
+.top-header-mobile .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-header-mobile .header-center .page-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.top-header-mobile .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.top-header-mobile .header-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.top-header-mobile .header-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Menu déroulant mobile */
+.mobile-menu-dropdown {
+    background: #8B0000;
+    padding: 0.5rem 1rem 1rem 1rem;
+    border-radius: 0 0 20px 20px;
+    display: none;
+}
+
+.mobile-menu-dropdown.open {
+    display: block;
+}
+
+.mobile-menu-dropdown a {
+    display: block;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.mobile-menu-dropdown a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.mobile-menu-dropdown a i {
+    margin-right: 0.5rem;
+    width: 20px;
+    text-align: center;
+}
+
+.mobile-menu-dropdown hr {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin: 0.25rem 0;
+}
+
+
+/* ==========================================================
+   FOOTER PC
+   ========================================================== */
+.footer-pc {
+    background-color: var(--primary-red);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    flex-shrink: 0;
+    display: none;
+    margin-top: auto;
+}
+
+.footer-pc p {
+    font-size: 0.9rem;
+    color: var(--white);
+    margin-bottom: 0;
+    opacity: 0.85;
+    color: white;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION MOBILE
+   ========================================================== */
+.bottom-nav-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #f0ece6;
+    padding: 0.4rem 0.5rem 0.6rem 0.5rem;
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+    flex-shrink: 0;
+}
+
+.bottom-nav-mobile .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 0.15rem 0.3rem;
+    border-radius: 8px;
+    transition: color 0.2s;
+    position: relative;
+    min-width: 40px;
+}
+
+.bottom-nav-mobile .nav-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.05rem;
+}
+
+.bottom-nav-mobile .nav-item.active {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item:hover {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.bottom-nav-mobile .nav-item-center:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.bottom-nav-mobile .nav-item-center i {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
    ========================================================== */
 @media (min-width: 769px) {
-
+    .navbar-pc {
+        display: flex !important;
+    }
+    .top-header-mobile {
+        display: none !important;
+    }
+    .bottom-nav-mobile {
+        display: none !important;
+    }
+    .footer-pc {
+        display: block !important;
+    }
     .main-content {
         padding: 1.5rem 2rem 2rem 2rem;
     }
-
     .header-pc {
         display: flex !important;
     }
-
     .header-pc h1 {
         font-size: 1.6rem;
     }
-
     .filter-bar .filter-btn {
         font-size: 0.8rem;
         padding: 0.35rem 1.2rem;
     }
-
     .filter-bar {
         gap: 0.4rem;
         margin-bottom: 1rem;
     }
-
     .search-bar .search-box input {
         font-size: 0.95rem;
         padding: 0.6rem 0.9rem 0.6rem 2.5rem;
     }
-
     .historique-item {
         padding: 0.9rem 1.2rem;
     }
-
     .historique-item .hi-info .hi-titre {
         font-size: 0.95rem;
     }
-
     .historique-item .hi-info .hi-detail {
         font-size: 0.8rem;
     }
-
     .historique-item .hi-actions .badge-status {
         font-size: 0.6rem;
         padding: 0.25rem 0.7rem;
     }
-
     .historique-item .hi-actions .hi-date {
         font-size: 0.75rem;
     }
-
-    .historique-item .hi-actions {
-        gap: 0.5rem;
-    }
 }
 
-/* ==========================================================
-   RESPONSIVE : TRES PETITS ECRANS (< 360px)
-   ========================================================== */
-@media (max-width: 360px) {
-
-    .historique-item {
-        padding: 0.4rem 0.5rem;
+@media (max-width: 768px) {
+    .top-header-mobile {
+        display: block !important;
     }
-
+    .bottom-nav-mobile {
+        display: flex !important;
+    }
+    .navbar-pc {
+        display: none !important;
+    }
+    .footer-pc {
+        display: none !important;
+    }
+    .header-pc {
+        display: none !important;
+    }
+    .main-content {
+        padding: 0.75rem 1rem 5rem 1rem;
+    }
+    .historique-item {
+        padding: 0.5rem 0.65rem;
+    }
     .historique-item .hi-info .hi-titre {
         font-size: 0.7rem;
     }
-
     .historique-item .hi-info .hi-detail {
         font-size: 0.55rem;
     }
-
     .historique-item .hi-actions .badge-status {
         font-size: 0.45rem;
         padding: 0.1rem 0.35rem;
     }
-
     .historique-item .hi-actions .hi-date {
         font-size: 0.5rem;
     }
-
     .filter-bar .filter-btn {
         font-size: 0.55rem;
         padding: 0.15rem 0.5rem;
     }
-
     .search-bar .search-box input {
         font-size: 0.7rem;
         padding: 0.35rem 0.5rem 0.35rem 1.8rem;
+    }
+    .bottom-nav-mobile .nav-item {
+        font-size: 0.45rem;
+        min-width: 32px;
+    }
+    .bottom-nav-mobile .nav-item i {
+        font-size: 1rem;
+    }
+    .bottom-nav-mobile .nav-item-center {
+        width: 44px;
+        height: 44px;
+        margin-top: -10px;
+    }
+    .bottom-nav-mobile .nav-item-center i {
+        font-size: 1.3rem;
     }
 }

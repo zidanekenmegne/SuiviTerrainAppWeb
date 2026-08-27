@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tableau de bord - SuiviTerrain</title>
-    <meta name="description" content="Tableau de bord SuiviTerrain - Visualisez vos visites et indicateurs clés.">
+    <meta name="description" content="Tableau de bord SuiviTerrain - Visualisez vos visites et indicateurs cles.">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,900 +13,65 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <style>
-        /* ========================== STYLES GLOBAUX ================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #FFF8F0;
-        }
-
-        /* ========================== BARRE DE NAVIGATION PC (visible sur > 768px) ================================ */
-
-        .navbar-pc {
-            background-color: #8B0000;
-            padding: 0.75rem 1.5rem;
-            display: none; /* caché par défaut, affiché sur PC */
-        }
-
-        .navbar-pc .navbar-brand {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-pc .navbar-brand img {
-            height: 30px;
-        }
-
-        .navbar-pc .navbar-brand span:first-child {
-            color: #ffffff;
-        }
-
-        .navbar-pc .navbar-brand span:last-child {
-            color: #C9A84C;
-        }
-
-        .navbar-pc .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar-pc .nav-links li a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .navbar-pc .nav-links li a:hover,
-        .navbar-pc .nav-links li a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .navbar-pc .nav-links li a i {
-            margin-right: 0.4rem;
-        }
-
-        /* Profil utilisateur + Notification (à droite) */
-        .navbar-pc .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-left: auto;
-        }
-
-        .navbar-pc .nav-right .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .navbar-pc .nav-right .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle {
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .navbar-pc .nav-right .dropdown-toggle i {
-            font-size: 1.2rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-menu {
-            border-radius: 12px;
-            padding: 0.5rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        .navbar-pc .nav-right .dropdown-item {
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 500;
-        }
-
-        .navbar-pc .nav-right .dropdown-item:hover {
-            background-color: #FFF8F0;
-        }
-
-        .navbar-pc .nav-right .dropdown-item i {
-            margin-right: 0.5rem;
-        }
-
-        .navbar-pc .nav-right .dropdown-divider {
-            margin: 0.25rem 0;
-        }
-    
-        /* BANDEAU HAUT MOBILE (visible sur < 768px) */
-
-        .top-header-mobile {
-            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
-            padding: 0.75rem 1rem 0.5rem 1rem;
-            border-radius: 0 0 1px 1px;
-            display: none;
-        }
-
-        .top-header-mobile .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .top-header-mobile .menu-hamburger {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.5rem;
-            padding: 0.25rem;
-        }
-
-        .top-header-mobile .header-center {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .top-header-mobile .header-center .greeting {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            color: #ffffff;
-            margin-bottom: 0;
-        }
-
-        .top-header-mobile .header-center .greeting span {
-            color: #C9A84C;
-        }
-
-        .top-header-mobile .header-center .notification-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.3rem;
-            position: relative;
-            padding: 0.25rem;
-        }
-
-        .top-header-mobile .header-center .notification-btn .badge-notif {
-            position: absolute;
-            top: -4px;
-            right: -6px;
-            background-color: #dc3545;
-            color: #fff;
-            font-size: 0.5rem;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .top-header-mobile .header-spacer {
-            width: 32px;
-        }
-
-        /* Menu déroulant vertical (mobile) */
-        .mobile-menu-dropdown {
-            background: #8B0000;
-            padding: 0.5rem 1rem 1rem 1rem;
-            border-radius: 0 0 20px 20px;
-            display: none;
-        }
-
-        .mobile-menu-dropdown.open {
-            display: block;
-        }
-
-        .mobile-menu-dropdown a {
-            display: block;
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.6rem 0.75rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-
-        .mobile-menu-dropdown a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .mobile-menu-dropdown a i {
-            margin-right: 0.5rem;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* ==========================CONTENU PRINCIPAL (commun PC + Mobile) ==========================) */
-        .main-content {
-            padding: 1.25rem 1.25rem 5rem 1.25rem;
-            background-color: #FFF8F0;
-            min-height: calc(100vh - 72px);
-        }
-
-        /* Résumé du jour */
-        .resume-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .resume-row .resume-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .resume-row .resume-date {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-bottom: 0;
-        }
-
-        /* Entête avec Bonjour + Date + Bouton (PC) */
-        .header-pc {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .header-pc .greeting h2 {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .header-pc .greeting h2 span {
-            color: #8B0000;
-        }
-
-        .header-pc .greeting p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 0;
-        }
-
-        .header-pc .btn-nouvelle-visite {
-            background-color: #8B0000;
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            padding: 0.6rem 1.25rem;
-            transition: background-color 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .header-pc .btn-nouvelle-visite:hover {
-            background-color: #6a0000;
-            color: #ffffff;
-        }
-
-        .header-pc .btn-nouvelle-visite i {
-            margin-right: 0.4rem;
-        }
-
-        /* Cartes statistiques */
-        .stats-row {
-            margin-bottom: 1.25rem;
-        }
-
-        .stats-row .stat-card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 0.75rem 0.25rem;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
-            height: 100%;
-            min-height: 85px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .stats-row .stat-card i {
-            font-size: 1.3rem;
-            margin-bottom: 0.1rem;
-        }
-
-        .stats-row .stat-card .stat-number {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #1a1a1a;
-            line-height: 1.2;
-        }
-
-        .stats-row .stat-card .stat-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .stat-card .icon-total { color: #8B0000; }
-        .stat-card .icon-realise { color: #28a745; }
-        .stat-card .icon-encours { color: #ffc107; }
-        .stat-card .icon-attente { color: #17a2b8; }
-
-        /* Visites récentes */
-        .visites-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .visites-header .visites-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .visites-header .voir-tout {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.75rem;
-            color: #8B0000;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .visites-header .voir-tout:hover {
-            text-decoration: underline;
-        }
-
-        .visites-list .visite-item {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.65rem 0.9rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 1px 6px rgba(139, 0, 0, 0.04);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .visites-list .visite-item .visite-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .visites-list .visite-item .visite-info .visite-titre {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .visites-list .visite-item .visite-info .visite-adresse {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.65rem;
-            color: #6c757d;
-            margin-bottom: 0;
-        }
-
-        .visites-list .visite-item .visite-info .visite-date {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            color: #adb5bd;
-            margin-bottom: 0;
-        }
-
-        .visites-list .visite-item .badge-status {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.55rem;
-            font-weight: 600;
-            padding: 0.2rem 0.55rem;
-            border-radius: 20px;
-            white-space: nowrap;
-            margin-left: 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .badge-status.realise { background-color: #28a745; color: #fff; }
-        .badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
-        .badge-status.retard { background-color: #dc3545; color: #fff; }
-        .badge-status.encours { background-color: #17a2b8; color: #fff; }
-
-        /* Actions rapides */
-        .actions-header {
-            margin-bottom: 0.5rem;
-        }
-
-        .actions-header .actions-title {
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1a1a1a;
-            margin-bottom: 0;
-        }
-
-        .actions-grid .action-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 0.75rem 0.25rem;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
-            height: 100%;
-            min-height: 75px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            color: #1a1a1a;
-            transition: transform 0.2s;
-            border: 1px solid transparent;
-        }
-
-        .actions-grid .action-card:hover {
-            transform: translateY(-2px);
-            border-color: #8B0000;
-        }
-
-        .actions-grid .action-card i {
-            font-size: 1.4rem;
-            color: #8B0000;
-            margin-bottom: 0.1rem;
-        }
-
-        .actions-grid .action-card .action-label {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-        }
-
-        /* ============================BARRE DE NAVIGATION MOBILE (visible sur < 768px)============================== */
-        .bottom-nav-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid #f0ece6;
-            padding: 0.4rem 0.5rem 0.6rem 0.5rem;
-            display: none;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
-        }
-
-        .bottom-nav-mobile .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #6c757d;
-            font-size: 0.5rem;
-            font-weight: 600;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 0.15rem 0.3rem;
-            border-radius: 8px;
-            transition: color 0.2s;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .bottom-nav-mobile .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 0.05rem;
-        }
-
-        .bottom-nav-mobile .nav-item.active {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item:hover {
-            color: #8B0000;
-        }
-
-        .bottom-nav-mobile .nav-item-center {
-            background: #8B0000;
-            color: #fff;
-            border-radius: 50%;
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -14px;
-            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-            transition: transform 0.2s;
-            text-decoration: none;
-        }
-
-        .bottom-nav-mobile .nav-item-center:hover {
-            transform: scale(1.05);
-            color: #fff;
-        }
-
-        .bottom-nav-mobile .nav-item-center i {
-            font-size: 1.6rem;
-            margin-bottom: 0;
-        }
-
-        /* ===========================RESPONSIVE : POINT DE RUPTURE À 768px=============================== */
-        @media (min-width: 769px) {
-            /* PC : afficher la navbar PC */
-            .navbar-pc {
-                display: flex !important;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            /* PC : cacher les éléments mobiles */
-            .top-header-mobile {
-                display: none !important;
-            }
-
-            .bottom-nav-mobile {
-                display: none !important;
-            }
-
-            .mobile-menu-dropdown {
-                display: none !important;
-            }
-
-            /* Ajustements PC */
-            .main-content {
-                padding: 1.5rem 2rem 2rem 2rem;
-                max-width: 1400px;
-                margin: 0 auto;
-            }
-
-            .header-pc .greeting h2 {
-                font-size: 1.5rem;
-            }
-
-            .stats-row .stat-card {
-                min-height: 110px;
-                padding: 1rem 0.5rem;
-            }
-
-            .stats-row .stat-card i {
-                font-size: 1.8rem;
-            }
-
-            .stats-row .stat-card .stat-number {
-                font-size: 1.8rem;
-            }
-
-            .stats-row .stat-card .stat-label {
-                font-size: 0.7rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-titre {
-                font-size: 0.95rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-adresse {
-                font-size: 0.8rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-date {
-                font-size: 0.75rem;
-            }
-
-            .actions-grid .action-card {
-                min-height: 90px;
-                padding: 1rem 0.5rem;
-            }
-
-            .actions-grid .action-card i {
-                font-size: 1.8rem;
-            }
-
-            .actions-grid .action-card .action-label {
-                font-size: 0.7rem;
-            }
-
-            /* Sur PC, on affiche le header PC */
-            .header-pc {
-                display: flex !important;
-            }
-
-            /* Sur PC, on cache le résumé du jour mobile */
-            .resume-row {
-                display: none !important;
-            }
-
-            /* Sur PC, afficher la version PC du titre "Visites récentes" */
-            .visites-header-pc {
-                display: flex !important;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 0.75rem;
-            }
-
-            .visites-header-pc .visites-title {
-                font-family: 'Segoe UI', sans-serif;
-                font-weight: 700;
-                font-size: 1.1rem;
-                color: #1a1a1a;
-                margin-bottom: 0;
-            }
-
-            .visites-header-pc .voir-tout {
-                font-family: 'Segoe UI', sans-serif;
-                font-size: 0.85rem;
-                color: #8B0000;
-                font-weight: 600;
-                text-decoration: none;
-            }
-
-            .visites-header-pc .voir-tout:hover {
-                text-decoration: underline;
-            }
-
-            .actions-header .actions-title {
-                font-size: 1.1rem;
-            }
-
-            /* Espacement PC */
-            .row.g-4 {
-                gap: 1.5rem 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            /* Mobile : afficher les éléments mobiles */
-            .top-header-mobile {
-                display: block !important;
-            }
-
-            .bottom-nav-mobile {
-                display: flex !important;
-            }
-
-            /* Mobile : cacher les éléments PC */
-            .navbar-pc {
-                display: none !important;
-            }
-
-            .header-pc {
-                display: none !important;
-            }
-
-            .visites-header-pc {
-                display: none !important;
-            }
-
-            /* Mobile : ajuster les marges */
-            .main-content {
-                padding: 0.75rem 1rem 5rem 1rem;
-            }
-
-            .stats-row .stat-card {
-                min-height: 72px;
-                padding: 0.4rem 0.15rem;
-            }
-
-            .stats-row .stat-card i {
-                font-size: 1.1rem;
-            }
-
-            .stats-row .stat-card .stat-number {
-                font-size: 1.2rem;
-            }
-
-            .stats-row .stat-card .stat-label {
-                font-size: 0.5rem;
-            }
-
-            .visites-list .visite-item {
-                padding: 0.5rem 0.65rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-titre {
-                font-size: 0.7rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-adresse {
-                font-size: 0.55rem;
-            }
-
-            .visites-list .visite-item .visite-info .visite-date {
-                font-size: 0.5rem;
-            }
-
-            .visites-list .visite-item .badge-status {
-                font-size: 0.45rem;
-                padding: 0.15rem 0.4rem;
-            }
-
-            .actions-grid .action-card {
-                min-height: 65px;
-                padding: 0.4rem 0.15rem;
-            }
-
-            .actions-grid .action-card i {
-                font-size: 1.2rem;
-            }
-
-            .actions-grid .action-card .action-label {
-                font-size: 0.5rem;
-            }
-
-            .bottom-nav-mobile .nav-item {
-                font-size: 0.45rem;
-                min-width: 32px;
-            }
-
-            .bottom-nav-mobile .nav-item i {
-                font-size: 1rem;
-            }
-
-            .bottom-nav-mobile .nav-item-center {
-                width: 44px;
-                height: 44px;
-                margin-top: -10px;
-            }
-
-            .bottom-nav-mobile .nav-item-center i {
-                font-size: 1.3rem;
-            }
-
-            /* Mobile : le résumé du jour est visible */
-            .resume-row {
-                display: flex !important;
-            }
-
-            /* Mobile : le header PC est caché */
-            .header-pc {
-                display: none !important;
-            }
-        }
-
-        /* ============================ ACCESSIBILITÉ ============================== */
-        a:focus-visible,
-        button:focus-visible {
-            outline: 3px solid #C9A84C;
-            outline-offset: 2px;
-        }
-
-        /* ============================ UTILITAIRES ============================== */
-        .text-primary-red { color: #8B0000; }
-        .bg-primary-red { background-color: #8B0000; }
-    </style>
+    <!-- CSS de la page -->
+    <link rel="stylesheet" href="../css/pages/tableau-bord.css">
 </head>
 <body>
 
-<!-- ==========================================================
-BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
-========================================================== -->
-<nav class="navbar-pc" aria-label="Navigation principale">
-    <div style="display: flex; align-items: center; gap: 2rem;">
-        <a class="navbar-brand" href="tableau-bord.html">
-            <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
-            <span>Suivi</span><span>Terrain</span>
-        </a>
-
-        <ul class="nav-links">
-            <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
-            <li><a href="liste-points.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
-            <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
-            <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
-            <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
-            <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
-        </ul>
-    </div>
-
-    <div class="nav-right">
-        <!-- ==========================================================
-        BARRE DE RECHERCHE GÉNÉRALE
-        ========================================================== -->
-        <div class="search-container" id="globalSearchContainer">
-            <div class="search-input-wrapper">
-                <i class="bi bi-search" aria-hidden="true"></i>
-                <input type="text" id="globalSearchInput" placeholder="Rechercher... " aria-label="Recherche globale">
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC (> 768px)
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-pc-inner">
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="tableau-bord.html">
+                    <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                    <span>Suivi</span><span>Terrain</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                    <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                    <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                    <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                    <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                    <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+                </ul>
             </div>
-            <!-- Liste des suggestions -->
-            <div class="search-suggestions" id="globalSearchSuggestions"></div>
+            <div class="nav-right">
+                <div class="search-container" id="globalSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                    </div>
+                    <div class="search-suggestions" id="globalSearchSuggestions"></div>
+                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <!-- Notification -->
-        <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
-            <i class="bi bi-bell" aria-hidden="true"></i>
-            <span class="badge-notif">3</span>
-        </button>
-
-        <!-- Profil -->
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-    <!-- ========================= BANDEAU HAUT MOBILE (< 768px) ================================= -->
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE (< 768px)
+    ========================================================== -->
     <header class="top-header-mobile">
         <div class="header-row">
             <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
                 <i class="bi bi-list" aria-hidden="true"></i>
             </button>
-
             <div class="header-center">
                 <p class="greeting">Bonjour, <span>Zidane</span></p>
                 <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
@@ -914,138 +79,100 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
                     <span class="badge-notif">3</span>
                 </button>
             </div>
-
             <div class="header-spacer"></div>
         </div>
-
-        <!-- Menu déroulant vertical -->
         <div class="mobile-menu-dropdown" id="mobileMenu">
             <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
-            <a href="liste-points.html"><i class="bi bi-shop" aria-hidden="true"></i> Points de vente</a>
+            <a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
             <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
             <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
             <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
             <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
             <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a>
-            <hr style="border-color: rgba(255,255,255,0.15); margin: 0.25rem 0;">
+            <hr>
             <a href="connexion.html" style="color: #dc3545;"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a>
         </div>
     </header>
 
-    <!-- ========================== CONTENU PRINCIPAL ================================ -->
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
     <main class="main-content">
 
-        <!-- ========================== EN-TÊTE PC (visible sur > 768px) ================================ -->
+        <!-- En-tête PC -->
         <div class="header-pc">
             <div class="greeting">
                 <h2>Bonjour, <span>Zidane</span></h2>
-                <p><i class="bi bi-calendar3" aria-hidden="true"></i> <span id="date-actuelle">12 juin 2025</span></p>
+                <p><i class="bi bi-calendar3" aria-hidden="true"></i> <span id="date-actuelle"></span></p>
             </div>
-            <button class="btn-nouvelle-visite">
+            <button class="btn-nouvelle-visite" id="btnNouvelleVisite">
                 <i class="bi bi-plus-circle" aria-hidden="true"></i> Nouvelle visite
             </button>
         </div>
 
-        <!-- ========================== RÉSUMÉ DU JOUR (visible sur < 768px) ================================ -->
+        <!-- Resume du jour (mobile) -->
         <div class="resume-row">
-            <span class="resume-title">Résumé du jour</span>
-            <span class="resume-date"><span id="date-actuelle-mobile">12 juin 2025</span></span>
+            <span class="resume-title">Resume du jour</span>
+            <span class="resume-date"><span id="date-actuelle-mobile"></span></span>
         </div>
 
-        <!-- ========================== CARTES STATISTIQUES ================================ -->
+        <!-- Cartes statistiques -->
         <section class="stats-row" aria-label="Indicateurs statistiques">
             <div class="row g-2">
                 <div class="col-3">
                     <div class="stat-card">
                         <i class="bi bi-calendar-event icon-total" aria-hidden="true"></i>
-                        <span class="stat-number">5</span>
+                        <span class="stat-number" id="totalVisites">5</span>
                         <span class="stat-label">Visites</span>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="stat-card">
                         <i class="bi bi-check-circle icon-realise" aria-hidden="true"></i>
-                        <span class="stat-number">3</span>
-                        <span class="stat-label">Réalisées</span>
+                        <span class="stat-number" id="realiseesCount">3</span>
+                        <span class="stat-label">Realisees</span>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="stat-card">
                         <i class="bi bi-play-circle icon-encours" aria-hidden="true"></i>
-                        <span class="stat-number">1</span>
+                        <span class="stat-number" id="encoursCount">1</span>
                         <span class="stat-label">En cours</span>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="stat-card">
                         <i class="bi bi-clock-history icon-attente" aria-hidden="true"></i>
-                        <span class="stat-number">1</span>
+                        <span class="stat-number" id="attenteCount">1</span>
                         <span class="stat-label">En attente</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ========VISITES RÉCENTES : TITRE + VOIR TOUT (version PC)======== -->
+        <!-- Visites recentes : titre (PC) -->
         <div class="visites-header-pc">
-            <span class="visites-title">Visites récentes</span>
-            <a href="liste-points.html" class="voir-tout">Voir tout</a>
+            <span class="visites-title">Visites recentes</span>
+            <a href="liste-visites.html" class="voir-tout">Voir tout</a>
         </div>
 
-        <!-- ==========================================================
-        VISITES RÉCENTES : TITRE + VOIR TOUT (version Mobile)
-        ========================================================== -->
+        <!-- Visites recentes : titre (Mobile) -->
         <div class="visites-header">
-            <span class="visites-title">Visites récentes</span>
-            <a href="liste-points.html" class="voir-tout">Voir tout</a>
+            <span class="visites-title">Visites recentes</span>
+            <a href="liste-visites.html" class="voir-tout">Voir tout</a>
         </div>
 
-        <!-- =========================== LISTE DES VISITES =============================== -->
-        <section class="visites-list" aria-label="Liste des visites récentes">
-
-            <div class="visite-item">
-                <div class="visite-info">
-                    <p class="visite-titre">Visite commerciale - Magasin A</p>
-                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Centre-ville</p>
-                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 à 08:00</p>
-                </div>
-                <span class="badge-status realise">Réalisée</span>
-            </div>
-
-            <div class="visite-item">
-                <div class="visite-info">
-                    <p class="visite-titre">Collecte de commandes - Client B</p>
-                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Bonamoussadi</p>
-                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 à 10:30</p>
-                </div>
-                <span class="badge-status attente">En attente</span>
-            </div>
-
-            <div class="visite-item">
-                <div class="visite-info">
-                    <p class="visite-titre">Suivi des retours - Magasin C</p>
-                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Akwa</p>
-                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 à 13:00</p>
-                </div>
-                <span class="badge-status retard">En retard</span>
-            </div>
-
-            <div class="visite-item">
-                <div class="visite-info">
-                    <p class="visite-titre">Collecte de paiement - Client D</p>
-                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Bépanda</p>
-                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 à 09:00</p>
-                </div>
-                <span class="badge-status realise">Réalisée</span>
-            </div>
-
+        <!-- Liste des visites -->
+        <section class="visites-list" aria-label="Liste des visites recentes" id="visitesList">
+            <!-- Genere par JavaScript -->
         </section>
 
-        <!-- =============== ACTIONS RAPIDES ================== -->
+        <!-- Actions rapides -->
         <div class="actions-header">
             <span class="actions-title">Actions rapides</span>
         </div>
-
         <section class="actions-grid" aria-label="Actions rapides">
             <div class="row g-2">
                 <div class="col-3">
@@ -1061,7 +188,7 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
                     </a>
                 </div>
                 <div class="col-3">
-                    <a href="liste-points.html" class="action-card">
+                    <a href="points-vente.html" class="action-card">
                         <i class="bi bi-shop" aria-hidden="true"></i>
                         <span class="action-label">Points de vente</span>
                     </a>
@@ -1077,21 +204,35 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
 
     </main>
 
-    <!-- ============================ BARRE DE NAVIGATION MOBILE (< 768px) ==============================-->
+    <!-- ==========================================================
+    FOOTER PC
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+    </footer>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION MOBILE
+    ========================================================== -->
     <nav class="bottom-nav-mobile" aria-label="Navigation principale">
 
-        <a href="liste-points.html" class="nav-item">
+        <a href="tableau-bord.html" class="nav-item">
+            <i class="bi bi-house-door" aria-hidden="true"></i>
+            Accueil
+        </a>
+
+        <a href="liste-visites.html" class="nav-item">
             <i class="bi bi-list-ul" aria-hidden="true"></i>
             Visites
         </a>
 
-        <a href="points-vente.html" class="nav-item">
-            <i class="bi bi-shop" aria-hidden="true"></i>
-            Points de vente
+        <a href="#" class="nav-item-center" id="btnPlusMobile" aria-label="Action selon l'onglet">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
 
-        <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Créer une nouvelle visite">
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        <a href="points-vente.html" class="nav-item active">
+            <i class="bi bi-shop" aria-hidden="true"></i>
+            Points de vente
         </a>
 
         <a href="profil.html" class="nav-item">
@@ -1099,80 +240,15 @@ BARRE DE NAVIGATION PC (> 768px) - AVEC RECHERCHE
             Profil
         </a>
 
-        <a href="carte.html" class="nav-item">
-            <i class="bi bi-map" aria-hidden="true"></i>
-            Carte
-        </a>
-
     </nav>
 
-    <!-- ========================== BOOTSTRAP JS ================================ -->
+    <!-- ==========================================================
+    BOOTSTRAP JS
+    ========================================================== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- ================================ SCRIPTS ========================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // DATE DYNAMIQUE
-
-            const dateSpans = document.querySelectorAll('#date-actuelle, #date-actuelle-mobile');
-            dateSpans.forEach(function(span) {
-                if (span) {
-                    const aujourdhui = new Date();
-                    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                    span.textContent = aujourdhui.toLocaleDateString('fr-FR', options);
-                }
-            });
-
-            // MENU HAMBURGER (mobile)
-
-            const menuBtn = document.getElementById('menuHamburger');
-            const mobileMenu = document.getElementById('mobileMenu');
-
-            if (menuBtn && mobileMenu) {
-                menuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('open');
-                    // Changer l'icône
-                    const icon = menuBtn.querySelector('i');
-                    if (mobileMenu.classList.contains('open')) {
-                        icon.className = 'bi bi-x-lg';
-                    } else {
-                        icon.className = 'bi bi-list';
-                    }
-                });
-            }
-
-            // NOTIFICATIONS (PC + Mobile)
-
-            const notifBtnPC = document.getElementById('notifBtnPC');
-            const notifBtnMobile = document.getElementById('notifBtnMobile');
-
-            function redirigerNotifications() {
-                window.location.href = 'notifications.html';
-            }
-
-            if (notifBtnPC) {
-                notifBtnPC.addEventListener('click', redirigerNotifications);
-            }
-
-            if (notifBtnMobile) {
-                notifBtnMobile.addEventListener('click', redirigerNotifications);
-            }
-
-
-            // BOUTON NOUVELLE VISITE (PC)
-            
-            const btnNouvelleVisite = document.querySelector('.btn-nouvelle-visite');
-            if (btnNouvelleVisite) {
-                btnNouvelleVisite.addEventListener('click', function() {
-                    window.location.href = 'nouvelle-visite.html';
-                });
-            }
-
-            console.log(' Tableau de bord adaptatif chargé');
-            console.log(' Breakpoint : 768px');
-        });
-    </script>
+    <!-- JavaScript de la page -->
+    <script src="../js/pages/tableau-bord.js"></script>
 
 </body>
 </html>
