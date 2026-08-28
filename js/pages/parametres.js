@@ -1,5 +1,5 @@
 // ==========================================================
-// RAPPORTS - SuiviTerrain
+// PARAMETRES - SuiviTerrain
 // Version 1.0
 // ==========================================================
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var btnAction = document.getElementById('btnActionMobile');
 
     function updateActionButton() {
-        // Page Rapports : AUCUNE ACTION D'AJOUT
+        // Page Parametres : AUCUNE ACTION D'AJOUT
         btnAction.style.opacity = '0.4';
         btnAction.style.cursor = 'not-allowed';
         btnAction.style.pointerEvents = 'none';
@@ -84,247 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 5. EXPORT
-    // ==========================================================
-    function handleExport() {
-        showToast('Export en cours...');
-        setTimeout(function() {
-            showToast('Export termine ! (simulation)');
-        }, 1500);
-    }
-
-    var exportBtn = document.getElementById('exportBtn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', handleExport);
-    }
-
-    // ==========================================================
-    // 6. DONNEES
-    // ==========================================================
-    var visitesData = [
-        { titre: 'Visite commerciale - Magasin A', agent: 'Zidane Fredy', date: '2025-06-12', statut: 'realisee' },
-        { titre: 'Collecte de commandes - Client B', agent: 'Sarah Niong', date: '2025-06-11',
-        statut: 'realisee' },
-        { titre: 'Suivi des retours - Magasin C', agent: 'Zidane Fredy', date: '2025-06-10',
-        statut: 'realisee' },
-        { titre: 'Collecte de paiement - Client D', agent: 'Jean Dupont', date: '2025-06-09',
-        statut: 'realisee' },
-        { titre: 'Collecte de paiement - Magasin E', agent: 'Sarah Niong', date: '2025-06-08',
-        statut: 'retard' },
-        { titre: 'Presentation produit - Client F', agent: 'Zidane Fredy', date: '2025-06-07',
-        statut: 'realisee' },
-        { titre: 'Visite de suivi - Magasin G', agent: 'Marie Claire', date: '2025-06-05', statut: 'realisee' },
-        { titre: 'Collecte de commandes - Client H', agent: 'Jean Dupont', date: '2025-06-04',
-        statut: 'retard' },
-        { titre: 'Visite commerciale - Magasin I', agent: 'Zidane Fredy', date: '2025-06-02',
-        statut: 'realisee' },
-        { titre: 'Collecte de paiement - Client J', agent: 'Sarah Niong', date: '2025-06-01',
-        statut: 'realisee' },
-        { titre: 'Visite de prospection - Client K', agent: 'Zidane Fredy', date: '2025-05-30',
-        statut: 'attente' },
-        { titre: 'Collecte de donnees - Client L', agent: 'Marie Claire', date: '2025-05-28',
-        statut: 'realisee' },
-        { titre: 'Visite commerciale - Magasin M', agent: 'Jean Dupont', date: '2025-05-25',
-        statut: 'encours' },
-        { titre: 'Suivi client N', agent: 'Sarah Niong', date: '2025-05-22', statut: 'realisee' },
-        { titre: 'Visite de suivi - Magasin O', agent: 'Zidane Fredy', date: '2025-05-20', statut: 'realisee' }
-    ];
-
-    // ==========================================================
-    // 7. FILTRES
-    // ==========================================================
-    var currentFilter = 'month';
-    var currentAgent = 'all';
-    var currentStatut = 'all';
-
-    function getFilteredData() {
-        var data = visitesData.slice();
-
-        var now = new Date();
-        if (currentFilter === 'month') {
-            var monthStart = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-            data = data.filter(function(item) { return new Date(item.date) >= monthStart; });
-        } else if (currentFilter === 'quarter') {
-            var quarterStart = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-            data = data.filter(function(item) { return new Date(item.date) >= quarterStart; });
-        } else if (currentFilter === 'year') {
-            var yearStart = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-            data = data.filter(function(item) { return new Date(item.date) >= yearStart; });
-        }
-
-        if (currentAgent !== 'all') {
-            data = data.filter(function(item) { return item.agent === currentAgent; });
-        }
-
-        if (currentStatut !== 'all') {
-            data = data.filter(function(item) { return item.statut === currentStatut; });
-        }
-
-        return data;
-    }
-
-    // ==========================================================
-    // 8. RENDU
-    // ==========================================================
-    function renderRapports() {
-        var data = getFilteredData();
-
-        var total = data.length;
-        var realisees = data.filter(function(d) { return d.statut === 'realisee'; }).length;
-        var attente = data.filter(function(d) { return d.statut === 'attente' || d.statut === 'encours'; }).length;
-        var taux = total > 0 ? Math.round((realisees / total) * 100) : 0;
-
-        document.getElementById('totalVisites').textContent = total;
-        document.getElementById('totalRealisees').textContent = realisees;
-        document.getElementById('totalAttente').textContent = attente;
-        document.getElementById('tauxReussite').textContent = taux + '%';
-
-        renderStatutChart(data);
-        renderEvolutionChart(data);
-        renderPerformanceTable(data);
-    }
-
-    // ==========================================================
-    // 9. GRAPHIQUE : REPARTITION PAR STATUT
-    // ==========================================================
-    function renderStatutChart(data) {
-        var container = document.getElementById('statutChart');
-        var statuts = {
-            'realisee': { label: 'Realisees', color: 'vert', count: 0 },
-            'encours': { label: 'En cours', color: 'bleu', count: 0 },
-            'attente': { label: 'En attente', color: 'orange', count: 0 },
-            'retard': { label: 'En retard', color: 'rouge', count: 0 }
-        };
-
-        data.forEach(function(d) {
-            if (statuts[d.statut]) statuts[d.statut].count++;
-        });
-
-        var maxCount = Math.max.apply(null, Object.values(statuts).map(function(s) { return s.count; }));
-        if (maxCount === 0) maxCount = 1;
-
-        var html = '';
-        for (var key in statuts) {
-            var s = statuts[key];
-            var percent = Math.round((s.count / maxCount) * 100);
-            html +=
-                '<div class="chart-bar-item">' +
-                '<span class="bar-label">' + s.label + '</span>' +
-                '<div class="bar-track">' +
-                '<div class="bar-fill ' + s.color + '" style="width:' + percent + '%;"></div>' +
-                '</div>' +
-                '<span class="bar-value">' + s.count + '</span>' +
-                '</div>';
-        }
-        container.innerHTML = html;
-    }
-
-    // ==========================================================
-    // 10. GRAPHIQUE : EVOLUTION MENSUELLE
-    // ==========================================================
-    function renderEvolutionChart(data) {
-        var container = document.getElementById('evolutionChart');
-
-        var months = {};
-        data.forEach(function(d) {
-            var month = d.date.substring(0, 7);
-            if (!months[month]) months[month] = 0;
-            months[month]++;
-        });
-
-        var sortedMonths = Object.keys(months).sort();
-        var maxCount = Math.max.apply(null, Object.values(months));
-        if (maxCount === 0) maxCount = 1;
-
-        var html = '';
-        sortedMonths.forEach(function(month) {
-            var label = month.substring(5, 7) + '/' + month.substring(2, 4);
-            var percent = Math.round((months[month] / maxCount) * 100);
-            html +=
-                '<div class="chart-bar-item">' +
-                '<span class="bar-label">' + label + '</span>' +
-                '<div class="bar-track">' +
-                '<div class="bar-fill rouge" style="width:' + percent + '%;"></div>' +
-                '</div>' +
-                '<span class="bar-value">' + months[month] + '</span>' +
-                '</div>';
-        });
-
-        container.innerHTML = html || '<p style="text-align:center;color:#6c757d;font-size:0.8rem;">Aucune donnee disponible</p>';
-    }
-
-    // ==========================================================
-    // 11. TABLEAU DES PERFORMANCES PAR AGENT
-    // ==========================================================
-    function renderPerformanceTable(data) {
-        var tbody = document.getElementById('performanceBody');
-
-        var agents = {};
-        data.forEach(function(d) {
-            if (!agents[d.agent]) {
-                agents[d.agent] = { total: 0, realisees: 0, attente: 0, retard: 0 };
-            }
-            agents[d.agent].total++;
-            if (d.statut === 'realisee') agents[d.agent].realisees++;
-            else if (d.statut === 'attente' || d.statut === 'encours') agents[d.agent].attente++;
-            else if (d.statut === 'retard') agents[d.agent].retard++;
-        });
-
-        var agentKeys = Object.keys(agents);
-        if (agentKeys.length === 0) {
-            tbody.innerHTML =
-                '<tr><td colspan="6" style="text-align:center;padding:1.5rem 0;color:#6c757d;">Aucune donnee disponible pour cette periode</td></tr>';
-            return;
-        }
-
-        var html = '';
-        agentKeys.forEach(function(agent) {
-            var stats = agents[agent];
-            var taux = stats.total > 0 ? Math.round((stats.realisees / stats.total) * 100) : 0;
-            html +=
-                '<tr>' +
-                '<td><strong>' + agent + '</strong></td>' +
-                '<td>' + stats.total + '</td>' +
-                '<td style="color:#28a745;">' + stats.realisees + '</td>' +
-                '<td style="color:#ffc107;">' + stats.attente + '</td>' +
-                '<td style="color:#dc3545;">' + stats.retard + '</td>' +
-                '<td><strong>' + taux + '%</strong></td>' +
-                '</tr>';
-        });
-
-        tbody.innerHTML = html;
-    }
-
-    // ==========================================================
-    // 12. FILTRES
-    // ==========================================================
-    document.querySelectorAll('.filter-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-            this.classList.add('active');
-            currentFilter = this.dataset.filter;
-            renderRapports();
-        });
-    });
-
-    var agentFilter = document.getElementById('agentFilter');
-    if (agentFilter) {
-        agentFilter.addEventListener('change', function() {
-            currentAgent = this.value;
-            renderRapports();
-        });
-    }
-
-    var statutFilter = document.getElementById('statutFilter');
-    if (statutFilter) {
-        statutFilter.addEventListener('change', function() {
-            currentStatut = this.value;
-            renderRapports();
-        });
-    }
-
-    // ==========================================================
-    // 13. TOAST
+    // 5. TOAST
     // ==========================================================
     function showToast(message) {
         var toast = document.createElement('div');
@@ -340,7 +100,213 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 14. RECHERCHE GLOBALE
+    // 6. DECONNEXION
+    // ==========================================================
+    window.handleLogout = function() {
+        if (confirm('Etes-vous sur de vouloir vous deconnecter ?')) {
+            window.location.href = 'connexion.html';
+        }
+    };
+
+    // ==========================================================
+    // 7. TOGGLES
+    // ==========================================================
+    var notifToggle = document.getElementById('notifToggle');
+    var offlineToggle = document.getElementById('offlineToggle');
+
+    if (notifToggle) {
+        notifToggle.addEventListener('change', function() {
+            var status = this.checked ? 'activees' : 'desactivees';
+            showToast('Notifications ' + status);
+        });
+    }
+
+    if (offlineToggle) {
+        offlineToggle.addEventListener('change', function() {
+            var status = this.checked ? 'active' : 'desactive';
+            showToast('Mode hors ligne ' + status);
+        });
+    }
+
+    // ==========================================================
+    // 8. CHANGER LE MOT DE PASSE
+    // ==========================================================
+    var btnChangePassword = document.getElementById('btnChangePassword');
+    if (btnChangePassword) {
+        btnChangePassword.addEventListener('click', function() {
+            openPasswordModal();
+        });
+    }
+
+    function openPasswordModal() {
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        document.getElementById('newPassword').disabled = true;
+        document.getElementById('confirmPassword').disabled = true;
+        document.getElementById('toggleNewPwd').disabled = true;
+        document.getElementById('toggleConfirmPwd').disabled = true;
+        document.getElementById('savePasswordBtn').disabled = true;
+        document.getElementById('savePasswordBtn').style.opacity = '0.5';
+        document.getElementById('savePasswordBtn').style.cursor = 'not-allowed';
+        document.getElementById('currentPwdError').style.display = 'none';
+        document.getElementById('confirmPwdError').style.display = 'none';
+
+        var modal = new bootstrap.Modal(document.getElementById('changerMotPasseModal'));
+        modal.show();
+    }
+
+    // Toggle mot de passe actuel
+    var toggleCurrentPwd = document.getElementById('toggleCurrentPwd');
+    if (toggleCurrentPwd) {
+        toggleCurrentPwd.addEventListener('click', function() {
+            var input = document.getElementById('currentPassword');
+            var icon = document.getElementById('currentPwdIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        });
+    }
+
+    // Verification du mot de passe actuel
+    var currentPassword = document.getElementById('currentPassword');
+    if (currentPassword) {
+        currentPassword.addEventListener('input', function() {
+            var currentPwd = this.value;
+            var errorEl = document.getElementById('currentPwdError');
+            var newPwd = document.getElementById('newPassword');
+            var confirmPwd = document.getElementById('confirmPassword');
+            var toggleNew = document.getElementById('toggleNewPwd');
+            var toggleConfirm = document.getElementById('toggleConfirmPwd');
+            var saveBtn = document.getElementById('savePasswordBtn');
+
+            if (currentPwd === 'admin123') {
+                errorEl.style.display = 'none';
+                newPwd.disabled = false;
+                confirmPwd.disabled = false;
+                toggleNew.disabled = false;
+                toggleConfirm.disabled = false;
+                newPwd.style.backgroundColor = '#ffffff';
+                confirmPwd.style.backgroundColor = '#ffffff';
+                toggleNew.style.backgroundColor = '#ffffff';
+                toggleConfirm.style.backgroundColor = '#ffffff';
+                checkPasswordMatch();
+            } else if (currentPwd.length > 0) {
+                errorEl.style.display = 'block';
+                newPwd.disabled = true;
+                confirmPwd.disabled = true;
+                toggleNew.disabled = true;
+                toggleConfirm.disabled = true;
+                newPwd.style.backgroundColor = '#f8f5f0';
+                confirmPwd.style.backgroundColor = '#f8f5f0';
+                toggleNew.style.backgroundColor = '#f8f5f0';
+                toggleConfirm.style.backgroundColor = '#f8f5f0';
+                saveBtn.disabled = true;
+                saveBtn.style.opacity = '0.5';
+                saveBtn.style.cursor = 'not-allowed';
+            } else {
+                errorEl.style.display = 'none';
+                newPwd.disabled = true;
+                confirmPwd.disabled = true;
+                toggleNew.disabled = true;
+                toggleConfirm.disabled = true;
+                newPwd.style.backgroundColor = '#f8f5f0';
+                confirmPwd.style.backgroundColor = '#f8f5f0';
+                toggleNew.style.backgroundColor = '#f8f5f0';
+                toggleConfirm.style.backgroundColor = '#f8f5f0';
+                saveBtn.disabled = true;
+                saveBtn.style.opacity = '0.5';
+                saveBtn.style.cursor = 'not-allowed';
+            }
+        });
+    }
+
+    // Toggle nouveau mot de passe
+    var toggleNewPwd = document.getElementById('toggleNewPwd');
+    if (toggleNewPwd) {
+        toggleNewPwd.addEventListener('click', function() {
+            var input = document.getElementById('newPassword');
+            var icon = document.getElementById('newPwdIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        });
+    }
+
+    // Toggle confirmation
+    var toggleConfirmPwd = document.getElementById('toggleConfirmPwd');
+    if (toggleConfirmPwd) {
+        toggleConfirmPwd.addEventListener('click', function() {
+            var input = document.getElementById('confirmPassword');
+            var icon = document.getElementById('confirmPwdIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        });
+    }
+
+    // Verification de la correspondance des mots de passe
+    function checkPasswordMatch() {
+        var newPwd = document.getElementById('newPassword').value;
+        var confirmPwd = document.getElementById('confirmPassword').value;
+        var errorEl = document.getElementById('confirmPwdError');
+        var saveBtn = document.getElementById('savePasswordBtn');
+
+        if (newPwd.length > 0 && confirmPwd.length > 0) {
+            if (newPwd === confirmPwd) {
+                errorEl.style.display = 'none';
+                saveBtn.disabled = false;
+                saveBtn.style.opacity = '1';
+                saveBtn.style.cursor = 'pointer';
+            } else {
+                errorEl.style.display = 'block';
+                saveBtn.disabled = true;
+                saveBtn.style.opacity = '0.5';
+                saveBtn.style.cursor = 'not-allowed';
+            }
+        } else {
+            errorEl.style.display = 'none';
+            saveBtn.disabled = true;
+            saveBtn.style.opacity = '0.5';
+            saveBtn.style.cursor = 'not-allowed';
+        }
+    }
+
+    var newPassword = document.getElementById('newPassword');
+    if (newPassword) {
+        newPassword.addEventListener('input', checkPasswordMatch);
+    }
+
+    var confirmPassword = document.getElementById('confirmPassword');
+    if (confirmPassword) {
+        confirmPassword.addEventListener('input', checkPasswordMatch);
+    }
+
+    // Enregistrer le nouveau mot de passe
+    var savePasswordBtn = document.getElementById('savePasswordBtn');
+    if (savePasswordBtn) {
+        savePasswordBtn.addEventListener('click', function() {
+            if (this.disabled) return;
+            showToast('Mot de passe modifie avec succes');
+            var modal = bootstrap.Modal.getInstance(document.getElementById('changerMotPasseModal'));
+            modal.hide();
+        });
+    }
+
+    // ==========================================================
+    // 9. RECHERCHE GLOBALE
     // ==========================================================
     var searchInputGlobal = document.getElementById('globalSearchInput');
     var suggestionsContainer = document.getElementById('globalSearchSuggestions');
@@ -533,10 +499,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // 15. INITIALISATION
+    // 10. INITIALISATION
     // ==========================================================
-    renderRapports();
     updateActionButton();
 
-    console.log('Page Rapports chargee');
+    console.log('Page Parametres chargee');
 });

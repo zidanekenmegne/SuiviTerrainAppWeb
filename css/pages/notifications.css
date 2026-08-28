@@ -1,10 +1,11 @@
-/* ==========================================================
-   POINTS DE VENTE - SuiviTerrain
-   Version 1.0 - Mobile-first
-   ========================================================== */
+/**
+ * Notifications - Styles specifiques
+ * Version 1.0
+ * Mobile-first
+ */
 
 /* ==========================================================
-   1. CONTENU PRINCIPAL
+   CONTENU PRINCIPAL
    ========================================================== */
 .main-content {
     flex: 1 0 auto;
@@ -13,13 +14,13 @@
     width: 100%;
 }
 
-.points-container {
-    max-width: 1200px;
+.notifications-container {
+    max-width: 900px;
     margin: 0 auto;
 }
 
 /* ==========================================================
-   2. EN-TÊTE PC
+   EN-TETE PC (cache par defaut sur mobile)
    ========================================================== */
 .header-pc {
     display: none;
@@ -41,199 +42,173 @@
     margin-right: 0.4rem;
 }
 
-/* ==========================================================
-   3. ONGLETS
-   ========================================================== */
-.tabs-container {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-}
-
-.tabs-container .tab-btn {
-    flex: 1;
-    padding: 0.5rem 0.8rem;
+.mark-all-btn {
+    background: none;
     border: none;
-    border-radius: 10px;
     font-family: 'Segoe UI', sans-serif;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    color: #8B0000;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.mark-all-btn:hover {
+    opacity: 0.7;
+}
+
+.mark-all-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* ==========================================================
+   FILTRES
+   ========================================================== */
+.filter-bar {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-bar .filter-btn {
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid #e0dcd6;
+    background: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
     color: #6c757d;
-    background: transparent;
     transition: all 0.2s;
     cursor: pointer;
 }
 
-.tabs-container .tab-btn:hover {
-    background-color: #FFF8F0;
-    color: #1a1a1a;
-}
-
-.tabs-container .tab-btn.active {
-    background-color: #8B0000;
-    color: #ffffff;
-}
-
-.tabs-container .tab-btn i {
-    margin-right: 0.4rem;
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-/* ==========================================================
-   4. POINTS HEADER
-   ========================================================== */
-.points-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.points-header .search-bar {
-    flex: 1;
-    min-width: 180px;
-}
-
-.points-header .search-bar .search-box {
-    position: relative;
-    width: 100%;
-}
-
-.points-header .search-bar .search-box input {
-    width: 100%;
-    padding: 0.4rem 0.65rem 0.4rem 2rem;
-    border-radius: 10px;
-    border: 1px solid #e0dcd6;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 0.8rem;
-    background-color: #ffffff;
-    transition: border-color 0.2s;
-}
-
-.points-header .search-bar .search-box input:focus {
+.filter-bar .filter-btn:hover {
     border-color: #8B0000;
-    outline: none;
+    color: #8B0000;
 }
 
-.points-header .search-bar .search-box i {
-    position: absolute;
-    left: 0.65rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-}
-
-.points-header .btn-ajouter {
+.filter-bar .filter-btn.active {
     background-color: #8B0000;
-    border: none;
-    border-radius: 8px;
+    border-color: #8B0000;
     color: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.points-header .btn-ajouter:hover {
-    background-color: #6a0000;
-}
-
-.points-header .btn-ajouter i {
-    margin-right: 0.3rem;
 }
 
 /* ==========================================================
-   5. TABLEAU DES POINTS
+   LISTE DES NOTIFICATIONS
    ========================================================== */
-.table-responsive-custom {
-    overflow-x: auto;
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification-item {
     background: #ffffff;
     border-radius: 12px;
-    padding: 0.5rem;
-    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
-}
-
-.table-custom {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.table-custom thead {
-    border-bottom: 2px solid #f0ece6;
-}
-
-.table-custom thead th {
-    text-align: left;
-    padding: 0.5rem 0.6rem;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.table-custom tbody td {
-    padding: 0.5rem 0.6rem;
-    font-size: 0.8rem;
-    color: #1a1a1a;
-    border-bottom: 1px solid #f8f5f0;
-    vertical-align: middle;
-}
-
-.table-custom tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.table-custom tbody tr:hover {
-    background-color: #FFF8F0;
-}
-
-.table-custom .btn-detail {
-    background: #8B0000;
-    border: none;
-    border-radius: 6px;
-    color: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    font-size: 0.65rem;
-    padding: 0.2rem 0.7rem;
-    transition: background-color 0.2s;
+    padding: 0.6rem 0.75rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.04);
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border-left: 4px solid transparent;
     cursor: pointer;
 }
 
-.table-custom .btn-detail:hover {
-    background-color: #6a0000;
+.notification-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.06);
 }
 
-.categorie-pastille {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
+.notification-item.unread {
+    border-left-color: #8B0000;
+}
+
+.notification-item.unread .notif-title {
+    font-weight: 700;
+}
+
+.notification-item .notif-icon {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    vertical-align: middle;
-    margin-right: 0.3rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.7rem;
+    margin-top: 0.05rem;
+}
+
+.notification-item .notif-icon.visite {
+    background-color: #8B0000;
+}
+.notification-item .notif-icon.rapport {
+    background-color: #28a745;
+}
+.notification-item .notif-icon.alerte {
+    background-color: #dc3545;
+}
+.notification-item .notif-icon.info {
+    background-color: #17a2b8;
+}
+.notification-item .notif-icon.systeme {
+    background-color: #ffc107;
+    color: #1a1a1a;
+}
+
+.notification-item .notif-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-item .notif-content .notif-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #1a1a1a;
+    margin-bottom: 0.05rem;
+}
+
+.notification-item .notif-content .notif-text {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.65rem;
+    color: #6c757d;
+    margin-bottom: 0.05rem;
+}
+
+.notification-item .notif-content .notif-date {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.55rem;
+    color: #adb5bd;
+}
+
+.notification-item .notif-action {
+    flex-shrink: 0;
+    margin-left: 0.3rem;
+}
+
+.notification-item .notif-action .btn-mark-read {
+    background: none;
+    border: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: #8B0000;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.notification-item .notif-action .btn-mark-read:hover {
+    opacity: 0.6;
 }
 
 /* ==========================================================
-   6. BARRE DE NAVIGATION PC
+   BARRE DE NAVIGATION PC
    ========================================================== */
 .navbar-pc {
     background-color: #8B0000;
@@ -242,16 +217,7 @@
     flex-shrink: 0;
 }
 
-.navbar-pc .navbar-pc-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.navbar-pc .navbar-brand-wrapper {
+.navbar-pc .navbar-left {
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -272,11 +238,11 @@
     height: 30px;
 }
 
-.navbar-pc .navbar-brand span:first-child {
+.navbar-pc .navbar-brand .brand-suivi {
     color: #ffffff;
 }
 
-.navbar-pc .navbar-brand span:last-child {
+.navbar-pc .navbar-brand .brand-terrain {
     color: #C9A84C;
 }
 
@@ -343,8 +309,9 @@
 }
 
 .navbar-pc .nav-right .dropdown-toggle {
+    background: none;
+    border: none;
     color: #ffffff;
-    text-decoration: none;
     font-family: 'Segoe UI', sans-serif;
     font-weight: 600;
     padding: 0.5rem 0.75rem;
@@ -353,8 +320,6 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    background: none;
-    border: none;
 }
 
 .navbar-pc .nav-right .dropdown-toggle:hover {
@@ -366,6 +331,7 @@
     padding: 0.5rem;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     border: none;
+    position: absolute;
     background: #ffffff;
     min-width: 180px;
 }
@@ -394,7 +360,7 @@
 }
 
 /* ==========================================================
-   7. RECHERCHE GLOBALE
+   RECHERCHE GLOBALE
    ========================================================== */
 .search-container {
     position: relative;
@@ -486,7 +452,7 @@
 }
 
 /* ==========================================================
-   8. BANDEAU HAUT MOBILE + MENU HAMBURGER
+   BANDEAU HAUT MOBILE
    ========================================================== */
 .top-header-mobile {
     background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
@@ -521,7 +487,7 @@
 .top-header-mobile .header-center .page-title {
     font-family: 'Segoe UI', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #ffffff;
     margin-bottom: 0;
 }
@@ -595,7 +561,7 @@
 }
 
 /* ==========================================================
-   9. FOOTER PC
+   FOOTER PC
    ========================================================== */
 .footer-pc {
     background-color: #8B0000;
@@ -615,7 +581,7 @@
 }
 
 /* ==========================================================
-   10. BARRE DE NAVIGATION MOBILE
+   BARRE DE NAVIGATION MOBILE
    ========================================================== */
 .bottom-nav-mobile {
     position: fixed;
@@ -638,7 +604,7 @@
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: #6c757d;
+    color: black;
     font-size: 0.5rem;
     font-weight: 600;
     font-family: 'Segoe UI', sans-serif;
@@ -694,254 +660,10 @@
 }
 
 /* ==========================================================
-   MODALES
-   ========================================================== */
-
-/* Conteneur de la photo dans la modale detail */
-.modal-photo-wrapper {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 1rem auto;
-}
-
-.modal-photo-wrapper .photo-point {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-    background: #f0ece6;
-    border: 2px solid #f0ece6;
-}
-
-.modal-photo-wrapper .photo-badge {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background: #8B0000;
-    border: 3px solid #ffffff;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
-}
-
-.modal-photo-wrapper .photo-badge:hover {
-    background-color: #6a0000;
-}
-
-#photoInput {
-    display: none;
-}
-
-/* Lignes d'information dans la modale detail */
-.modal-body .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid #f8f5f0;
-}
-
-.modal-body .info-row:last-child {
-    border-bottom: none;
-}
-
-.modal-body .info-row .info-label {
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: #6c757d;
-}
-
-.modal-body .info-row .info-value {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 0.85rem;
-    color: #1a1a1a;
-    font-weight: 500;
-    text-align: right;
-    flex: 1;
-    margin-left: 1rem;
-    word-break: break-word;
-}
-
-.modal-body .info-row .info-value input,
-.modal-body .info-row .info-value select {
-    width: 100%;
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #e0dcd6;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 0.85rem;
-    background-color: #ffffff;
-}
-
-.modal-body .info-row .info-value input:focus,
-.modal-body .info-row .info-value select:focus {
-    border-color: #8B0000;
-    outline: none;
-}
-
-.modal-body .info-row .info-value input:disabled,
-.modal-body .info-row .info-value select:disabled {
-    background-color: #f8f5f0;
-    border: none;
-    color: #1a1a1a;
-    font-weight: 500;
-    padding: 0.3rem 0;
-}
-
-/* Boutons de la modale detail */
-.modal-footer .btn-modifier {
-    background-color: #8B0000;
-    border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-
-.modal-footer .btn-modifier:hover {
-    background-color: #6a0000;
-}
-
-.modal-footer .btn-retour {
-    background: transparent;
-    border: 2px solid #6c757d;
-    border-radius: 8px;
-    color: #6c757d;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.modal-footer .btn-retour:hover {
-    background-color: #6c757d;
-    color: #ffffff;
-}
-
-.modal-footer .btn-enregistrer {
-    background-color: #28a745;
-    border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-
-.modal-footer .btn-enregistrer:hover {
-    background-color: #1e7e34;
-}
-
-.modal-footer .btn-annuler {
-    background: transparent;
-    border: 2px solid #dc3545;
-    border-radius: 8px;
-    color: #dc3545;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.modal-footer .btn-annuler:hover {
-    background-color: #dc3545;
-    color: #ffffff;
-}
-
-.modal-footer .btn-danger {
-    background-color: #dc3545;
-    border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    padding: 0.5rem 1.5rem;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-
-.modal-footer .btn-danger:hover {
-    background-color: #b02a37;
-}
-
-/* Modales Ajouter Point et Categorie */
-.modal-content {
-    border-radius: 16px;
-    overflow: hidden;
-    border: none;
-}
-
-.modal-header {
-    border-bottom: 1px solid #f0ece6;
-    padding: 1rem 1.5rem;
-}
-
-.modal-header .modal-title {
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #1a1a1a;
-}
-
-.modal-header .modal-title i {
-    color: #8B0000;
-    margin-right: 0.4rem;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.modal-body .form-label {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #1a1a1a;
-}
-
-.modal-body .form-control,
-.modal-body .form-select {
-    border-radius: 10px;
-    border: 1px solid #e0dcd6;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.75rem;
-}
-
-.modal-body .form-control:focus,
-.modal-body .form-select:focus {
-    border-color: #8B0000;
-    box-shadow: none;
-}
-
-.modal-footer {
-    border-top: 1px solid #f0ece6;
-    padding: 1rem 1.5rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-/* ==========================================================
-   11. RESPONSIVE
+   RESPONSIVE : PC (> 768px)
    ========================================================== */
 @media (min-width: 769px) {
+
     .navbar-pc {
         display: flex !important;
         align-items: center;
@@ -975,38 +697,49 @@
         font-size: 1.6rem;
     }
 
-    .tabs-container .tab-btn {
+    .filter-bar .filter-btn {
+        font-size: 0.8rem;
+        padding: 0.35rem 1.2rem;
+    }
+
+    .filter-bar {
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .notification-item {
+        padding: 1rem 1.25rem;
+        gap: 0.75rem;
+    }
+
+    .notification-item .notif-icon {
+        width: 36px;
+        height: 36px;
         font-size: 0.9rem;
-        padding: 0.6rem 1.2rem;
     }
 
-    .points-header .btn-ajouter {
-        padding: 0.5rem 1.2rem;
-        font-size: 0.85rem;
+    .notification-item .notif-content .notif-title {
+        font-size: 0.9rem;
     }
 
-    .table-custom thead th {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.75rem;
+    .notification-item .notif-content .notif-text {
+        font-size: 0.8rem;
     }
 
-    .table-custom tbody td {
-        padding: 0.6rem 0.8rem;
-        font-size: 0.85rem;
-    }
-
-    .table-custom .btn-detail {
+    .notification-item .notif-content .notif-date {
         font-size: 0.7rem;
-        padding: 0.25rem 0.8rem;
     }
 
-    .points-header .search-bar .search-box input {
-        font-size: 0.85rem;
-        padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+    .notification-item .notif-action .btn-mark-read {
+        font-size: 0.6rem;
     }
 }
 
+/* ==========================================================
+   RESPONSIVE : MOBILE (< 768px)
+   ========================================================== */
 @media (max-width: 768px) {
+
     .top-header-mobile {
         display: block !important;
     }
@@ -1031,40 +764,30 @@
         padding: 0.75rem 1rem 5rem 1rem;
     }
 
-    .table-custom .col-contact,
-    .table-custom .col-adresse,
-    .table-custom tbody td:nth-child(3),
-    .table-custom tbody td:nth-child(4) {
-        display: none !important;
+    .notification-item {
+        padding: 0.5rem 0.65rem;
     }
 
-    .tabs-container {
-        flex-direction: row;
-        gap: 0.3rem;
-        padding: 0.3rem;
-    }
-
-    .tabs-container .tab-btn {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.6rem;
-    }
-
-    .table-responsive-custom {
-        padding: 0.25rem;
-    }
-
-    .table-custom thead th {
-        font-size: 0.65rem;
-        padding: 0.4rem 0.5rem;
-    }
-
-    .table-custom tbody td {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.5rem;
-    }
-
-    .table-custom .btn-detail {
+    .notification-item .notif-icon {
+        width: 28px;
+        height: 28px;
         font-size: 0.6rem;
+    }
+
+    .notification-item .notif-content .notif-title {
+        font-size: 0.7rem;
+    }
+
+    .notification-item .notif-content .notif-text {
+        font-size: 0.6rem;
+    }
+
+    .notification-item .notif-content .notif-date {
+        font-size: 0.5rem;
+    }
+
+    .filter-bar .filter-btn {
+        font-size: 0.55rem;
         padding: 0.15rem 0.5rem;
     }
 
@@ -1088,35 +811,36 @@
     }
 }
 
+/* ==========================================================
+   RESPONSIVE : TRES PETITS ECRANS (< 360px)
+   ========================================================== */
 @media (max-width: 360px) {
-    .tabs-container .tab-btn {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.4rem;
+
+    .notification-item {
+        padding: 0.4rem 0.5rem;
     }
 
-    .table-custom thead th {
+    .notification-item .notif-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0.5rem;
+    }
+
+    .notification-item .notif-content .notif-title {
+        font-size: 0.65rem;
+    }
+
+    .notification-item .notif-content .notif-text {
         font-size: 0.55rem;
-        padding: 0.3rem 0.3rem;
     }
 
-    .table-custom tbody td {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.3rem;
+    .notification-item .notif-content .notif-date {
+        font-size: 0.45rem;
     }
 
-    .table-custom .btn-detail {
-        font-size: 0.55rem;
-        padding: 0.15rem 0.4rem;
-    }
-
-    .points-header .btn-ajouter {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.5rem;
-    }
-
-    .points-header .search-bar .search-box input {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.5rem 0.3rem 1.8rem;
+    .filter-bar .filter-btn {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.4rem;
     }
 
     .bottom-nav-mobile .nav-item {
@@ -1140,7 +864,7 @@
 }
 
 /* ==========================================================
-   12. ACCESSIBILITE
+   ACCESSIBILITE
    ========================================================== */
 a:focus-visible,
 button:focus-visible,

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestion des utilisateurs - SuiviTerrain</title>
+    <meta name="description" content="Gerez les utilisateurs de votre application SuiviTerrain.">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS de la page -->
+    <link rel="stylesheet" href="../css/pages/gestion-utilisateurs.css">
+</head>
+<body>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC (> 768px)
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-pc-inner">
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="tableau-bord.html">
+                    <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                    <span>Suivi</span><span>Terrain</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                    <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                    <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                    <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                    <li><a href="gestion-utilisateurs.html" class="active"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                    <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-container" id="globalSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                    </div>
+                    <div class="search-suggestions" id="globalSearchSuggestions"></div>
+                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE (< 768px)
+    ========================================================== -->
+    <header class="top-header-mobile">
+        <div class="header-row">
+            <button class="back-button" id="backButton" aria-label="Retour">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            </button>
+            <div class="header-center">
+                <span class="page-title">Gestion des utilisateurs</span>
+            </div>
+            <div class="header-right">
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
+    <main class="main-content">
+
+        <div class="header-pc">
+            <h1><i class="bi bi-people" aria-hidden="true"></i> Gestion des utilisateurs</h1>
+        </div>
+
+        <!-- Onglets -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="tab-liste" id="tabListeBtn">
+                <i class="bi bi-list-ul" aria-hidden="true"></i> Utilisateurs
+            </button>
+            <button class="tab-btn" data-tab="tab-ajout" id="tabAjoutBtn">
+                <i class="bi bi-person-plus" aria-hidden="true"></i> Ajouter un utilisateur
+            </button>
+        </div>
+
+        <!-- Panneau 1 : Liste des utilisateurs -->
+        <div class="tab-panel active" id="tab-liste">
+            <div class="search-bar">
+                <div class="search-box">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="text" id="searchUser" placeholder="Rechercher un utilisateur...">
+                </div>
+            </div>
+            <div class="table-responsive-custom">
+                <table class="table-custom" id="userTable">
+                    <thead>
+                        <tr>
+                            <th data-sort="nom">Nom <i class="bi bi-arrow-up" aria-hidden="true"></i></th>
+                            <th data-sort="email">Email <i class="bi bi-arrow-up" aria-hidden="true"></i></th>
+                            <th data-sort="role">Role <i class="bi bi-arrow-up" aria-hidden="true"></i></th>
+                            <th data-sort="statut">Statut <i class="bi bi-arrow-up" aria-hidden="true"></i></th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panneau 2 : Ajouter un utilisateur -->
+        <div class="tab-panel" id="tab-ajout">
+            <div class="form-container">
+                <div class="form-title"><i class="bi bi-person-plus" aria-hidden="true"></i> Nouvel utilisateur</div>
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label for="nomComplet" class="form-label">Nom complet</label>
+                        <input type="text" class="form-control" id="nomComplet" placeholder="Entrez le nom complet" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailUser" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="emailUser" placeholder="Entrez l'adresse email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telephoneUser" class="form-label">Telephone</label>
+                        <input type="tel" class="form-control" id="telephoneUser" placeholder="Entrez le numero de telephone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="roleUser" class="form-label">Role</label>
+                        <select class="form-select" id="roleUser">
+                            <option value="agent">Agent</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="zoneUser" class="form-label">Zone d'intervention</label>
+                        <input type="text" class="form-control" id="zoneUser" placeholder="Ex: Douala, Cameroun">
+                    </div>
+                    <div class="button-group mt-3">
+                        <button type="button" class="btn-cancel" id="btnCancelAdd">Annuler</button>
+                        <button type="submit" class="btn-submit"><i class="bi bi-plus-circle" aria-hidden="true"></i> Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==========================================================
+    FOOTER PC
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Application de gestion des visites</p>
+    </footer>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION MOBILE (< 768px)
+    ========================================================== -->
+    <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+        <a href="tableau-bord.html" class="nav-item">
+            <i class="bi bi-house-door" aria-hidden="true"></i> Accueil
+        </a>
+        <a href="liste-visites.html" class="nav-item">
+            <i class="bi bi-list-ul" aria-hidden="true"></i> Visites
+        </a>
+        <a href="#" class="nav-item-center" id="btnActionMobile" aria-label="Action contextuelle">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </a>
+        <a href="points-vente.html" class="nav-item">
+            <i class="bi bi-shop" aria-hidden="true"></i> Points de vente
+        </a>
+        <a href="profil.html" class="nav-item">
+            <i class="bi bi-person" aria-hidden="true"></i> Profil
+        </a>
+    </nav>
+
+    <!-- ==========================================================
+    BOOTSTRAP JS
+    ========================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript de la page -->
+    <script src="../js/pages/gestion-utilisateurs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,913 @@
+/* ==========================================================
+   TABLEAU DE BORD - SuiviTerrain
+   ========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FFF8F0;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION PC
+   ========================================================== */
+.navbar-pc {
+    background-color: #8B0000;
+    padding: 0.75rem 1.5rem;
+    display: none;
+}
+
+.navbar-pc .navbar-pc-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.navbar-pc .navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-pc .navbar-brand {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-pc .navbar-brand img {
+    height: 30px;
+}
+
+.navbar-pc .navbar-brand span:first-child {
+    color: #ffffff;
+}
+
+.navbar-pc .navbar-brand span:last-child {
+    color: #C9A84C;
+}
+
+.navbar-pc .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-pc .nav-links li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+.navbar-pc .nav-links li a:hover,
+.navbar-pc .nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.navbar-pc .nav-links li a i {
+    margin-right: 0.4rem;
+}
+
+.navbar-pc .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-pc .nav-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.navbar-pc .nav-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-pc .nav-right .dropdown-toggle {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-pc .nav-right .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-pc .nav-right .dropdown-menu {
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: none;
+}
+
+.navbar-pc .nav-right .dropdown-item {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 500;
+}
+
+.navbar-pc .nav-right .dropdown-item:hover {
+    background-color: #FFF8F0;
+}
+
+.navbar-pc .nav-right .dropdown-item i {
+    margin-right: 0.5rem;
+}
+
+/* ==========================================================
+   RECHERCHE GLOBALE
+   ========================================================== */
+.search-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.1rem 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+
+.search-input-wrapper i {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+    transition: color 0.2s;
+}
+
+.search-input-wrapper:focus-within i {
+    color: #8B0000;
+}
+
+.search-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.3rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    color: #ffffff;
+    outline: none;
+    width: 100%;
+    min-width: 140px;
+}
+
+.search-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input-wrapper:focus-within input {
+    color: #1a1a1a;
+}
+
+.search-input-wrapper:focus-within input::placeholder {
+    color: #6c757d;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10000;
+    padding: 0.3rem 0;
+}
+
+.search-suggestions.visible {
+    display: block;
+}
+
+.search-suggestions .suggestion-empty {
+    padding: 1.5rem 0.8rem;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.search-suggestions .suggestion-empty i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+    color: #ced4da;
+}
+
+/* ==========================================================
+   BANDEAU HAUT MOBILE
+   ========================================================== */
+.top-header-mobile {
+    background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+    padding: 0.75rem 1rem 0.5rem 1rem;
+    border-radius: 0 0 1px 1px;
+    display: none;
+}
+
+.top-header-mobile .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header-mobile .menu-hamburger {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+}
+
+.top-header-mobile .header-center {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.top-header-mobile .header-center .greeting {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.top-header-mobile .header-center .greeting span {
+    color: #C9A84C;
+}
+
+.top-header-mobile .header-center .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.top-header-mobile .header-center .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-header-mobile .header-spacer {
+    width: 32px;
+}
+
+.mobile-menu-dropdown {
+    background: #8B0000;
+    padding: 0.5rem 1rem 1rem 1rem;
+    border-radius: 0 0 20px 20px;
+    display: none;
+}
+
+.mobile-menu-dropdown.open {
+    display: block;
+}
+
+.mobile-menu-dropdown a {
+    display: block;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.mobile-menu-dropdown a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.mobile-menu-dropdown a i {
+    margin-right: 0.5rem;
+    width: 20px;
+    text-align: center;
+}
+
+.mobile-menu-dropdown hr {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin: 0.25rem 0;
+}
+
+/* ==========================================================
+   CONTENU PRINCIPAL
+   ========================================================== */
+.main-content {
+    padding: 1.25rem 1.25rem 5rem 1.25rem;
+    background-color: #FFF8F0;
+    min-height: calc(100vh - 72px);
+}
+
+.resume-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.resume-row .resume-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.resume-row .resume-date {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.header-pc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.header-pc .greeting h2 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.header-pc .greeting h2 span {
+    color: #8B0000;
+}
+
+.header-pc .greeting p {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.header-pc .btn-nouvelle-visite {
+    background-color: #8B0000;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.header-pc .btn-nouvelle-visite:hover {
+    background-color: #6a0000;
+    color: #ffffff;
+}
+
+.header-pc .btn-nouvelle-visite i {
+    margin-right: 0.4rem;
+}
+
+/* Cartes statistiques */
+.stats-row {
+    margin-bottom: 1.25rem;
+}
+
+.stats-row .stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 0.75rem 0.25rem;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
+    height: 100%;
+    min-height: 85px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-row .stat-card i {
+    font-size: 1.3rem;
+    margin-bottom: 0.1rem;
+}
+
+.stats-row .stat-card .stat-number {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    line-height: 1.2;
+}
+
+.stats-row .stat-card .stat-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.stat-card .icon-total { color: #8B0000; }
+.stat-card .icon-realise { color: #28a745; }
+.stat-card .icon-encours { color: #ffc107; }
+.stat-card .icon-attente { color: #17a2b8; }
+
+/* Visites recentes */
+.visites-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.visites-header .visites-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.visites-header .voir-tout {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: #8B0000;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.visites-header .voir-tout:hover {
+    text-decoration: underline;
+}
+
+.visites-list .visite-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.65rem 0.9rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 6px rgba(139, 0, 0, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.visites-list .visite-item:hover {
+    transform: translateX(4px);
+}
+
+.visites-list .visite-item .visite-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.visites-list .visite-item .visite-info .visite-titre {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.visites-list .visite-item .visite-info .visite-adresse {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.65rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.visites-list .visite-item .visite-info .visite-date {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    color: #adb5bd;
+    margin-bottom: 0;
+}
+
+.visites-list .visite-item .badge-status {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.badge-status.realise { background-color: #28a745; color: #fff; }
+.badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
+.badge-status.retard { background-color: #dc3545; color: #fff; }
+.badge-status.encours { background-color: #17a2b8; color: #fff; }
+
+/* Actions rapides */
+.actions-header {
+    margin-bottom: 0.5rem;
+}
+
+.actions-header .actions-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.actions-grid .action-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.75rem 0.25rem;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
+    height: 100%;
+    min-height: 75px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: transform 0.2s;
+    border: 1px solid transparent;
+}
+
+.actions-grid .action-card:hover {
+    transform: translateY(-2px);
+    border-color: #8B0000;
+}
+
+.actions-grid .action-card i {
+    font-size: 1.4rem;
+    color: #8B0000;
+    margin-bottom: 0.1rem;
+}
+
+.actions-grid .action-card .action-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+/* ==========================================================
+   FOOTER PC
+   ========================================================== */
+.footer-pc {
+    background-color: #8B0000;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    flex-shrink: 0;
+    display: none;
+    margin-top: auto;
+}
+
+.footer-pc p {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin-bottom: 0;
+    opacity: 0.85;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION MOBILE
+   ========================================================== */
+.bottom-nav-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #f0ece6;
+    padding: 0.4rem 0.5rem 0.6rem 0.5rem;
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+}
+
+.bottom-nav-mobile .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 0.15rem 0.3rem;
+    border-radius: 8px;
+    transition: color 0.2s;
+    position: relative;
+    min-width: 40px;
+}
+
+.bottom-nav-mobile .nav-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.05rem;
+}
+
+.bottom-nav-mobile .nav-item.active {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item:hover {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.bottom-nav-mobile .nav-item-center:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.bottom-nav-mobile .nav-item-center i {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+    .navbar-pc {
+        display: flex !important;
+    }
+    .top-header-mobile {
+        display: none !important;
+    }
+    .bottom-nav-mobile {
+        display: none !important;
+    }
+    .footer-pc {
+        display: block !important;
+    }
+    .main-content {
+        padding: 1.5rem 2rem 2rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    .header-pc {
+        display: flex !important;
+    }
+    .header-pc .greeting h2 {
+        font-size: 1.5rem;
+    }
+    .resume-row {
+        display: none !important;
+    }
+    .visites-header {
+        display: none !important;
+    }
+    .visites-header-pc {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    .visites-header-pc .visites-title {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1a1a1a;
+        margin-bottom: 0;
+    }
+    .visites-header-pc .voir-tout {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.85rem;
+        color: #8B0000;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .visites-header-pc .voir-tout:hover {
+        text-decoration: underline;
+    }
+    .stats-row .stat-card {
+        min-height: 110px;
+        padding: 1rem 0.5rem;
+    }
+    .stats-row .stat-card i {
+        font-size: 1.8rem;
+    }
+    .stats-row .stat-card .stat-number {
+        font-size: 1.8rem;
+    }
+    .stats-row .stat-card .stat-label {
+        font-size: 0.7rem;
+    }
+    .visites-list .visite-item .visite-info .visite-titre {
+        font-size: 0.95rem;
+    }
+    .visites-list .visite-item .visite-info .visite-adresse {
+        font-size: 0.8rem;
+    }
+    .visites-list .visite-item .visite-info .visite-date {
+        font-size: 0.75rem;
+    }
+    .actions-grid .action-card {
+        min-height: 90px;
+        padding: 1rem 0.5rem;
+    }
+    .actions-grid .action-card i {
+        font-size: 1.8rem;
+    }
+    .actions-grid .action-card .action-label {
+        font-size: 0.7rem;
+    }
+    .actions-header .actions-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-header-mobile {
+        display: block !important;
+    }
+    .bottom-nav-mobile {
+        display: flex !important;
+    }
+    .navbar-pc {
+        display: none !important;
+    }
+    .footer-pc {
+        display: none !important;
+    }
+    .header-pc {
+        display: none !important;
+    }
+    .visites-header-pc {
+        display: none !important;
+    }
+    .main-content {
+        padding: 0.75rem 1rem 5rem 1rem;
+    }
+    .resume-row {
+        display: flex !important;
+    }
+    .visites-header {
+        display: flex !important;
+    }
+    .stats-row .stat-card {
+        min-height: 72px;
+        padding: 0.4rem 0.15rem;
+    }
+    .stats-row .stat-card i {
+        font-size: 1.1rem;
+    }
+    .stats-row .stat-card .stat-number {
+        font-size: 1.2rem;
+    }
+    .stats-row .stat-card .stat-label {
+        font-size: 0.5rem;
+    }
+    .visites-list .visite-item {
+        padding: 0.5rem 0.65rem;
+    }
+    .visites-list .visite-item .visite-info .visite-titre {
+        font-size: 0.7rem;
+    }
+    .visites-list .visite-item .visite-info .visite-adresse {
+        font-size: 0.55rem;
+    }
+    .visites-list .visite-item .visite-info .visite-date {
+        font-size: 0.5rem;
+    }
+    .visites-list .visite-item .badge-status {
+        font-size: 0.45rem;
+        padding: 0.15rem 0.4rem;
+    }
+    .actions-grid .action-card {
+        min-height: 65px;
+        padding: 0.4rem 0.15rem;
+    }
+    .actions-grid .action-card i {
+        font-size: 1.2rem;
+    }
+    .actions-grid .action-card .action-label {
+        font-size: 0.5rem;
+    }
+    .bottom-nav-mobile .nav-item {
+        font-size: 0.45rem;
+        min-width: 32px;
+    }
+    .bottom-nav-mobile .nav-item i {
+        font-size: 1rem;
+    }
+    .bottom-nav-mobile .nav-item-center {
+        width: 44px;
+        height: 44px;
+        margin-top: -10px;
+    }
+    .bottom-nav-mobile .nav-item-center i {
+        font-size: 1.3rem;
+    }
+}
+
+/* ==========================================================
+   ACCESSIBILITE
+   ========================================================== */
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid #C9A84C;
+    outline-offset: 2px;
+}
+
+/* ==========================================================
+   UTILITAIRES
+   ========================================================== */
+.text-primary-red { color: #8B0000; }
+.bg-primary-red { background-color: #8B0000; }

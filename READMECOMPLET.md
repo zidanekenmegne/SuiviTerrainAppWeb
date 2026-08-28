@@ -183,30 +183,40 @@ Les principales pages sont:
     7. Historique: Traçabilité des visites passées	
     8. Notifications: Alertes et rappels
     9. Paramètres: Configuration compte/préférences	
-    10. Mode hors ligne: Gestion des données en déconnexion
 
-# FICHIERS PARTAGES
-Fichiers partages de l'application SuiviTerrain.
-- style.css : Variables globales, reset, typographie, utilitaires personnalises
-- components/navbar.css : Barre de navigation PC
-- components/footer.css : Footer PC
-- components/modals.css : Popups
-- components/toasts.css : Notifications
-- app.js : Initialisation, Service Worker, toasts
-- components/navbar.js : Menu hamburger, recherche, notifications
-- components/modals.js : Gestion des modales
-- components/toasts.js : Affichage des toasts
-- sw.js : Service Worker pour le cache hors ligne
-
-Ces fichiers sont charges dans chaque page de l'application.
-
-
-# **Page de connexion:
-Page de connexion de l'application SuiviTerrain.
-
+# **Création de toutes les 7 pages principales et des pages sécondaires comme paremètres....:
 - Structure : HTML pur avec separation CSS/JS
 - Design : Carte centree avec formulaire, oeil pour le mot de passe
+- Recherche dynamique en tepms réel des points de vente
 - Validation : Champs obligatoires, simulation de connexion
 - Responsive : Adapte a toutes les tailles d'ecran (mobile-first)
 
-Technologies : Bootstrap 5, Bootstrap Icons, Google Fonts (Segoe UI)
+Technologies : Bootstrap 5, Bootstrap Icons, Google Fonts (Segoe UI), OpenStreetMap
+
+# ** # Les plus grandes difficultés rencontrées pour cette période du projet sont:
+Pendant cette phase de construction des maquettes, j'ai renontré plusieurs difficultés:
+- 1-Premièrement: Intégration du favicon et des logos
+    J'ai placé le dossier favicon dans frontend/public/ mais les chemins d’accès relatifs (../assets/images/) ne correspondaient pas toujours.
+
+- 2-Deuxièmement:  Illisibilité et difficulté de maintenance des fichiers
+    Pour chaque page, j'ai mélangé les lignes de code html, css et js dans un même fichier
+  Cette approche rendait mon code touffu et difficile de me rtrouver malgré les commentaires insérés.
+
+- 3- Troisièmement: Superposition des modales (Points / Catégories)
+    Dans la gestion des modales des formulaires d'ajout, j'ai superposé des modales (Points / Catégories) ce qui faisait que les deux formulaires modales s’ouvraient en même temps
+
+- 4- Quatrièmement: Menus hamburger non fonctionnels
+    Le menu ne s’ouvrait pas car le code était placé en dehors du DOMContentLoaded dans certains fichiers JS
+
+- 5-Cinquièmement: Bouton + mobile non contextuel
+    Le bouton '+' sur les interfaces mobiles ouvrait toujours la même modale d'ajout d'une visite, quel que soit l’onglet actif.
+
+- 6-Sixièmement: Déploiement sur GitHub Pages (erreur 404)
+    Malgré que GitHub Pages avait déjà généré le lien pour le site, la page de rédirection index.html ne renvoiyait pas vers la page d'accueil et GitHub Pages ne proposait pas le dossier frontend/ dans les options de publication (uniquement /root et /docs).
+# ** # Les solutions que j'ai apporté pour sésoudre ces difficultés sont:
+- 1- J'ai déplacé le dossier dans le dossier assts/images de frontend et j'ai modifié le chemin d'accès.
+- 2- J'ai transformé chaque fichier entier en 3 fichiers html, css et js disctincs et j'ai utilisé les liens link pour tous les relier
+- 3- Ici, j'ai corrigé ce prblème en fermant l’autre modale avant d’ouvrir la nouvelle.
+- 4- Il fallait déplacer la logique à l’intérieur du DOMContentLoaded dans les fichiers JS concernés.
+- 5- J'ai rendu son comportement dynamique avec updateActionButton() qui vérifiait à chaque fois la page sur laquelle l'utilisateur se trouve.
+- 6- Pour le résoudre, j’ai créé un fichier .nojekyll à la racine du dépôt, ce qui force GitHub Pages à ignorer le traitement Jekyll et à publier l’intégralité du dépôt. Ensuite, j’ai accédé au site via l’URL https://zidanekennegne.github.io/SuiviTerrainAppWeb/frontend/pages/tableau-bord.html.

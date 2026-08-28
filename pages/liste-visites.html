@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rapports - SuiviTerrain</title>
-    <meta name="description" content="Consultez les rapports et statistiques de vos visites SuiviTerrain.">
+    <title>Liste des visites - SuiviTerrain</title>
+    <meta name="description" content="Consultez et gerez toutes vos visites commerciales SuiviTerrain.">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,12 +15,12 @@
     <!-- Style global -->
     <link rel="stylesheet" href="../css/style.css">
     <!-- Style specifique -->
-    <link rel="stylesheet" href="../css/pages/rapports.css">
+    <link rel="stylesheet" href="../css/pages/liste-visites.css">
 </head>
 <body>
 
     <!-- ==========================================================
-    BARRE DE NAVIGATION PC
+    BARRE DE NAVIGATION PC (> 768px)
     ========================================================== -->
     <nav class="navbar-pc" aria-label="Navigation principale">
         <div class="navbar-pc-inner">
@@ -30,7 +30,6 @@
                     <span>Suivi</span><span>Terrain</span>
                 </a>
                 <ul class="nav-links">
-                    <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
                     <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
                     <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
                     <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
@@ -52,14 +51,14 @@
                     <span class="badge-notif">3</span>
                 </button>
                 <div class="dropdown">
-                    <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
-                    </button>
-                    <ul class="dropdown-menu" id="dropdownMenu">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
-                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Paramètres</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Déconnexion</a></li>
                     </ul>
                 </div>
             </div>
@@ -76,13 +75,13 @@
             </button>
 
             <div class="header-center">
-                <span class="page-title">Rapports</span>
+                <span class="page-title">Mes visites</span>
             </div>
 
             <div class="header-right">
                 <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
                     <i class="bi bi-bell" aria-hidden="true"></i>
-                    <span class="badge-notif">3</span>
+                    <span class="badge-notif" id="badgeNotifMobile">3</span>
                 </button>
             </div>
         </div>
@@ -107,93 +106,83 @@
     ========================================================== -->
     <main class="main-content">
 
-        <div class="rapports-container">
-
-            <div class="header-pc">
-                <h1><i class="bi bi-file-earmark-text" aria-hidden="true"></i> Rapports</h1>
-                <button class="export-btn" id="exportBtn">
-                    <i class="bi bi-download" aria-hidden="true"></i> Exporter
-                </button>
-            </div>
-
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <button class="filter-btn active" data-filter="month">Ce mois</button>
-                    <button class="filter-btn" data-filter="quarter">Ce trimestre</button>
-                    <button class="filter-btn" data-filter="year">Cette annee</button>
-                </div>
-                <select class="filter-select" id="agentFilter">
-                    <option value="all">Tous les agents</option>
-                    <option value="Zidane Fredy">Zidane Fredy</option>
-                    <option value="Sarah Niong">Sarah Niong</option>
-                    <option value="Jean Dupont">Jean Dupont</option>
-                    <option value="Marie Claire">Marie Claire</option>
-                </select>
-                <select class="filter-select" id="statutFilter">
-                    <option value="all">Tous les statuts</option>
-                    <option value="realisee">Realisees</option>
-                    <option value="encours">En cours</option>
-                    <option value="attente">En attente</option>
-                    <option value="retard">En retard</option>
-                </select>
-            </div>
-
-            <div class="kpi-row" id="kpiRow">
-                <div class="kpi-card">
-                    <i class="bi bi-calendar-event kpi-icon rouge" aria-hidden="true"></i>
-                    <div class="kpi-number" id="totalVisites">0</div>
-                    <div class="kpi-label">Visites totales</div>
-                </div>
-                <div class="kpi-card">
-                    <i class="bi bi-check-circle kpi-icon vert" aria-hidden="true"></i>
-                    <div class="kpi-number" id="totalRealisees">0</div>
-                    <div class="kpi-label">Realisees</div>
-                </div>
-                <div class="kpi-card">
-                    <i class="bi bi-clock-history kpi-icon orange" aria-hidden="true"></i>
-                    <div class="kpi-number" id="totalAttente">0</div>
-                    <div class="kpi-label">En attente</div>
-                </div>
-                <div class="kpi-card">
-                    <i class="bi bi-graph-up-arrow kpi-icon bleu" aria-hidden="true"></i>
-                    <div class="kpi-number" id="tauxReussite">0%</div>
-                    <div class="kpi-label">Taux de reussite</div>
-                </div>
-            </div>
-
-            <div class="charts-row">
-                <div class="chart-card">
-                    <div class="chart-title"><i class="bi bi-pie-chart" aria-hidden="true"></i> Repartition par statut</div>
-                    <div id="statutChart"></div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-title"><i class="bi bi-bar-chart" aria-hidden="true"></i> Evolution mensuelle</div>
-                    <div id="evolutionChart"></div>
-                </div>
-            </div>
-
-            <div class="tableau-card">
-                <div class="tableau-title"><i class="bi bi-table" aria-hidden="true"></i> Detail des performances</div>
-                <div class="table-responsive-custom">
-                    <table class="table-custom" id="performanceTable">
-                        <thead>
-                            <tr>
-                                <th>Agent</th>
-                                <th>Visites</th>
-                                <th>Realisees</th>
-                                <th>En attente</th>
-                                <th>En retard</th>
-                                <th>Taux reussite</th>
-                            </tr>
-                        </thead>
-                        <tbody id="performanceBody">
-                            <!-- Genere par JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+        <div class="header-pc">
+            <h1><i class="bi bi-list-ul" aria-hidden="true"></i> Mes visites</h1>
+            <button class="btn-ajouter" id="btnNouvelleVisite">
+                <i class="bi bi-plus-circle" aria-hidden="true"></i> Nouvelle visite
+            </button>
         </div>
+
+        <div class="filter-search-row">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filtre="Toutes">Toutes</button>
+                <button class="filter-btn" data-filtre="En cours">En cours</button>
+                <button class="filter-btn" data-filtre="Realisees">Realisees</button>
+                <button class="filter-btn" data-filtre="En attente">En attente</button>
+            </div>
+            <div class="search-box">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input type="text" id="searchVisite" placeholder="Rechercher une visite...">
+            </div>
+        </div>
+
+        <section class="visites-list" aria-label="Liste des visites">
+
+            <div class="visite-card" data-statut="realisee" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Visite commerciale - Magasin A</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Centre-ville</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 a 08:00</p>
+                </div>
+                <span class="badge-status realise">Realisee</span>
+            </div>
+
+            <div class="visite-card" data-statut="attente" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Collecte de commandes - Client B</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Bonamoussadi</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 a 10:30</p>
+                </div>
+                <span class="badge-status attente">En attente</span>
+            </div>
+
+            <div class="visite-card" data-statut="retard" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Suivi des retours - Magasin C</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Akwa</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 a 13:00</p>
+                </div>
+                <span class="badge-status retard">En retard</span>
+            </div>
+
+            <div class="visite-card" data-statut="realisee" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Collecte de paiement - Client D</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Bepanda</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 12 juin 2025 a 09:00</p>
+                </div>
+                <span class="badge-status realise">Realisee</span>
+            </div>
+
+            <div class="visite-card" data-statut="attente" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Collecte de paiement - Magasin E</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Total Logbaba</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 13 juin 2025 a 11:00</p>
+                </div>
+                <span class="badge-status attente">En attente</span>
+            </div>
+
+            <div class="visite-card" data-statut="encours" onclick="window.location.href='detail-visite.html'">
+                <div class="visite-info">
+                    <p class="visite-titre">Presentation produit - Client F</p>
+                    <p class="visite-adresse"><i class="bi bi-geo-alt" aria-hidden="true"></i> Makape</p>
+                    <p class="visite-date"><i class="bi bi-clock" aria-hidden="true"></i> 13 juin 2025 a 15:00</p>
+                </div>
+                <span class="badge-status encours">En cours</span>
+            </div>
+
+        </section>
 
     </main>
 
@@ -214,12 +203,12 @@
             Accueil
         </a>
 
-        <a href="liste-visites.html" class="nav-item">
+        <a href="liste-visites.html" class="nav-item active">
             <i class="bi bi-list-ul" aria-hidden="true"></i>
             Visites
         </a>
 
-        <a href="#" class="nav-item-center" id="btnActionMobile" aria-label="Action contextuelle">
+        <a href="nouvelle-visite.html" class="nav-item-center" aria-label="Creer une nouvelle visite">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
         </a>
 
@@ -239,8 +228,8 @@
     SCRIPTS
     ========================================================== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/app.js"></script>
-    <script src="../js/pages/rapports.js"></script>
+    <!-- <script src="../js/app.js"></script> -->
+    <script src="../js/pages/liste-visites.js"></script>
 
 </body>
 </html>

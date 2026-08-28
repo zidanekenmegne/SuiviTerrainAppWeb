@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Parametres - SuiviTerrain</title>
+    <meta name="description" content="Gerez vos preferences et parametres SuiviTerrain.">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/parametres.css">
+</head>
+<body>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-pc-inner">
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="tableau-bord.html">
+                    <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                    <span>Suivi</span><span>Terrain</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
+                    <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                    <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                    <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                    <li><a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                    <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                    <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-container" id="globalSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                    </div>
+                    <div class="search-suggestions" id="globalSearchSuggestions"></div>
+                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                    </button>
+                    <ul class="dropdown-menu" id="dropdownMenu">
+                        <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE
+    ========================================================== -->
+    <header class="top-header-mobile">
+        <div class="header-row">
+            <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+
+            <div class="header-center">
+                <span class="page-title">Parametres</span>
+            </div>
+
+            <div class="header-right">
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-menu-dropdown" id="mobileMenu">
+            <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
+            <a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
+            <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
+            <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
+            <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
+            <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
+            <hr>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
+        </div>
+    </header>
+
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
+    <main class="main-content">
+
+        <div class="parametres-container">
+
+            <div class="header-pc">
+                <h1><i class="bi bi-gear" aria-hidden="true"></i> Parametres</h1>
+            </div>
+
+            <!-- SECTION : COMPTE -->
+            <div class="settings-section">
+                <div class="section-title"><i class="bi bi-person" aria-hidden="true"></i> Compte</div>
+
+                <div class="settings-item" onclick="window.location.href='profil.html'">
+                    <div class="item-left">
+                        <div class="item-icon rouge"><i class="bi bi-person" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">Informations personnelles</div>
+                            <div class="item-subtitle">Nom, email, telephone, zone d'intervention</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+
+                <div class="settings-item" id="btnChangePassword">
+                    <div class="item-left">
+                        <div class="item-icon bleu"><i class="bi bi-shield-lock" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">Securite</div>
+                            <div class="item-subtitle">Changer votre mot de passe</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION : PREFERENCES -->
+            <div class="settings-section">
+                <div class="section-title"><i class="bi bi-sliders2" aria-hidden="true"></i> Preferences</div>
+
+                <div class="settings-item">
+                    <div class="item-left">
+                        <div class="item-icon orange"><i class="bi bi-bell" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">Notifications</div>
+                            <div class="item-subtitle">Recevoir des alertes et rappels</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <label class="switch">
+                            <input type="checkbox" id="notifToggle" checked>
+                            <span class="slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-item">
+                    <div class="item-left">
+                        <div class="item-icon gris"><i class="bi bi-wifi" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">Mode hors ligne</div>
+                            <div class="item-subtitle">Synchroniser les donnees en arriere-plan</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <label class="switch">
+                            <input type="checkbox" id="offlineToggle">
+                            <span class="slider" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-item">
+                    <div class="item-left">
+                        <div class="item-icon vert"><i class="bi bi-globe" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">Langue</div>
+                            <div class="item-subtitle">Changer la langue de l'application</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-value">Francais</span>
+                        <span class="item-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION : AUTRES -->
+            <div class="settings-section">
+                <div class="section-title"><i class="bi bi-three-dots" aria-hidden="true"></i> Autres</div>
+
+                <div class="settings-item" onclick="alert('SuiviTerrain v2.1.0\nDeveloppe avec ❤️')">
+                    <div class="item-left">
+                        <div class="item-icon bleu"><i class="bi bi-info-circle" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title">A propos de l'application</div>
+                            <div class="item-subtitle">Version 2.1.0</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+
+                <div class="settings-item danger" onclick="handleLogout()">
+                    <div class="item-left">
+                        <div class="item-icon rouge-clair"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></div>
+                        <div class="item-text">
+                            <div class="item-title" style="color: #dc3545;">Deconnexion</div>
+                            <div class="item-subtitle">Se deconnecter de l'application</div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-arrow"><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ==========================================================
+    FOOTER PC
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
+    </footer>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION MOBILE
+    ========================================================== -->
+    <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
+        <a href="tableau-bord.html" class="nav-item">
+            <i class="bi bi-house-door" aria-hidden="true"></i>
+            Accueil
+        </a>
+
+        <a href="liste-visites.html" class="nav-item">
+            <i class="bi bi-list-ul" aria-hidden="true"></i>
+            Visites
+        </a>
+
+        <a href="#" class="nav-item-center" id="btnActionMobile" aria-label="Action contextuelle">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </a>
+
+        <a href="points-vente.html" class="nav-item">
+            <i class="bi bi-shop" aria-hidden="true"></i>
+            Points de vente
+        </a>
+
+        <a href="profil.html" class="nav-item">
+            <i class="bi bi-person" aria-hidden="true"></i>
+            Profil
+        </a>
+
+    </nav>
+
+    <!-- ==========================================================
+    MODALE CHANGER LE MOT DE PASSE
+    ========================================================== -->
+    <div class="modal fade" id="changerMotPasseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Changer le mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Entrez votre mot de passe actuel">
+                            <button type="button" class="btn btn-light border" id="toggleCurrentPwd">
+                                <i class="bi bi-eye" id="currentPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="currentPwdError" class="text-danger" style="display:none;">Mot de passe incorrect</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" placeholder="Entrez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleNewPwd" disabled>
+                                <i class="bi bi-eye" id="newPwdIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleConfirmPwd" disabled>
+                                <i class="bi bi-eye" id="confirmPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="confirmPwdError" class="text-danger" style="display:none;">Les mots de passe ne correspondent pas</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="savePasswordBtn" disabled>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+    SCRIPTS
+    ========================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/parametres.js"></script>
+
+</body>
+</html>
