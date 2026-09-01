@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-header bg-primary-red text-white text-center">
+                <h4 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Connexion</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               required placeholder="agent@suiviterrain.com"
+                               aria-describedby="emailError">
+                        <div id="emailError" class="invalid-feedback">Veuillez entrer votre adresse email.</div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-3">
+                        <label for="mdp" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="mdp" name="mdp" 
+                               required placeholder="••••••••"
+                               aria-describedby="mdpError">
+                        <div id="mdpError" class="invalid-feedback">Veuillez entrer votre mot de passe.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary-red">Se connecter</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted">Pas encore de compte ? 
+                        <a href="{{ url_for('auth.register') }}" style="color: #8B0000;">Créer un compte</a>
+                    </p>
+                    <a href="#" class="text-muted small">Mot de passe oublié ?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const email = document.getElementById('email');
+        const mdp = document.getElementById('mdp');
+
+        function validateField(input, errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (input.validity.valid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errorEl.style.display = 'none';
+                return true;
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorEl.style.display = 'block';
+                return false;
+            }
+        }
+
+        email.addEventListener('input', function() { validateField(this, 'emailError'); });
+        mdp.addEventListener('input', function() { validateField(this, 'mdpError'); });
+
+        form.addEventListener('submit', function(e) {
+            const isEmailValid = validateField(email, 'emailError');
+            const isMdpValid = validateField(mdp, 'mdpError');
+
+            if (!isEmailValid || !isMdpValid) {
+                e.preventDefault();
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) firstInvalid.focus();
+                return false;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

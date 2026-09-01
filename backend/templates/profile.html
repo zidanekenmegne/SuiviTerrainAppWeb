@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Mon profil - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary-red text-white">
+                <h4 class="mb-0"><i class="bi bi-person"></i> Mon profil</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="avatar-circle bg-primary-red text-white mx-auto" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold;">
+                        {{ current_user.nom_user[0]|upper }}
+                    </div>
+                    <h5 class="mt-2">{{ current_user.nom_user }}</h5>
+                    <p class="text-muted">{{ current_user.role|capitalize }}</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <strong>Email :</strong> {{ current_user.mail }}
+                    </div>
+                    <div class="col-12 mb-2">
+                        <strong>Zone d'intervention :</strong> {{ current_user.zone_intervention or 'Non définie' }}
+                    </div>
+                    <div class="col-12 mb-2">
+                        <strong>Statut :</strong> 
+                        {% if current_user.actif %}
+                        <span class="badge bg-success">Actif</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactif</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 mb-2">
+                        <strong>Membre depuis :</strong> {{ current_user.date_creation_user.strftime('%d/%m/%Y') }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Dernière connexion :</strong> {{ current_user.derniere_connexion_user.strftime('%d/%m/%Y à %H:%M') if current_user.derniere_connexion_user else 'Jamais' }}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
