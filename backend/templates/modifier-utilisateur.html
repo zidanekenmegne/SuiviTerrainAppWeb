@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier un utilisateur - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary-red text-white">
+                <h4 class="mb-0"><i class="bi bi-person-gear"></i> Modifier un utilisateur</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="modifierUtilisateurForm" novalidate>
+                    <div class="mb-3">
+                        <label for="nom" class="form-label">Nom complet *</label>
+                        <input type="text" class="form-control" id="nom" name="nom" 
+                               value="{{ utilisateur.nom_user }}" required minlength="2"
+                               aria-describedby="nomError">
+                        <div id="nomError" class="invalid-feedback">Le nom doit contenir au moins 2 caractères.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ utilisateur.mail }}" required
+                               aria-describedby="emailError">
+                        <div id="emailError" class="invalid-feedback">Veuillez entrer une adresse email valide.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mdp" class="form-label">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" id="mdp" name="mdp" 
+                               minlength="6" placeholder="Laisser vide pour conserver l'actuel"
+                               aria-describedby="mdpError">
+                        <div id="mdpError" class="invalid-feedback">Le mot de passe doit contenir au moins 6 caractères.</div>
+                        <small class="text-muted">Laissez vide pour conserver le mot de passe actuel.</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="agent" {% if utilisateur.role == 'agent' %}selected{% endif %}>Agent</option>
+                                <option value="admin" {% if utilisateur.role == 'admin' %}selected{% endif %}>Administrateur</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="zone_intervention" class="form-label">Zone d'intervention</label>
+                            <input type="text" class="form-control" id="zone_intervention" name="zone_intervention" 
+                                   value="{{ utilisateur.zone_intervention or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary-red">Enregistrer</button>
+                        <a href="{{ url_for('liste_utilisateurs') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('modifierUtilisateurForm');
+        const nom = document.getElementById('nom');
+        const email = document.getElementById('email');
+        const mdp = document.getElementById('mdp');
+
+        function validateField(input, errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (input.validity.valid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errorEl.style.display = 'none';
+                return true;
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorEl.style.display = 'block';
+                return false;
+            }
+        }
+
+        nom.addEventListener('input', function() { validateField(this, 'nomError'); });
+        email.addEventListener('input', function() { validateField(this, 'emailError'); });
+        mdp.addEventListener('input', function() { validateField(this, 'mdpError'); });
+
+        form.addEventListener('submit', function(e) {
+            const isNomValid = validateField(nom, 'nomError');
+            const isEmailValid = validateField(email, 'emailError');
+            const isMdpValid = validateField(mdp, 'mdpError');
+
+            if (!isNomValid || !isEmailValid || !isMdpValid) {
+                e.preventDefault();
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) firstInvalid.focus();
+                return false;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Catégories - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-tags" style="color: #8B0000;"></i> Catégories</h1>
+    <a href="{{ url_for('ajouter_categorie') }}" class="btn btn-primary-red">
+        <i class="bi bi-plus-circle"></i> Ajouter
+    </a>
+</div>
+
+<!-- Barre de recherche -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchCategorie" placeholder="Rechercher par nom...">
+            <button class="btn btn-outline-secondary" id="clearSearchCategorie" type="button">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <small class="text-muted">La recherche s'effectue en temps réel.</small>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white rounded-3 overflow-hidden shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Nom</th>
+                <th>Couleur</th>
+                <th>Nombre de points</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if categories %}
+            {% for cat in categories %}
+            <tr class="categorie-row" data-nom="{{ cat.nom_cat|lower }}">
+                <td><strong>{{ cat.nom_cat }}</strong></td>
+                <td>
+                    <span class="badge" style="background-color: {{ cat.couleur }}; width: 30px; height: 30px; border-radius: 50%; display: inline-block;"></span>
+                    <span class="ms-2">{{ cat.couleur }}</span>
+                </td>
+                <td>{{ cat.points|length }}</td>
+                <td class="text-center">
+                    <a href="{{ url_for('modifier_categorie', id=cat.id_cat) }}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('supprimer_categorie', id=cat.id_cat) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette catégorie ?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    <i class="bi bi-tags" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Aucune catégorie trouvée.</p>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchCategorie');
+        const clearBtn = document.getElementById('clearSearchCategorie');
+        const rows = document.querySelectorAll('.categorie-row');
+
+        function filterCategories() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            rows.forEach(row => {
+                const nom = row.dataset.nom || '';
+                const match = nom.includes(searchTerm);
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterCategories);
+
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterCategories();
+            searchInput.focus();
+        });
+    });
+</script>
+
+{% endblock %}

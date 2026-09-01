@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Visites - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-list-ul" style="color: #8B0000;"></i> Mes visites</h1>
+    <a href="{{ url_for('ajouter_visite') }}" class="btn btn-primary-red">
+        <i class="bi bi-plus-circle"></i> Planifier
+    </a>
+</div>
+
+<!-- Barre de recherche -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchVisite" placeholder="Rechercher par point, statut, date ou heure...">
+            <button class="btn btn-outline-secondary" id="clearSearchVisite" type="button">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <small class="text-muted">La recherche s'effectue en temps réel sur tous les champs.</small>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white rounded-3 overflow-hidden shadow-sm" id="visitesTable">
+        <thead class="table-light">
+            <tr>
+                <th>Date prévue</th>
+                <th>Heure</th>
+                <th>Point de vente</th>
+                <th>Statut</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if visites %}
+            {% for visite in visites %}
+            <tr class="visite-row" 
+                data-point="{{ visite.point.nom_pt if visite.point else 'sans point'|lower }}" 
+                data-statut="{{ visite.statut|lower }}" 
+                data-date="{{ visite.date_prevue.strftime('%d/%m/%Y') }}" 
+                data-heure="{{ visite.heure_prevue.strftime('%H:%M') }}">
+                <td>{{ visite.date_prevue.strftime('%d/%m/%Y') }}</td>
+                <td>{{ visite.heure_prevue.strftime('%H:%M') }}</td>
+                <td>{{ visite.point.nom_pt if visite.point else 'Sans point' }}</td>
+                <td>
+                    <span class="badge badge-{{ visite.statut }}">
+                        {{ visite.statut|capitalize }}
+                    </span>
+                </td>
+                <td class="text-center">
+                    <a href="{{ url_for('modifier_visite', id=visite.id_visite) }}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('supprimer_visite', id=visite.id_visite) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette visite ?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Aucune visite planifiée.</p>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchVisite');
+        const clearBtn = document.getElementById('clearSearchVisite');
+        const rows = document.querySelectorAll('.visite-row');
+
+        function filterVisites() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            rows.forEach(row => {
+                const point = row.dataset.point || '';
+                const statut = row.dataset.statut || '';
+                const date = row.dataset.date || '';
+                const heure = row.dataset.heure || '';
+                
+                const match = point.includes(searchTerm) || 
+                             statut.includes(searchTerm) || 
+                             date.includes(searchTerm) || 
+                             heure.includes(searchTerm);
+                
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        // Recherche en temps réel
+        searchInput.addEventListener('input', filterVisites);
+
+        // Effacer la recherche
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterVisites();
+            searchInput.focus();
+        });
+    });
+</script>
+
+{% endblock %}

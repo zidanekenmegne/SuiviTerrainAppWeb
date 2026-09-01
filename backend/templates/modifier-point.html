@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier un point de vente - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary-red text-white">
+                <h4 class="mb-0"><i class="bi bi-pencil"></i> Modifier un point de vente</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="modifierPointForm" novalidate>
+                    <!-- Nom -->
+                    <div class="mb-3">
+                        <label for="nom" class="form-label">Nom *</label>
+                        <input type="text" class="form-control" id="nom" name="nom" 
+                               value="{{ point.nom_pt }}" required minlength="2"
+                               aria-describedby="nomError">
+                        <div id="nomError" class="invalid-feedback">Le nom doit contenir au moins 2 caractères.</div>
+                    </div>
+
+                    <!-- Adresse -->
+                    <div class="mb-3">
+                        <label for="adresse" class="form-label">Adresse *</label>
+                        <input type="text" class="form-control" id="adresse" name="adresse" 
+                               value="{{ point.adresse }}" required
+                               aria-describedby="adresseError">
+                        <div id="adresseError" class="invalid-feedback">L'adresse est obligatoire.</div>
+                    </div>
+
+                    <!-- Latitude / Longitude -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="latitude" class="form-label">Latitude</label>
+                            <input type="number" step="any" class="form-control" id="latitude" name="latitude" 
+                                   value="{{ point.latitude or '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="longitude" class="form-label">Longitude</label>
+                            <input type="number" step="any" class="form-control" id="longitude" name="longitude" 
+                                   value="{{ point.longitude or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="telephone" class="form-label">Téléphone</label>
+                        <input type="tel" class="form-control" id="telephone" name="telephone" 
+                               value="{{ point.telephone or '' }}"
+                               pattern="^(\+237|00237)?[0-9]{8,9}$"
+                               aria-describedby="telephoneError">
+                        <div id="telephoneError" class="invalid-feedback">
+                            Format invalide. Utilisez +237 612 34 56 78 ou 612345678.
+                        </div>
+                        <small class="text-muted">Ex: +237 612 34 56 78</small>
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="mb-3">
+                        <label for="categorie" class="form-label">Catégorie</label>
+                        <select class="form-select" id="categorie" name="categorie">
+                            <option value="">Sans catégorie</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id_cat }}" {% if point.id_cat == cat.id_cat %}selected{% endif %}>
+                                {{ cat.nom_cat }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Photo -->
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo actuelle</label>
+                        {% if point.photo %}
+                        <div class="mb-2">
+                            <img src="{{ url_for('static', filename=point.photo) }}" alt="Photo" 
+                                 style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                        </div>
+                        {% else %}
+                        <p class="text-muted">Aucune photo</p>
+                        {% endif %}
+                        <input type="file" class="form-control" id="photo" name="photo" 
+                               accept="image/png, image/jpeg, image/gif, image/webp">
+                        <small class="text-muted">Laissez vide pour conserver la photo actuelle.</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary-red">Enregistrer</button>
+                        <a href="{{ url_for('points_vente') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('modifierPointForm');
+        const nom = document.getElementById('nom');
+        const adresse = document.getElementById('adresse');
+        const telephone = document.getElementById('telephone');
+
+        function validateField(input, errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (input.validity.valid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errorEl.style.display = 'none';
+                return true;
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorEl.style.display = 'block';
+                return false;
+            }
+        }
+
+        nom.addEventListener('input', function() { validateField(this, 'nomError'); });
+        adresse.addEventListener('input', function() { validateField(this, 'adresseError'); });
+        telephone.addEventListener('input', function() { validateField(this, 'telephoneError'); });
+
+        form.addEventListener('submit', function(e) {
+            const isNomValid = validateField(nom, 'nomError');
+            const isAdresseValid = validateField(adresse, 'adresseError');
+            const isTelephoneValid = validateField(telephone, 'telephoneError');
+
+            if (!isNomValid || !isAdresseValid || !isTelephoneValid) {
+                e.preventDefault();
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) firstInvalid.focus();
+                return false;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

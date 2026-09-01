@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Utilisateurs - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people" style="color: #8B0000;"></i> Utilisateurs</h1>
+    <a href="{{ url_for('ajouter_utilisateur') }}" class="btn btn-primary-red">
+        <i class="bi bi-plus-circle"></i> Ajouter
+    </a>
+</div>
+
+<!-- Barre de recherche -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchUser" placeholder="Rechercher par nom, email, rôle ou zone...">
+            <button class="btn btn-outline-secondary" id="clearSearchUser" type="button">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <small class="text-muted">La recherche s'effectue en temps réel sur tous les champs.</small>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white rounded-3 overflow-hidden shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Zone</th>
+                <th>Statut</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if utilisateurs %}
+            {% for user in utilisateurs %}
+            <tr class="user-row" 
+                data-nom="{{ user.nom_user|lower }}" 
+                data-email="{{ user.mail|lower }}" 
+                data-role="{{ user.role|lower }}" 
+                data-zone="{{ user.zone_intervention or ''|lower }}">
+                <td><strong>{{ user.nom_user }}</strong></td>
+                <td>{{ user.mail }}</td>
+                <td>
+                    <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-info{% endif %}">
+                        {{ user.role|capitalize }}
+                    </span>
+                </td>
+                <td>{{ user.zone_intervention or 'Non défini' }}</td>
+                <td>
+                    {% if user.actif %}
+                    <span class="badge bg-success">Actif</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inactif</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="{{ url_for('modifier_utilisateur', id=user.id_user) }}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    {% if user.role != 'admin' %}
+                    <a href="{{ url_for('supprimer_utilisateur', id=user.id_user) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet utilisateur ?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                    {% else %}
+                    <button class="btn btn-sm btn-secondary" disabled title="L'administrateur ne peut pas être supprimé">
+                        <i class="bi bi-lock"></i>
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <i class="bi bi-people" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Aucun utilisateur trouvé.</p>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchUser');
+        const clearBtn = document.getElementById('clearSearchUser');
+        const rows = document.querySelectorAll('.user-row');
+
+        function filterUsers() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            rows.forEach(row => {
+                const nom = row.dataset.nom || '';
+                const email = row.dataset.email || '';
+                const role = row.dataset.role || '';
+                const zone = row.dataset.zone || '';
+                
+                const match = nom.includes(searchTerm) || 
+                             email.includes(searchTerm) || 
+                             role.includes(searchTerm) || 
+                             zone.includes(searchTerm);
+                
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterUsers);
+
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterUsers();
+            searchInput.focus();
+        });
+    });
+</script>
+
+{% endblock %}

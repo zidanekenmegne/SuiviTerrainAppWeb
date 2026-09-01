@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier une visite - SuiviTerrain{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary-red text-white">
+                <h4 class="mb-0"><i class="bi bi-calendar-check"></i> Modifier une visite</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="modifierVisiteForm" novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="date_prevue" class="form-label">Date *</label>
+                            <input type="date" class="form-control" id="date_prevue" name="date_prevue" 
+                                   value="{{ visite.date_prevue.strftime('%Y-%m-%d') }}" required
+                                   aria-describedby="dateError">
+                            <div id="dateError" class="invalid-feedback">La date est obligatoire.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="heure_prevue" class="form-label">Heure *</label>
+                            <input type="time" class="form-control" id="heure_prevue" name="heure_prevue" 
+                                   value="{{ visite.heure_prevue.strftime('%H:%M') }}" required
+                                   aria-describedby="heureError">
+                            <div id="heureError" class="invalid-feedback">L'heure est obligatoire.</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="point_vente" class="form-label">Point de vente *</label>
+                        <select class="form-select" id="point_vente" name="point_vente" required
+                                aria-describedby="pointError">
+                            {% for point in points %}
+                            <option value="{{ point.id_pt }}" {% if visite.id_pt == point.id_pt %}selected{% endif %}>
+                                {{ point.nom_pt }} - {{ point.adresse }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div id="pointError" class="invalid-feedback">Veuillez sélectionner un point de vente.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="statut" class="form-label">Statut</label>
+                        <select class="form-select" id="statut" name="statut">
+                            <option value="planifiee" {% if visite.statut == 'planifiee' %}selected{% endif %}>Planifiée</option>
+                            <option value="encours" {% if visite.statut == 'encours' %}selected{% endif %}>En cours</option>
+                            <option value="realisee" {% if visite.statut == 'realisee' %}selected{% endif %}>Réalisée</option>
+                            <option value="attente" {% if visite.statut == 'attente' %}selected{% endif %}>En attente</option>
+                            <option value="retard" {% if visite.statut == 'retard' %}selected{% endif %}>En retard</option>
+                            <option value="annulee" {% if visite.statut == 'annulee' %}selected{% endif %}>Annulée</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="compte_rendu" class="form-label">Compte rendu</label>
+                        <textarea class="form-control" id="compte_rendu" name="compte_rendu" rows="3">{{ visite.compte_rendu or '' }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary-red">Enregistrer</button>
+                        <a href="{{ url_for('list_visites') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('modifierVisiteForm');
+        const datePrevue = document.getElementById('date_prevue');
+        const heurePrevue = document.getElementById('heure_prevue');
+        const pointVente = document.getElementById('point_vente');
+
+        function validateField(input, errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (input.validity.valid) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errorEl.style.display = 'none';
+                return true;
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorEl.style.display = 'block';
+                return false;
+            }
+        }
+
+        datePrevue.addEventListener('input', function() { validateField(this, 'dateError'); });
+        heurePrevue.addEventListener('input', function() { validateField(this, 'heureError'); });
+        pointVente.addEventListener('change', function() { validateField(this, 'pointError'); });
+
+        form.addEventListener('submit', function(e) {
+            const isDateValid = validateField(datePrevue, 'dateError');
+            const isHeureValid = validateField(heurePrevue, 'heureError');
+            const isPointValid = validateField(pointVente, 'pointError');
+
+            if (!isDateValid || !isHeureValid || !isPointValid) {
+                e.preventDefault();
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) firstInvalid.focus();
+                return false;
+            }
+        });
+    });
+</script>
+
+{% endblock %}
