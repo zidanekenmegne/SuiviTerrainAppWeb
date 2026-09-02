@@ -1,0 +1,143 @@
+{
+  "info": {
+    "name": "SuiviTerrain API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/login",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@suiviterrain.com\", \"mdp\": \"admin123\"}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/auth/refresh",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Points",
+      "item": [
+        {
+          "name": "Liste des points",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/points?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Détail d'un point",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/points/1"
+          }
+        },
+        {
+          "name": "Créer un point (authentifié)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/points",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nom\": \"Magasin Test\", \"adresse\": \"123 Test\", \"latitude\": 4.051, \"longitude\": 9.767}"
+            }
+          }
+        },
+        {
+          "name": "Modifier un point (authentifié)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/v1/points/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {"mode": "raw", "raw": "{\"nom\": \"Nouveau nom\"}"}
+          }
+        },
+        {
+          "name": "Supprimer un point (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/v1/points/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Visites",
+      "item": [
+        {
+          "name": "Liste des visites",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/visites",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Détail d'une visite",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/visites/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Créer une visite",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/visites",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"date_prevue\": \"2026-09-15\", \"heure_prevue\": \"09:00\", \"point_vente_id\": 1, \"statut\": \"planifiee\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catégories",
+      "item": [
+        {
+          "name": "Liste des catégories",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/categories"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Statistiques",
+      "item": [
+        {
+          "name": "Statistiques",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/stats",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://127.0.0.1:5000"},
+    {"key": "token", "value": ""}
+  ]
+}

@@ -11,7 +11,7 @@
                 <h4 class="mb-0"><i class="bi bi-calendar-plus"></i> Planifier une visite</h4>
             </div>
             <div class="card-body">
-                <form method="POST" id="ajouterVisiteForm" novalidate>
+                <form method="POST" id="ajouterVisiteForm" action="{{ url_for('visites.ajouter') }}" novalidate>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="date_prevue" class="form-label">Date *</label>
@@ -59,7 +59,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary-red">Planifier</button>
-                        <a href="{{ url_for('list_visites') }}" class="btn btn-secondary">Annuler</a>
+                        <a href="{{ url_for('visites.liste') }}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>
@@ -89,7 +89,6 @@
             }
         }
 
-        // Validation de la date (ne peut pas être dans le passé)
         function validateDate() {
             const dateValue = datePrevue.value;
             const today = new Date().toISOString().split('T')[0];

@@ -11,7 +11,7 @@
                 <h4 class="mb-0"><i class="bi bi-person-plus"></i> Ajouter un utilisateur</h4>
             </div>
             <div class="card-body">
-                <form method="POST" id="ajouterUtilisateurForm" novalidate>
+                <form method="POST" id="ajouterUtilisateurForm" action="{{ url_for('utilisateurs.ajouter') }}" novalidate>
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom complet *</label>
                         <input type="text" class="form-control" id="nom" name="nom" 
@@ -53,7 +53,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary-red">Ajouter</button>
-                        <a href="{{ url_for('liste_utilisateurs') }}" class="btn btn-secondary">Annuler</a>
+                        <a href="{{ url_for('utilisateurs.liste') }}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>

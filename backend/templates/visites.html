@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-list-ul" style="color: #8B0000;"></i> Mes visites</h1>
-    <a href="{{ url_for('ajouter_visite') }}" class="btn btn-primary-red">
+    <a href="{{ url_for('visites.ajouter') }}" class="btn btn-primary-red">
         <i class="bi bi-plus-circle"></i> Planifier
     </a>
 </div>
@@ -53,10 +53,10 @@
                     </span>
                 </td>
                 <td class="text-center">
-                    <a href="{{ url_for('modifier_visite', id=visite.id_visite) }}" class="btn btn-sm btn-warning">
+                    <a href="{{ url_for('visites.modifier', id=visite.id_visite) }}" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil"></i>
                     </a>
-                    <a href="{{ url_for('supprimer_visite', id=visite.id_visite) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette visite ?')">
+                    <a href="{{ url_for('visites.supprimer', id=visite.id_visite) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette visite ?')">
                         <i class="bi bi-trash"></i>
                     </a>
                 </td>
@@ -98,10 +98,7 @@
             });
         }
 
-        // Recherche en temps réel
         searchInput.addEventListener('input', filterVisites);
-
-        // Effacer la recherche
         clearBtn.addEventListener('click', function() {
             searchInput.value = '';
             filterVisites();

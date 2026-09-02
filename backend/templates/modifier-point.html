@@ -11,7 +11,7 @@
                 <h4 class="mb-0"><i class="bi bi-pencil"></i> Modifier un point de vente</h4>
             </div>
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data" id="modifierPointForm" novalidate>
+                <form method="POST" enctype="multipart/form-data" id="modifierPointForm" action="{{ url_for('points.modifier', id=point.id_pt) }}" novalidate>
                     <!-- Nom -->
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom *</label>
@@ -88,7 +88,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary-red">Enregistrer</button>
-                        <a href="{{ url_for('points_vente') }}" class="btn btn-secondary">Annuler</a>
+                        <a href="{{ url_for('points.liste') }}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>

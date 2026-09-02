@@ -1,15 +1,21 @@
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 db = SQLAlchemy()
 
-# Table d'association REALISER (many-to-many entre utilisateur et visite)
+# ==========================================================
+# TABLE D'ASSOCIATION REALISER (UTILISATEUR - VISITE)
+# ==========================================================
 realiser = db.Table('realiser',
     db.Column('id_user', db.Integer, db.ForeignKey('utilisateur.id_user'), primary_key=True),
     db.Column('id_visite', db.Integer, db.ForeignKey('visite.id_visite'), primary_key=True)
 )
 
-class Utilisateur(db.Model):
+# ==========================================================
+# MODÈLE UTILISATEUR
+# ==========================================================
+class Utilisateur(db.Model, UserMixin):
     __tablename__ = 'utilisateur'
     
     id_user = db.Column(db.Integer, primary_key=True)
@@ -24,11 +30,30 @@ class Utilisateur(db.Model):
     
     # Relations
     visites = db.relationship('Visite', secondary=realiser, back_populates='agents')
-    connexions = db.relationship('JournalConnexion', back_populates='utilisateur')
+    connexions = db.relationship('JournalConnexion', back_populates='utilisateur', cascade='all, delete-orphan')
+    
+    # Méthodes Flask-Login
+    def get_id(self):
+        return str(self.id_user)
+    
+    @property
+    def is_active(self):
+        return self.actif if self.actif is not None else True
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+    @property
+    def is_anonymous(self):
+        return False
     
     def __repr__(self):
         return f'<Utilisateur {self.nom_user}>'
 
+# ==========================================================
+# MODÈLE CATEGORIE
+# ==========================================================
 class Categorie(db.Model):
     __tablename__ = 'categorie'
     
@@ -37,35 +62,38 @@ class Categorie(db.Model):
     couleur = db.Column(db.String(7), nullable=False)
     date_creation_cat = db.Column(db.DateTime, default=datetime.now)
     
-    # Relations
-    points = db.relationship('PointDeVente', back_populates='categorie')
+    points = db.relationship('PointDeVente', back_populates='categorie', cascade='all, delete-orphan')
     
     def __repr__(self):
         return f'<Categorie {self.nom_cat}>'
 
+# ==========================================================
+# MODÈLE POINT DE VENTE
+# ==========================================================
 class PointDeVente(db.Model):
     __tablename__ = 'point_de_vente'
     
     id_pt = db.Column(db.Integer, primary_key=True)
     nom_pt = db.Column(db.String(100), nullable=False)
     adresse = db.Column(db.Text, nullable=False)
-    latitude = db.Column(db.Numeric(10, 7), nullable=False)
-    longitude = db.Column(db.Numeric(10, 7), nullable=False)
+    latitude = db.Column(db.Numeric(10, 7), nullable=True)
+    longitude = db.Column(db.Numeric(10, 7), nullable=True)
     telephone = db.Column(db.String(20))
     photo = db.Column(db.String(255))
     date_creation_pt = db.Column(db.DateTime, default=datetime.now)
     date_modif = db.Column(db.DateTime)
     
-    # Clé étrangère
     id_cat = db.Column(db.Integer, db.ForeignKey('categorie.id_cat'), nullable=True)
     
-    # Relations
     categorie = db.relationship('Categorie', back_populates='points')
-    visites = db.relationship('Visite', back_populates='point')
+    visites = db.relationship('Visite', back_populates='point', cascade='all, delete-orphan')
     
     def __repr__(self):
         return f'<PointDeVente {self.nom_pt}>'
 
+# ==========================================================
+# MODÈLE VISITE
+# ==========================================================
 class Visite(db.Model):
     __tablename__ = 'visite'
     
@@ -79,16 +107,17 @@ class Visite(db.Model):
     date_creation = db.Column(db.DateTime, default=datetime.now)
     date_modif = db.Column(db.DateTime)
     
-    # Clé étrangère
     id_pt = db.Column(db.Integer, db.ForeignKey('point_de_vente.id_pt'), nullable=True)
     
-    # Relations
     point = db.relationship('PointDeVente', back_populates='visites')
     agents = db.relationship('Utilisateur', secondary=realiser, back_populates='visites')
     
     def __repr__(self):
         return f'<Visite {self.id_visite} - {self.date_prevue}>'
 
+# ==========================================================
+# MODÈLE JOURNAL DE CONNEXION
+# ==========================================================
 class JournalConnexion(db.Model):
     __tablename__ = 'journal_connexion'
     
@@ -96,10 +125,8 @@ class JournalConnexion(db.Model):
     horodatage = db.Column(db.DateTime, default=datetime.now)
     adresse_ip = db.Column(db.String(45))
     
-    # Clé étrangère
     id_user = db.Column(db.Integer, db.ForeignKey('utilisateur.id_user'), nullable=False)
     
-    # Relations
     utilisateur = db.relationship('Utilisateur', back_populates='connexions')
     
     def __repr__(self):

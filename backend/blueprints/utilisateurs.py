@@ -3,6 +3,7 @@ from flask_login import login_required
 from werkzeug.security import generate_password_hash
 from models import db, Utilisateur, Visite
 from datetime import datetime
+from decorators import admin_required
 import re
 
 utilisateurs_bp = Blueprint('utilisateurs', __name__, url_prefix='/utilisateurs')
@@ -19,6 +20,7 @@ def valider_nom(nom):
 
 @utilisateurs_bp.route('/')
 @login_required
+@admin_required
 def liste():
     utilisateurs = Utilisateur.query.order_by(Utilisateur.nom_user).all()
     return render_template('utilisateurs.html', utilisateurs=utilisateurs)

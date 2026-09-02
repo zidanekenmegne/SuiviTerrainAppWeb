@@ -11,7 +11,7 @@
                 <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter un point de vente</h4>
             </div>
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data" id="ajouterPointForm" novalidate>
+                <form method="POST" enctype="multipart/form-data" id="ajouterPointForm" action="{{ url_for('points.ajouter') }}" novalidate>
                     <!-- Nom -->
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom *</label>
@@ -79,7 +79,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary-red">Ajouter</button>
-                        <a href="{{ url_for('points_vente') }}" class="btn btn-secondary">Annuler</a>
+                        <a href="{{ url_for('points.liste') }}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>
@@ -94,10 +94,8 @@
         const adresse = document.getElementById('adresse');
         const telephone = document.getElementById('telephone');
 
-        // === Fonction pour valider un champ ===
         function validateField(input, errorId) {
             const errorEl = document.getElementById(errorId);
-            
             if (input.validity.valid) {
                 input.classList.remove('is-invalid');
                 input.classList.add('is-valid');
@@ -111,20 +109,10 @@
             }
         }
 
-        // === Validation en temps réel ===
-        nom.addEventListener('input', function() {
-            validateField(this, 'nomError');
-        });
+        nom.addEventListener('input', function() { validateField(this, 'nomError'); });
+        adresse.addEventListener('input', function() { validateField(this, 'adresseError'); });
+        telephone.addEventListener('input', function() { validateField(this, 'telephoneError'); });
 
-        adresse.addEventListener('input', function() {
-            validateField(this, 'adresseError');
-        });
-
-        telephone.addEventListener('input', function() {
-            validateField(this, 'telephoneError');
-        });
-
-        // === Validation au moment de l'envoi ===
         form.addEventListener('submit', function(e) {
             const isNomValid = validateField(nom, 'nomError');
             const isAdresseValid = validateField(adresse, 'adresseError');
@@ -133,9 +121,7 @@
             if (!isNomValid || !isAdresseValid || !isTelephoneValid) {
                 e.preventDefault();
                 const firstInvalid = form.querySelector('.is-invalid');
-                if (firstInvalid) {
-                    firstInvalid.focus();
-                }
+                if (firstInvalid) firstInvalid.focus();
                 return false;
             }
         });

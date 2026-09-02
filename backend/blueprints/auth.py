@@ -5,11 +5,10 @@ from models import db, Utilisateur, JournalConnexion
 from datetime import datetime
 import re
 
-# Création du blueprint
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 # ==========================================================
-# FONCTIONS DE VALIDATION (communes)
+# FONCTIONS DE VALIDATION
 # ==========================================================
 
 def valider_email(email):
@@ -38,12 +37,20 @@ def login():
 
         user = Utilisateur.query.filter_by(mail=email).first()
 
-        if user and check_password_hash(user.mdp, mdp):
+        if user:
+            try:
+                password_valid = check_password_hash(user.mdp, mdp)
+            except ValueError:
+                flash('Votre mot de passe doit être réinitialisé. Contactez l\'administrateur.', 'danger')
+                return render_template('login.html')
+        else:
+            password_valid = False
+
+        if user and password_valid:
             login_user(user)
             user.derniere_connexion_user = datetime.now()
             db.session.commit()
 
-            # Journal de connexion
             journal = JournalConnexion(
                 id_user=user.id_user,
                 adresse_ip=request.remote_addr,
@@ -53,6 +60,10 @@ def login():
             db.session.commit()
 
             flash(f'Bienvenue {user.nom_user} !', 'success')
+            
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
             return redirect(url_for('tableau_bord'))
         else:
             flash('Email ou mot de passe incorrect.', 'danger')
@@ -98,7 +109,8 @@ def register():
             mdp=mdp_hash,
             role=role,
             zone_intervention=zone if zone else None,
-            date_creation_user=datetime.now()
+            date_creation_user=datetime.now(),
+            actif=True
         )
 
         db.session.add(nouvel_utilisateur)
@@ -108,3 +120,8 @@ def register():
         return redirect(url_for('auth.login'))
 
     return render_template('register.html')
+
+@auth_bp.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)

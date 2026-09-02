@@ -11,7 +11,7 @@
                 <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter une catégorie</h4>
             </div>
             <div class="card-body">
-                <form method="POST" id="ajouterCategorieForm" novalidate>
+                <form method="POST" id="ajouterCategorieForm" action="{{ url_for('categories.ajouter') }}" novalidate>
                     <div class="mb-3">
                         <label for="nom" class="form-label">Nom *</label>
                         <input type="text" class="form-control" id="nom" name="nom" 
@@ -33,7 +33,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary-red">Ajouter</button>
-                        <a href="{{ url_for('liste_categories') }}" class="btn btn-secondary">Annuler</a>
+                        <a href="{{ url_for('categories.liste') }}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>
