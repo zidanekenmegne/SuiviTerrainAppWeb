@@ -7,6 +7,7 @@ from flask_limiter.util import get_remote_address
 from config import Config
 from models import db, Utilisateur, PointDeVente, Visite
 from datetime import datetime
+from models import Categorie
 import requests
 import os
 
@@ -93,7 +94,7 @@ def index():
 @app.route('/tableau-bord')
 @login_required
 def tableau_bord():
-    print("✅ Route tableau_bord appelée")
+    print(" Route tableau_bord appelée")
     # Données statistiques
     total_visites = Visite.query.count()
     total_realisees = Visite.query.filter_by(statut='realisee').count()
@@ -114,6 +115,26 @@ def tableau_bord():
         visites_recentes=visites_recentes,
         date_actuelle=date_actuelle
     )
+
+@app.route('/check-auth')
+@login_required
+def check_auth():
+    return f"Connecté en tant que : {current_user.nom_user}"
+
+@app.route('/carte')
+@login_required
+def carte():
+    categories = Categorie.query.order_by(Categorie.nom_cat).all()
+    return render_template('carte.html', categories=categories)
+
+@app.route('/session-check')
+def session_check():
+    from flask import session
+    return {
+        'session': dict(session),
+        'user_id': session.get('_user_id'),
+        'is_authenticated': current_user.is_authenticated if current_user.is_authenticated else False
+    }
 
 # ==========================================================
 # GESTION DES ERREURS (API)

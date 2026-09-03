@@ -394,3 +394,30 @@ def api_get_stats():
         },
         'points_par_categorie': points_par_categorie
     })
+    
+@api_bp.route('/visites/jour', methods=['GET'])
+@jwt_required()
+@cross_origin()
+def api_get_visites_jour():
+    """Visites du jour pour l'agent connecté"""
+    current_user_id = get_jwt_identity()
+    today = datetime.now().date()
+    
+    visites = Visite.query.filter(
+        Visite.date_prevue == today,
+        Visite.id_utilisateur == current_user_id
+    ).order_by(Visite.heure_prevue).all()
+    
+    return api_response(data=[{
+        'id': v.id_visite,
+        'date_prevue': v.date_prevue.isoformat(),
+        'heure_prevue': v.heure_prevue.isoformat() if v.heure_prevue else None,
+        'statut': v.statut,
+        'point_vente': {
+            'id': v.point.id_pt,
+            'nom': v.point.nom_pt,
+            'adresse': v.point.adresse,
+            'latitude': float(v.point.latitude) if v.point.latitude else None,
+            'longitude': float(v.point.longitude) if v.point.longitude else None
+        } if v.point else None
+    } for v in visites])

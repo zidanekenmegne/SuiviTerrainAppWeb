@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Carte - SuiviTerrain{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map {
+        height: 550px;
+        width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        z-index: 1;
+    }
+    .map-controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .map-controls select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #e0dcd6;
+        font-family: 'Segoe UI', sans-serif;
+        background: white;
+        min-width: 180px;
+    }
+    .map-controls .btn-map {
+        background-color: #8B0000;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .map-controls .btn-map:hover {
+        background-color: #6a0000;
+    }
+    .map-controls .btn-map.btn-secondary {
+        background-color: #6c757d;
+    }
+    .map-controls .btn-map.btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    .leaflet-popup-content {
+        font-family: 'Segoe UI', sans-serif;
+        min-width: 200px;
+    }
+    .leaflet-popup-content strong {
+        color: #8B0000;
+    }
+    .leaflet-popup-content .popup-categorie {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #fff;
+        margin-top: 4px;
+    }
+    .custom-marker {
+        background: none;
+        border: none;
+    }
+    .user-marker {
+        background: none;
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><i class="bi bi-map" style="color: #8B0000;"></i> Carte des points de vente</h1>
+</div>
+
+<!-- Contrôles -->
+<div class="map-controls">
+    <select id="filterCategorie" class="form-select">
+        <option value="">Toutes les catégories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id_cat }}">{{ cat.nom_cat }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn-map" id="btnGeolocate">
+        <i class="bi bi-crosshair"></i> Ma position
+    </button>
+    <button class="btn-map" id="btnItineraire">
+        <i class="bi bi-route"></i> Itinéraire du jour
+    </button>
+    <button class="btn-map btn-secondary" id="btnRefresh">
+        <i class="bi bi-arrow-clockwise"></i> Actualiser
+    </button>
+</div>
+
+<!-- Carte -->
+<div id="map"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ==========================================================
+        // INITIALISATION DE LA CARTE
+        // ==========================================================
+        const map = L.map('map').setView([4.051056, 9.767869], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(map);
+
+        let markers = [];
+        let userMarker = null;
+        let allPoints = [];
+
+        // ==========================================================
+        // RÉCUPÉRER LES POINTS DEPUIS L'API
+        // ==========================================================
+        function loadPoints() {
+            fetch('/api/v1/points?limit=100')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data && data.data.points) {
+                        allPoints = data.data.points;
+                        displayPoints(allPoints);
+                    } else {
+                        console.error('Erreur de chargement des points');
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+
+        // ==========================================================
+        // AFFICHER LES POINTS SUR LA CARTE
+        // ==========================================================
+        function displayPoints(points) {
+            // Supprimer les anciens marqueurs
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            const filterValue = document.getElementById('filterCategorie').value;
+
+            points.forEach(point => {
+                if (!point.latitude || !point.longitude) return;
+
+                // Filtrage par catégorie
+                if (filterValue && point.categorie_id != filterValue) return;
+
+                // Couleur du marqueur selon la catégorie
+                const color = point.couleur || '#6c757d';
+
+                const icon = L.divIcon({
+                    html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; font-weight: 700;"><i class="bi bi-shop" style="font-size: 12px;"></i></div>`,
+                    className: 'custom-marker',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15],
+                    popupAnchor: [0, -15]
+                });
+
+                const marker = L.marker([point.latitude, point.longitude], { icon: icon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="padding: 4px;">
+                            <strong>${point.nom}</strong>
+                            <br><span style="color: #6c757d; font-size: 0.85rem;">${point.adresse}</span>
+                            ${point.telephone ? `<br><i class="bi bi-telephone"></i> ${point.telephone}` : ''}
+                            ${point.categorie ? `<br><span class="popup-categorie" style="background-color: ${color};">${point.categorie}</span>` : ''}
+                            <br><a href="/points/modifier/${point.id}" style="color: #8B0000; font-weight: 600; text-decoration: none; margin-top: 4px; display: inline-block;">Voir les détails →</a>
+                        </div>
+                    `);
+
+                markers.push(marker);
+            });
+        }
+
+        // ==========================================================
+        // GÉOLOCALISATION
+        // ==========================================================
+        document.getElementById('btnGeolocate').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        //  Affichage de la précision dans la console
+                        console.log(`Une Précision à: ${position.coords.accuracy} mètres`);
+
+                        // Mettre à jour la carte
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+
+                        const userIcon = L.divIcon({
+                            html: `<div style="background-color: #8B0000; width: 20px; height: 20px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"><div style="width: 8px; height: 8px; background-color: #ffffff; border-radius: 50%; margin: 6px auto;"></div></div>`,
+                            className: 'user-marker',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+
+                        userMarker = L.marker([lat, lng], { icon: userIcon })
+                            .addTo(map)
+                            .bindPopup(`Hey, Vous êtes ici<br><span style="font-size: 0.7rem; color: #6c757d;">Précision : ${position.coords.accuracy} m</span>`);
+
+                        map.setView([lat, lng], 17); // Zoom plus fort
+                        userMarker.openPopup();
+                    },
+                    function(error) {
+                        alert('Erreur de géolocalisation : ' + error.message);
+                    },
+                    {
+                        enableHighAccuracy: true,    //  Active le GPS
+                        timeout: 15000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+            }
+        });
+
+        // ==========================================================
+        // FILTRE PAR CATÉGORIE
+        // ==========================================================
+        document.getElementById('filterCategorie').addEventListener('change', function() {
+            displayPoints(allPoints);
+        });
+
+        // ==========================================================
+        // ACTUALISER
+        // ==========================================================
+        document.getElementById('btnRefresh').addEventListener('click', function() {
+            loadPoints();
+        });
+
+        // ==========================================================
+        // INITIALISATION
+        // ==========================================================
+        loadPoints();
+    });
+</script>
+
+{% endblock %}

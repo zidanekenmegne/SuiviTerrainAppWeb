@@ -48,9 +48,12 @@ def login():
 
         if user and password_valid:
             login_user(user)
+            print(f" Utilisateur connecté : {user.nom_user} (ID: {user.id_user})")
+            print(f" Session ID : {request.cookies.get('session')}")
             user.derniere_connexion_user = datetime.now()
             db.session.commit()
 
+            # Journal de connexion
             journal = JournalConnexion(
                 id_user=user.id_user,
                 adresse_ip=request.remote_addr,
@@ -61,9 +64,12 @@ def login():
 
             flash(f'Bienvenue {user.nom_user} !', 'success')
             
+            # Redirection CORRIGÉE
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
+            
+            # Redirection vers le tableau de bord
             return redirect(url_for('tableau_bord'))
         else:
             flash('Email ou mot de passe incorrect.', 'danger')

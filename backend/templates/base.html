@@ -104,6 +104,17 @@
         }
     </style>
     {% block extra_css %}{% endblock %}
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+
 </head>
 <body>
 
@@ -122,9 +133,9 @@
                 <li><a href="{{ url_for('visites.liste') }}"><i class="bi bi-list-ul"></i> Visites</a></li>
                 <li><a href="{{ url_for('categories.liste') }}"><i class="bi bi-tags"></i> Catégories</a></li>
                 <li><a href="{{ url_for('utilisateurs.liste') }}"><i class="bi bi-people"></i> Utilisateurs</a></li>
+                <li><a href="{{ url_for('carte') }}"><i class="bi bi-map"></i> Carte</a></li>
                 <li><a href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profil</a></li>
-                <li><a href="{{ url_for('auth.logout') }}" style="color: #ff6b6b;"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
-                {% else %}
+                <li><a href="{{ url_for('auth.logout') }}" style="color: #ff6b6b;"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>                {% else %}
                 <li><a href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right"></i> Connexion</a></li>
                 <li><a href="{{ url_for('auth.register') }}"><i class="bi bi-person-plus"></i> Inscription</a></li>
                 {% endif %}
