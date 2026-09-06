@@ -1,0 +1,51 @@
+/* ==========================================================
+   SUIVITERRAIN - STYLES GLOBAUX
+   ========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FFF8F0;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+}
+
+.btn-primary-red {
+    background-color: #8B0000;
+    border: none;
+    color: #ffffff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.btn-primary-red:hover {
+    background-color: #6a0000;
+    color: #ffffff;
+}
+
+.btn-outline-red {
+    background: transparent;
+    border: 2px solid #8B0000;
+    color: #8B0000;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.btn-outline-red:hover {
+    background-color: #8B0000;
+    color: #ffffff;
+}
