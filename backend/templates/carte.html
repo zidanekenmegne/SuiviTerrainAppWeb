@@ -13,18 +13,29 @@
     }
     .map-controls {
         display: flex;
+        flex-direction: column;
         gap: 10px;
         margin-bottom: 15px;
+    }
+    .map-controls .filter-group {
+        display: flex;
+        gap: 8px;
         flex-wrap: wrap;
         align-items: center;
     }
-    .map-controls select {
+    .map-controls .actions-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .map-controls select,
+    .map-controls input {
         padding: 8px 12px;
         border-radius: 8px;
         border: 1px solid #e0dcd6;
         font-family: 'Segoe UI', sans-serif;
         background: white;
-        min-width: 180px;
     }
     .map-controls .btn-map {
         background-color: #8B0000;
@@ -72,6 +83,22 @@
         background: none;
         border: none;
     }
+    .leaflet-routing-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        padding: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .leaflet-routing-container .leaflet-routing-alt {
+        max-height: 250px;
+    }
+    .leaflet-routing-container h2 {
+        font-size: 14px;
+        color: #8B0000;
+    }
 </style>
 {% endblock %}
 
@@ -81,26 +108,51 @@
     <h1><i class="bi bi-map" style="color: #8B0000;"></i> Carte des points de vente</h1>
 </div>
 
-<!-- Contrôles -->
 <div class="map-controls">
-    <select id="filterCategorie" class="form-select">
-        <option value="">Toutes les catégories</option>
-        {% for cat in categories %}
-        <option value="{{ cat.id_cat }}">{{ cat.nom_cat }}</option>
-        {% endfor %}
-    </select>
-    <button class="btn-map" id="btnGeolocate">
-        <i class="bi bi-crosshair"></i> Ma position
-    </button>
-    <button class="btn-map" id="btnItineraire">
-        <i class="bi bi-route"></i> Itinéraire du jour
-    </button>
-    <button class="btn-map btn-secondary" id="btnRefresh">
-        <i class="bi bi-arrow-clockwise"></i> Actualiser
-    </button>
+    <!-- Filtres -->
+    <div class="filter-group">
+        <input type="text" id="searchPoint" placeholder="🔍 Nom du point..." 
+               class="form-control" style="min-width: 150px; max-width: 200px;">
+        
+        <input type="date" id="filterDate" class="form-control" 
+               style="max-width: 160px;" value="{{ today }}">
+        
+        <select id="filterCategorie" class="form-select" style="min-width: 140px; max-width: 180px;">
+            <option value="">Toutes les catégories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id_cat }}">{{ cat.nom_cat }}</option>
+            {% endfor %}
+        </select>
+        
+        <select id="filterZone" class="form-select" style="min-width: 140px; max-width: 180px;">
+            <option value="">Toutes les zones</option>
+            {% for zone in zones %}
+            <option value="{{ zone }}">{{ zone }}</option>
+            {% endfor %}
+        </select>
+        
+        <button class="btn-map" id="btnApplyFilters">
+            <i class="bi bi-funnel"></i> Filtrer
+        </button>
+        <button class="btn-map btn-secondary" id="btnResetFilters">
+            <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+        </button>
+    </div>
+    
+    <!-- Actions -->
+    <div class="actions-group">
+        <button class="btn-map" id="btnGeolocate">
+            <i class="bi bi-crosshair"></i> Ma position
+        </button>
+        <button class="btn-map" id="btnItineraire">
+            <i class="bi bi-route"></i> Itinéraire du jour
+        </button>
+        <button class="btn-map btn-secondary" id="btnRefresh">
+            <i class="bi bi-arrow-clockwise"></i> Actualiser
+        </button>
+    </div>
 </div>
 
-<!-- Carte -->
 <div id="map"></div>
 
 <script>
@@ -118,6 +170,9 @@
         let markers = [];
         let userMarker = null;
         let allPoints = [];
+        let userLat = null;
+        let userLng = null;
+        let routingControl = null;
 
         // ==========================================================
         // RÉCUPÉRER LES POINTS DEPUIS L'API
@@ -140,7 +195,6 @@
         // AFFICHER LES POINTS SUR LA CARTE
         // ==========================================================
         function displayPoints(points) {
-            // Supprimer les anciens marqueurs
             markers.forEach(m => map.removeLayer(m));
             markers = [];
 
@@ -148,11 +202,8 @@
 
             points.forEach(point => {
                 if (!point.latitude || !point.longitude) return;
-
-                // Filtrage par catégorie
                 if (filterValue && point.categorie_id != filterValue) return;
 
-                // Couleur du marqueur selon la catégorie
                 const color = point.couleur || '#6c757d';
 
                 const icon = L.divIcon({
@@ -186,13 +237,11 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
+                        userLat = position.coords.latitude;
+                        userLng = position.coords.longitude;
 
-                        //  Affichage de la précision dans la console
-                        console.log(`Une Précision à: ${position.coords.accuracy} mètres`);
+                        console.log(`📍 Précision : ${position.coords.accuracy} mètres`);
 
-                        // Mettre à jour la carte
                         if (userMarker) {
                             map.removeLayer(userMarker);
                         }
@@ -204,18 +253,18 @@
                             iconAnchor: [10, 10]
                         });
 
-                        userMarker = L.marker([lat, lng], { icon: userIcon })
+                        userMarker = L.marker([userLat, userLng], { icon: userIcon })
                             .addTo(map)
-                            .bindPopup(`Hey, Vous êtes ici<br><span style="font-size: 0.7rem; color: #6c757d;">Précision : ${position.coords.accuracy} m</span>`);
+                            .bindPopup(`📍 Vous êtes ici<br><span style="font-size: 0.7rem; color: #6c757d;">Précision : ${position.coords.accuracy} m</span>`);
 
-                        map.setView([lat, lng], 17); // Zoom plus fort
+                        map.setView([userLat, userLng], 17);
                         userMarker.openPopup();
                     },
                     function(error) {
                         alert('Erreur de géolocalisation : ' + error.message);
                     },
                     {
-                        enableHighAccuracy: true,    //  Active le GPS
+                        enableHighAccuracy: true,
                         timeout: 15000,
                         maximumAge: 0
                     }
@@ -226,10 +275,33 @@
         });
 
         // ==========================================================
-        // FILTRE PAR CATÉGORIE
+        // FILTRES AVANCÉS
         // ==========================================================
-        document.getElementById('filterCategorie').addEventListener('change', function() {
-            displayPoints(allPoints);
+        document.getElementById('btnApplyFilters').addEventListener('click', function() {
+            const search = document.getElementById('searchPoint').value.trim();
+            const categorie = document.getElementById('filterCategorie').value;
+            const zone = document.getElementById('filterZone').value;
+            
+            let url = '/api/v1/points/filter?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (categorie) url += `categorie=${encodeURIComponent(categorie)}&`;
+            if (zone) url += `zone=${encodeURIComponent(zone)}&`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data) {
+                        displayPoints(data.data);
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+        });
+
+        document.getElementById('btnResetFilters').addEventListener('click', function() {
+            document.getElementById('searchPoint').value = '';
+            document.getElementById('filterCategorie').value = '';
+            document.getElementById('filterZone').value = '';
+            loadPoints();
         });
 
         // ==========================================================
@@ -237,6 +309,126 @@
         // ==========================================================
         document.getElementById('btnRefresh').addEventListener('click', function() {
             loadPoints();
+        });
+
+        // ==========================================================
+        // FILTRAGE DE L'ITINÉRAIRE PAR DATE
+        // ==========================================================
+        document.getElementById('filterDate').addEventListener('change', function() {
+            const date = this.value;
+            if (date) {
+                chargerItineraire(date);
+            }
+        });
+
+        // ==========================================================
+        // ITINÉRAIRE DU JOUR (avec sessions Flask)
+        // ==========================================================
+        function chargerItineraire(dateParam) {
+            const date = dateParam || new Date().toISOString().split('T')[0];
+            
+            fetch(`/api/v1/visites/jour?date=${date}`, {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.status === 401 || response.status === 302) {
+                    alert('Votre session a expiré. Veuillez vous reconnecter.');
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data) return;
+
+                if (data.status === 'success' && data.data && data.data.length > 0) {
+                    const visites = data.data;
+
+                    const waypointsData = visites
+                        .filter(v => v.point_vente && v.point_vente.latitude && v.point_vente.longitude)
+                        .map(v => ({
+                            lat: v.point_vente.latitude,
+                            lng: v.point_vente.longitude,
+                            nom: v.point_vente.nom,
+                            heure: v.heure_prevue ? v.heure_prevue.substring(0, 5) : '--:--'
+                        }));
+
+                    if (waypointsData.length < 2) {
+                        alert('Il faut au moins 2 visites avec coordonnées GPS pour tracer un itinéraire.');
+                        return;
+                    }
+
+                    let points = waypointsData.map(w => L.latLng(w.lat, w.lng));
+
+                    if (userLat && userLng) {
+                        points.unshift(L.latLng(userLat, userLng));
+                    }
+
+                    if (routingControl) {
+                        map.removeControl(routingControl);
+                    }
+
+                    routingControl = L.Routing.control({
+                        waypoints: points,
+                        routeWhileDragging: true,
+                        showAlternatives: true,
+                        lineOptions: {
+                            styles: [{ color: '#8B0000', weight: 4 }]
+                        },
+                        createMarker: function(i, wp) {
+                            if (i === 0 && userLat && userLng) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        html: '<div style="background-color: #8B0000; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"><div style="width: 6px; height: 6px; background-color: #ffffff; border-radius: 50%; margin: 5px auto;"></div></div>',
+                                        className: 'user-marker',
+                                        iconSize: [16, 16],
+                                        iconAnchor: [8, 8]
+                                    })
+                                }).bindPopup('📍 Départ (vous)');
+                            }
+
+                            const idx = i - (userLat && userLng ? 1 : 0);
+                            const waypoint = waypointsData[idx];
+
+                            if (waypoint) {
+                                return L.marker(wp.latLng, {
+                                    icon: L.divIcon({
+                                        html: `<div style="background-color: #007bff; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; font-weight: 700;">${i}</div>`,
+                                        className: 'custom-marker',
+                                        iconSize: [24, 24],
+                                        iconAnchor: [12, 12]
+                                    })
+                                }).bindPopup(`<strong>${waypoint.nom}</strong><br>🕐 ${waypoint.heure}`);
+                            }
+
+                            return L.marker(wp.latLng);
+                        }
+                    }).addTo(map);
+
+                    setTimeout(() => {
+                        const bounds = routingControl.getPlan().getBounds();
+                        if (bounds) {
+                            map.fitBounds(bounds, { padding: [50, 50] });
+                        }
+                    }, 500);
+
+                } else if (data.status === 'error') {
+                    alert(data.message || 'Erreur lors du chargement des visites.');
+                } else {
+                    alert('Aucune visite planifiée pour cette date avec coordonnées GPS.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors du chargement des visites.');
+            });
+        }
+
+        document.getElementById('btnItineraire').addEventListener('click', function() {
+            chargerItineraire();
         });
 
         // ==========================================================

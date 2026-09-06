@@ -40,6 +40,17 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="agent" class="form-label">Agent responsable *</label>
+                        <select class="form-select" id="agent" name="agent" required>
+                            <option value="">Sélectionner un agent</option>
+                            {% for agent in agents %}
+                            <option value="{{ agent.id_user }}">{{ agent.nom_user }} ({{ agent.zone_intervention }})</option>
+                            {% endfor %}
+                        </select>
+                        <div id="agentError" class="invalid-feedback">Veuillez sélectionner un agent.</div>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="statut" class="form-label">Statut</label>
                         <select class="form-select" id="statut" name="statut">
                             <option value="planifiee">Planifiée</option>

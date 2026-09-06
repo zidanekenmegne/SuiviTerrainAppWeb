@@ -2,8 +2,9 @@ from flask import Blueprint, request, jsonify, url_for
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 from flask_limiter import Limiter
+from flask_login import current_user
 from flask_limiter.util import get_remote_address
-from models import db, Utilisateur, Categorie, PointDeVente, Visite
+from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 
@@ -396,17 +397,23 @@ def api_get_stats():
     })
     
 @api_bp.route('/visites/jour', methods=['GET'])
-@jwt_required()
 @cross_origin()
 def api_get_visites_jour():
     """Visites du jour pour l'agent connecté"""
-    current_user_id = get_jwt_identity()
+    if not current_user.is_authenticated:
+        return api_response(message='Non authentifié', status='error', code=401)
+    
+    current_user_id = current_user.id_user
     today = datetime.now().date()
     
-    visites = Visite.query.filter(
-        Visite.date_prevue == today,
-        Visite.id_utilisateur == current_user_id
-    ).order_by(Visite.heure_prevue).all()
+    visites = Visite.query\
+        .join(realiser, Visite.id_visite == realiser.c.id_visite)\
+        .filter(
+            Visite.date_prevue == today,
+            realiser.c.id_user == current_user_id
+        )\
+        .order_by(Visite.heure_prevue)\
+        .all()
     
     return api_response(data=[{
         'id': v.id_visite,
@@ -421,3 +428,42 @@ def api_get_visites_jour():
             'longitude': float(v.point.longitude) if v.point.longitude else None
         } if v.point else None
     } for v in visites])
+    
+@api_bp.route('/points/filter', methods=['GET'])
+@cross_origin()
+def api_filter_points():
+    """Points de vente avec filtrage avancé"""
+    search = request.args.get('search', '').strip()
+    categorie = request.args.get('categorie', '').strip()
+    zone = request.args.get('zone', '').strip()
+    
+    query = PointDeVente.query
+    
+    if search:
+        query = query.filter(
+            (PointDeVente.nom_pt.ilike(f'%{search}%')) |
+            (PointDeVente.adresse.ilike(f'%{search}%'))
+        )
+    
+    if categorie:
+        query = query.join(Categorie).filter(Categorie.nom_cat.ilike(f'%{categorie}%'))
+    
+    if zone:
+        # Points de vente dans la zone d'intervention de l'agent
+        # On peut chercher les utilisateurs de cette zone et leurs visites
+        query = query.join(Visite).join(Utilisateur).filter(Utilisateur.zone_intervention.ilike(f'%{zone}%'))
+    
+    points = query.order_by(PointDeVente.nom_pt).limit(200).all()
+    
+    return api_response(data=[{
+        'id': p.id_pt,
+        'nom': p.nom_pt,
+        'adresse': p.adresse,
+        'latitude': float(p.latitude) if p.latitude else None,
+        'longitude': float(p.longitude) if p.longitude else None,
+        'telephone': p.telephone,
+        'photo': p.photo,
+        'categorie': p.categorie.nom_cat if p.categorie else None,
+        'couleur': p.categorie.couleur if p.categorie else None,
+        'categorie_id': p.id_cat
+    } for p in points])

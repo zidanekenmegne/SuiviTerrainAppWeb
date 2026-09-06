@@ -121,12 +121,6 @@ def tableau_bord():
 def check_auth():
     return f"Connecté en tant que : {current_user.nom_user}"
 
-@app.route('/carte')
-@login_required
-def carte():
-    categories = Categorie.query.order_by(Categorie.nom_cat).all()
-    return render_template('carte.html', categories=categories)
-
 @app.route('/session-check')
 def session_check():
     from flask import session
@@ -135,6 +129,27 @@ def session_check():
         'user_id': session.get('_user_id'),
         'is_authenticated': current_user.is_authenticated if current_user.is_authenticated else False
     }
+    
+@app.route('/carte')
+@login_required
+def carte():
+    categories = Categorie.query.order_by(Categorie.nom_cat).all()
+    
+    # Récupérer les zones uniques des utilisateurs
+    zones = db.session.query(Utilisateur.zone_intervention)\
+        .filter(Utilisateur.zone_intervention.isnot(None))\
+        .distinct()\
+        .order_by(Utilisateur.zone_intervention)\
+        .all()
+    zones = [z[0] for z in zones if z[0]]
+    
+    today = datetime.now().date().isoformat()
+    
+    return render_template('carte.html', 
+        categories=categories, 
+        zones=zones,
+        today=today
+    )
 
 # ==========================================================
 # GESTION DES ERREURS (API)
