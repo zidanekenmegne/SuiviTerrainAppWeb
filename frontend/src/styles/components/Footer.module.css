@@ -11,17 +11,16 @@
   margin-top: auto;
 }
 
+@media (min-width: 769px) {
+  .footerPC {
+    display: block !important;
+  }
+}
+
 .footerPC p {
   font-family: 'Segoe UI', sans-serif;
   font-size: 0.9rem;
   color: #ffffff;
   margin-bottom: 0;
   opacity: 0.85;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (min-width: 769px) {
-  .footerPC {
-    display: block !important;
-  }
 }

@@ -18,6 +18,12 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 768px) {
+  .bottomNavMobile {
+    display: flex !important;
+  }
+}
+
 /* ===== ÉLÉMENTS ===== */
 .navItem {
   display: flex;
@@ -77,13 +83,6 @@
 .navItemCenter i {
   font-size: 1.6rem;
   margin-bottom: 0;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .bottomNavMobile {
-    display: flex !important;
-  }
 }
 
 @media (max-width: 360px) {
