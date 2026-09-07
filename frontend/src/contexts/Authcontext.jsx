@@ -39,29 +39,40 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Fonction de connexion
-  const login = async (email, password) => {
+    const login = async (email, password) => {
     try {
-      const response = await apiClient.post('/auth/login', { email, mdp: password });
-      const { token, user: userData } = response.data.data;
-      
-      // Sauvegarder dans localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      // Mettre à jour les états
-      setToken(token);
-      setUser(userData);
-      apiClient.defaults.headers.Authorization = `Bearer ${token}`;
-      
-      return { success: true, user: userData };
+        const response = await apiClient.post('/auth/login', { email, mdp: password });
+        console.log('Réponse API login:', response.data); // ← Pour déboguer
+        
+        // Vérifier si la réponse a le format attendu
+        if (!response.data || !response.data.data) {
+        throw new Error('Format de réponse API invalide');
+        }
+        
+        const { token, user } = response.data.data;
+        
+        if (!token || !user) {
+        throw new Error('Token ou utilisateur manquant');
+        }
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Mettre à jour les états
+        setToken(token);
+        setUser(user);
+        apiClient.defaults.headers.Authorization = `Bearer ${token}`;
+        
+        return { success: true, user };
     } catch (error) {
-      console.error('Erreur de connexion:', error);
-      return { 
+        console.error('Erreur de connexion détaillée:', error.response?.data || error.message);
+        return { 
         success: false, 
         message: error.response?.data?.message || 'Erreur lors de la connexion' 
-      };
+        };
     }
-  };
+    };
 
   // Fonction de déconnexion
   const logout = () => {
