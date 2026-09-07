@@ -1,0 +1,27 @@
+/* ==========================================================
+   FOOTER PC - SuiviTerrain
+   ========================================================== */
+
+.footerPC {
+  background-color: #8B0000;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  flex-shrink: 0;
+  display: none;
+  margin-top: auto;
+}
+
+.footerPC p {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin-bottom: 0;
+  opacity: 0.85;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 769px) {
+  .footerPC {
+    display: block !important;
+  }
+}

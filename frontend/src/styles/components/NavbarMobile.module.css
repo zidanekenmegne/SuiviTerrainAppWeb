@@ -1,0 +1,133 @@
+/* ==========================================================
+   NAVBAR MOBILE - SuiviTerrain
+   ========================================================== */
+
+.topHeaderMobile {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  padding: 0.75rem 1rem 0.5rem 1rem;
+  border-radius: 0 0 1px 1px;
+  display: none;
+  flex-shrink: 0;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== HAMBURGER ===== */
+.menuHamburger {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+/* ===== TITRE ===== */
+.headerCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pageTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 0;
+}
+
+/* ===== NOTIFICATIONS ===== */
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.notificationBtn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.3rem;
+  position: relative;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.badgeNotif {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.5rem;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== MENU DROPDOWN ===== */
+.mobileMenuDropdown {
+  background: #8B0000;
+  padding: 0.5rem 1rem 1rem 1rem;
+  border-radius: 0 0 20px 20px;
+  display: none;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.mobileMenuDropdown.open {
+  display: block;
+}
+
+.mobileMenuDropdown a {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.mobileMenuDropdown a:hover,
+.mobileMenuDropdown a.activeLink {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.mobileMenuDropdown a i {
+  margin-right: 0.5rem;
+  width: 20px;
+  text-align: center;
+}
+
+.mobileMenuDropdown hr {
+  border-color: rgba(255, 255, 255, 0.15);
+  margin: 0.25rem 0;
+}
+
+.textDanger {
+  color: #ff6b6b !important;
+}
+
+.textDanger:hover {
+  background-color: rgba(220, 53, 69, 0.2) !important;
+  color: #ff6b6b !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .topHeaderMobile {
+    display: block !important;
+  }
+}
