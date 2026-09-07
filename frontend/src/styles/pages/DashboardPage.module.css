@@ -1,0 +1,516 @@
+/* ==========================================================
+   TABLEAU DE BORD - SuiviTerrain
+   ========================================================== */
+
+.dashboardContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;  /* Marges gauche/droite */
+}
+
+/* ==========================================================
+   EN-TÊTE PC
+   ========================================================== */
+.headerPC {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.headerPC .greeting h2 {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+}
+
+.headerPC .greeting h2 span {
+  color: #8B0000;
+}
+
+.headerPC .greeting p {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.btnNouvelleVisite {
+  background-color: #8B0000;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btnNouvelleVisite:hover {
+  background-color: #6a0000;
+  color: #ffffff;
+}
+
+.btnNouvelleVisite i {
+  margin-right: 0.4rem;
+}
+
+/* ==========================================================
+   RÉSUMÉ DU JOUR (MOBILE)
+   ========================================================== */
+.resumeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.resumeTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+}
+
+.resumeDate {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+/* ==========================================================
+   STATISTIQUES
+   ========================================================== */
+.statsRow {
+  margin-bottom: 1.25rem;
+}
+
+.statCard {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0.75rem 0.25rem;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
+  height: 100%;
+  min-height: 85px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.statCard i {
+  font-size: 1.3rem;
+  margin-bottom: 0.1rem;
+}
+
+.statNumber {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.iconTotal { color: #8B0000; }
+.iconRealise { color: #28a745; }
+.iconEncours { color: #ffc107; }
+.iconAttente { color: #17a2b8; }
+
+/* ==========================================================
+   VISITES RÉCENTES
+   ========================================================== */
+.visitesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.visitesHeaderPC {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.visitesTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+}
+
+.voirTout {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  color: #8B0000;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.voirTout:hover {
+  text-decoration: underline;
+  color: #8B0000;
+}
+
+.visitesList {
+  margin-bottom: 1.5rem;
+}
+
+.visiteItem {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 6px rgba(139, 0, 0, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.visiteItem:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.08);
+}
+
+.visiteInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.visiteTitre {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.visiteAdresse {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.65rem;
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+.visiteAdresse i {
+  margin-right: 0.15rem;
+}
+
+.visiteDate {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  color: #adb5bd;
+  margin-bottom: 0;
+}
+
+.visiteDate i {
+  margin-right: 0.15rem;
+}
+
+.badgeStatus {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.badgeStatus.realise {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.badgeStatus.attente {
+  background-color: #ffc107;
+  color: #1a1a1a;
+}
+
+.badgeStatus.retard {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.badgeStatus.encours {
+  background-color: #17a2b8;
+  color: #fff;
+}
+
+/* ==========================================================
+   ACTIONS RAPIDES
+   ========================================================== */
+.actionsHeader {
+  margin-bottom: 0.5rem;
+}
+
+.actionsTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+}
+
+.actionsGrid {
+  margin-bottom: 1rem;
+}
+
+.actionCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.75rem 0.25rem;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.06);
+  height: 100%;
+  min-height: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: #1a1a1a;
+  transition: transform 0.2s, border-color 0.2s;
+  border: 1px solid transparent;
+}
+
+.actionCard:hover {
+  transform: translateY(-2px);
+  border-color: #8B0000;
+  color: #1a1a1a;
+}
+
+.actionCard i {
+  font-size: 1.4rem;
+  color: #8B0000;
+  margin-bottom: 0.1rem;
+}
+
+.actionLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+  .headerPC {
+    display: flex !important;
+  }
+
+  .headerPC .greeting h2 {
+    font-size: 1.5rem;
+  }
+
+  .resumeRow {
+    display: none !important;
+  }
+
+  .visitesHeader {
+    display: none !important;
+  }
+
+  .visitesHeaderPC {
+    display: flex !important;
+  }
+
+  .visitesHeaderPC .visitesTitle {
+    font-size: 1.1rem;
+  }
+
+  .visitesHeaderPC .voirTout {
+    font-size: 0.85rem;
+  }
+
+  .statCard {
+    min-height: 110px;
+    padding: 1rem 0.5rem;
+  }
+
+  .statCard i {
+    font-size: 1.8rem;
+  }
+
+  .statNumber {
+    font-size: 1.8rem;
+  }
+
+  .statLabel {
+    font-size: 0.7rem;
+  }
+
+  .visiteItem .visiteTitre {
+    font-size: 0.95rem;
+  }
+
+  .visiteItem .visiteAdresse {
+    font-size: 0.8rem;
+  }
+
+  .visiteItem .visiteDate {
+    font-size: 0.75rem;
+  }
+
+  .visiteItem .badgeStatus {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .actionCard {
+    min-height: 90px;
+    padding: 1rem 0.5rem;
+  }
+
+  .actionCard i {
+    font-size: 1.8rem;
+  }
+
+  .actionLabel {
+    font-size: 0.7rem;
+  }
+
+  .actionsTitle {
+    font-size: 1.1rem;
+  }
+
+  .dashboardContainer {
+    padding: 0 2rem;  /* Marges plus grandes sur PC */
+  }
+}
+
+@media (max-width: 768px) {
+  .headerPC {
+    display: none !important;
+  }
+
+  .resumeRow {
+    display: flex !important;
+  }
+
+  .visitesHeader {
+    display: flex !important;
+  }
+
+  .visitesHeaderPC {
+    display: none !important;
+  }
+
+  .statCard {
+    min-height: 72px;
+    padding: 0.4rem 0.15rem;
+  }
+
+  .statCard i {
+    font-size: 1.1rem;
+  }
+
+  .statNumber {
+    font-size: 1.2rem;
+  }
+
+  .statLabel {
+    font-size: 0.5rem;
+  }
+
+  .visiteItem {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .visiteItem .visiteTitre {
+    font-size: 0.7rem;
+  }
+
+  .visiteItem .visiteAdresse {
+    font-size: 0.55rem;
+  }
+
+  .visiteItem .visiteDate {
+    font-size: 0.5rem;
+  }
+
+  .visiteItem .badgeStatus {
+    font-size: 0.45rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .actionCard {
+    min-height: 65px;
+    padding: 0.4rem 0.15rem;
+  }
+
+  .actionCard i {
+    font-size: 1.2rem;
+  }
+
+  .actionLabel {
+    font-size: 0.5rem;
+  }
+
+  .dashboardContainer {
+    padding: 0 0.75rem;  /* Marges réduites sur mobile */
+  }
+}
+
+@media (max-width: 360px) {
+  .statCard {
+    min-height: 60px;
+    padding: 0.3rem 0.1rem;
+  }
+
+  .statCard i {
+    font-size: 0.9rem;
+  }
+
+  .statNumber {
+    font-size: 1rem;
+  }
+
+  .statLabel {
+    font-size: 0.4rem;
+  }
+
+  .actionCard {
+    min-height: 55px;
+    padding: 0.3rem 0.1rem;
+  }
+
+  .actionCard i {
+    font-size: 1rem;
+  }
+
+  .actionLabel {
+    font-size: 0.4rem;
+  }
+
+  .dashboardContainer {
+    padding: 0 0.5rem;
+  }
+}

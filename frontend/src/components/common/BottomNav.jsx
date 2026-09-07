@@ -1,19 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import styles from '../../styles/components/BottomNav.module.css';
 
-/**
- * Barre de navigation mobile (bas de page)
- * - Affichée uniquement sur les écrans < 768px
- * - 5 onglets avec bouton d'action central
- */
 const BottomNav = () => {
   const location = useLocation();
 
+  // Ordre : Accueil → Visites → [+]/Action → Points → Profil
   const navItems = [
     { to: '/', label: 'Accueil', icon: 'bi bi-house-door' },
     { to: '/visites', label: 'Visites', icon: 'bi bi-list-ul' },
+    // Le bouton '+' sera inséré ici (entre Visites et Points)
     { to: '/points', label: 'Points', icon: 'bi bi-shop' },
-    { to: '/carte', label: 'Carte', icon: 'bi bi-map' },
     { to: '/profil', label: 'Profil', icon: 'bi bi-person' }
   ];
 
@@ -21,33 +17,34 @@ const BottomNav = () => {
     return location.pathname === path ? styles.active : '';
   };
 
-  // Déterminer l'action du bouton central selon la page
+  // ==========================================================
+  // BOUTON CENTRAL : ACTION CONTEXTUELLE
+  // ==========================================================
+  // Retourne l'URL de redirection et le label selon la page
   const getCenterAction = () => {
     const actions = {
-      '/': '/points', // Sur Dashboard → Ajouter un point
-      '/visites': '/visites/nouvelle',
-      '/points': '/points/ajouter',
-      '/carte': '/points/ajouter',
-      '/profil': '/parametres'
+      '/': { url: '/points/ajouter', label: 'Ajouter un point' },
+      '/visites': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
+      '/planning': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
+      '/historique': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
+      '/points': { url: '/points/ajouter', label: 'Ajouter un point' },
+      '/carte': { url: '/points/ajouter', label: 'Ajouter un point' },
+      '/profil': { url: '/parametres', label: 'Paramètres' },
+      '/utilisateurs': { url: '/utilisateurs/ajouter', label: 'Ajouter un utilisateur' },
+      '/rapports': { url: '/rapports/nouveau', label: 'Nouveau rapport' }
     };
-    return actions[location.pathname] || '/points/ajouter';
+    
+    const defaultAction = { url: '/points/ajouter', label: 'Action' };
+    return actions[location.pathname] || defaultAction;
   };
 
-  const getCenterLabel = () => {
-    const labels = {
-      '/': 'Ajouter un point',
-      '/visites': 'Nouvelle visite',
-      '/points': 'Ajouter un point',
-      '/carte': 'Ajouter un point',
-      '/profil': 'Paramètres'
-    };
-    return labels[location.pathname] || 'Action';
-  };
+  const centerAction = getCenterAction();
 
   return (
     <nav className={styles.bottomNavMobile} aria-label="Navigation principale mobile">
       
-      {navItems.map((item) => (
+      {/* Éléments avant le bouton central (Accueil + Visites) */}
+      {navItems.slice(0, 2).map((item) => (
         <Link
           key={item.to}
           to={item.to}
@@ -58,15 +55,27 @@ const BottomNav = () => {
         </Link>
       ))}
 
-      {/* Bouton central */}
+      {/* Bouton central '+' (contextuel) */}
       <Link
-        to={getCenterAction()}
+        to={centerAction.url}
         className={styles.navItemCenter}
-        aria-label={getCenterLabel()}
-        title={getCenterLabel()}
+        aria-label={centerAction.label}
+        title={centerAction.label}
       >
         <i className="bi bi-plus-lg" aria-hidden="true"></i>
       </Link>
+
+      {/* Éléments après le bouton central (Points + Profil) */}
+      {navItems.slice(2).map((item) => (
+        <Link
+          key={item.to}
+          to={item.to}
+          className={`${styles.navItem} ${isActive(item.to)}`}
+        >
+          <i className={item.icon} aria-hidden="true"></i>
+          <span>{item.label}</span>
+        </Link>
+      ))}
 
     </nav>
   );

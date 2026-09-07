@@ -2,11 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from '../../styles/components/Navbar.module.css';
 
-/**
- * Barre de navigation PC
- * - Affichée uniquement sur les écrans > 768px
- * - Navigation complète avec liens et recherche
- */
 const Navbar = () => {
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,11 +10,11 @@ const Navbar = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const navLinks = [
-    { to: '/', label: 'Tableau de bord', icon: 'bi bi-house-door' },
+    { to: '/', label: 'Accueil', icon: 'bi bi-house-door' },
     { to: '/visites', label: 'Visites', icon: 'bi bi-list-ul' },
     { to: '/planning', label: 'Planning', icon: 'bi bi-calendar-check' },
     { to: '/historique', label: 'Historique', icon: 'bi bi-clock-history' },
-    { to: '/points', label: 'Points de vente', icon: 'bi bi-shop' },
+    { to: '/points', label: 'Points', icon: 'bi bi-shop' },
     { to: '/utilisateurs', label: 'Utilisateurs', icon: 'bi bi-people' },
     { to: '/carte', label: 'Carte', icon: 'bi bi-map' }
   ];
@@ -28,13 +23,11 @@ const Navbar = () => {
     return location.pathname === path ? 'active' : '';
   };
 
-  // Recherche globale (simulation)
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     
     if (query.length >= 2) {
-      // Simulation de résultats
       const results = [
         { label: 'Visite - Magasin A', type: 'visit', url: '/visites' },
         { label: 'Point - Client B', type: 'point', url: '/points' }
@@ -55,32 +48,22 @@ const Navbar = () => {
     window.location.href = url;
   };
 
-  // Notifications (exemple)
   const notifCount = 3;
 
   return (
     <nav className={styles.navbarPC} aria-label="Navigation principale">
       <div className={styles.navbarInner}>
         
-        {/* Logo + Liens */}
         <div className={styles.navbarBrandWrapper}>
           <Link to="/" className={styles.navbarBrand}>
-            <img 
-              src="/favicon.svg" 
-              alt="SuiviTerrain" 
-              width="30" 
-              height="30" 
-            />
+            <img src="/favicon.svg" alt="SuiviTerrain" width="28" height="28" />
             <span>Suivi</span><span className={styles.brandGold}>Terrain</span>
           </Link>
           
           <ul className={styles.navLinks}>
             {navLinks.map((link) => (
               <li key={link.to}>
-                <Link 
-                  to={link.to} 
-                  className={isActive(link.to)}
-                >
+                <Link to={link.to} className={isActive(link.to)}>
                   <i className={link.icon} aria-hidden="true"></i>
                   {link.label}
                 </Link>
@@ -89,10 +72,8 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {/* Droite : Recherche + Notifications + Profil */}
         <div className={styles.navRight}>
           
-          {/* Recherche globale */}
           <div className={styles.searchContainer}>
             <div className={styles.searchInputWrapper}>
               <i className="bi bi-search" aria-hidden="true"></i>
@@ -105,10 +86,8 @@ const Navbar = () => {
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 aria-label="Recherche globale"
               />
-              <span className={styles.searchShortcut}>Ctrl+K</span>
             </div>
             
-            {/* Suggestions */}
             {showSuggestions && suggestions.length > 0 && (
               <div className={styles.searchSuggestions}>
                 {suggestions.map((item, index) => (
@@ -132,7 +111,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Notifications */}
           <button 
             className={styles.notificationBtn}
             aria-label="Notifications"
@@ -144,7 +122,6 @@ const Navbar = () => {
             )}
           </button>
 
-          {/* Profil Dropdown */}
           <div className={styles.dropdown}>
             <button
               className={styles.dropdownToggle}
@@ -153,7 +130,7 @@ const Navbar = () => {
             >
               <i className="bi bi-person-circle" aria-hidden="true"></i>
               Zidane
-              <i className="bi bi-chevron-down" aria-hidden="true" style={{ fontSize: '0.7rem', marginLeft: '0.3rem' }} />
+              <i className="bi bi-chevron-down" aria-hidden="true" />
             </button>
             
             {dropdownOpen && (
