@@ -322,3 +322,95 @@
   border: none;
   border-top: 1px solid #f0ece6;
 }
+
+/* Indicateur de chargement dans la recherche */
+.searchLoading {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.searchLoading .spinner-border {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+  color: #8B0000;
+}
+
+/* Aucun résultat */
+.suggestionEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: #6c757d;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+}
+
+.suggestionEmpty i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #ced4da;
+}
+
+/* Badge dans les suggestions */
+.suggestionBadge {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  background-color: #f0ece6;
+  color: #6c757d;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* En-tête du dropdown utilisateur */
+.dropdownHeader {
+  padding: 0.5rem 0.75rem;
+}
+
+.dropdownUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dropdownUserInfo i {
+  font-size: 1.8rem;
+  color: #8B0000;
+}
+
+.dropdownUserName {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
+.dropdownUserRole {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.7rem;
+  color: #6c757d;
+  text-transform: capitalize;
+}
+
+/* Bouton de déconnexion (button, pas lien) */
+.dropdownLogout {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
