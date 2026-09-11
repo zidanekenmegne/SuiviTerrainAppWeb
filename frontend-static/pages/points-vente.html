@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Points de vente - SuiviTerrain</title>
+    <meta name="description" content="Gerez vos points de vente et categories SuiviTerrain.">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/points-vente.css">
+</head>
+<body>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-pc-inner">
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="tableau-bord.html">
+                    <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                    <span>Suivi</span><span>Terrain</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                    <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                    <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                    <li><a href="points-vente.html" class="active"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                    <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                    <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-container" id="globalSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                    </div>
+                    <div class="search-suggestions" id="globalSearchSuggestions"></div>
+                </div>
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                    </button>
+                    <ul class="dropdown-menu" id="dropdownMenu">
+                        <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                        <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE
+    ========================================================== -->
+    <header class="top-header-mobile">
+        <div class="header-row">
+            <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+
+            <div class="header-center">
+                <span class="page-title">Points de vente</span>
+            </div>
+
+            <div class="header-right">
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif">3</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-menu-dropdown" id="mobileMenu">
+            <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
+            <a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
+            <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
+            <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
+            <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
+            <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
+            <hr>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
+        </div>
+    </header>
+
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
+    <main class="main-content">
+
+        <div class="points-container">
+
+            <div class="header-pc">
+                <h1><i class="bi bi-shop" aria-hidden="true"></i> Points de vente</h1>
+            </div>
+
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="tab-points" id="tabPointsBtn">
+                    <i class="bi bi-shop" aria-hidden="true"></i> Points de vente
+                </button>
+                <button class="tab-btn" data-tab="tab-categories" id="tabCategoriesBtn">
+                    <i class="bi bi-tags" aria-hidden="true"></i> Categories
+                </button>
+            </div>
+
+            <!-- PANNEAU 1 : POINTS DE VENTE -->
+            <div class="tab-panel active" id="tab-points">
+
+                <div class="points-header">
+                    <div class="search-bar">
+                        <div class="search-box">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input type="text" id="searchPoint" placeholder="Rechercher un point de vente...">
+                        </div>
+                    </div>
+                    <button class="btn-ajouter" id="btnAjouterPoint">
+                        <i class="bi bi-plus-circle" aria-hidden="true"></i> Ajouter
+                    </button>
+                </div>
+
+                <div class="table-responsive-custom">
+                    <table class="table-custom" id="pointsTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Categorie</th>
+                                <th class="col-contact">Contact</th>
+                                <th class="col-adresse">Adresse</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pointsTableBody">
+                            <!-- Genere par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PANNEAU 2 : CATEGORIES -->
+            <div class="tab-panel" id="tab-categories">
+
+                <div class="table-responsive-custom">
+                    <table class="table-custom" id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Couleur</th>
+                                <th>Nombre de points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <!-- Genere par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ==========================================================
+    FOOTER PC
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
+    </footer>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION MOBILE
+    ========================================================== -->
+    <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
+        <a href="tableau-bord.html" class="nav-item">
+            <i class="bi bi-house-door" aria-hidden="true"></i>
+            Accueil
+        </a>
+
+        <a href="liste-visites.html" class="nav-item">
+            <i class="bi bi-list-ul" aria-hidden="true"></i>
+            Visites
+        </a>
+
+        <a href="#" class="nav-item-center" id="btnActionMobile" aria-label="Action contextuelle">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </a>
+
+        <a href="points-vente.html" class="nav-item active">
+            <i class="bi bi-shop" aria-hidden="true"></i>
+            Points de vente
+        </a>
+
+        <a href="profil.html" class="nav-item">
+            <i class="bi bi-person" aria-hidden="true"></i>
+            Profil
+        </a>
+
+    </nav>
+
+    <!-- ==========================================================
+    MODALES
+    ========================================================== -->
+
+    <!-- Modale Detail Point -->
+    <div class="modal fade" id="detailPointModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shop" aria-hidden="true"></i>
+                        <span id="detailModalTitle">Detail du point de vente</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-photo-wrapper">
+                        <img class="photo-point" id="detailPhoto" src="" alt="Photo du point de vente">
+                        <div class="photo-badge" id="photoBadge" aria-label="Changer la photo">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </div>
+                        <input type="file" id="photoInput" accept="image/png, image/jpeg, image/gif, image/webp">
+                    </div>
+                    <div id="detailInfoContainer"></div>
+                </div>
+                <div class="modal-footer" id="detailModalFooter">
+                    <!-- Genere par JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Ajouter Point -->
+    <div class="modal fade" id="ajouterPointModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                        Ajouter un point de vente
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="ajoutNom" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="ajoutNom" placeholder="Entrez le nom du point">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ajoutCategorie" class="form-label">Categorie</label>
+                        <select class="form-select" id="ajoutCategorie">
+                            <option value="Alimentation">Alimentation</option>
+                            <option value="Services">Services</option>
+                            <option value="Vetement">Vetement</option>
+                            <option value="Electronique">Electronique</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ajoutContact" class="form-label">Contact</label>
+                        <input type="text" class="form-control" id="ajoutContact" placeholder="Entrez le contact">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ajoutAdresse" class="form-label">Adresse</label>
+                        <input type="text" class="form-control" id="ajoutAdresse" placeholder="Entrez l'adresse">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" id="btnAjoutAnnuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="btnAjoutEnregistrer">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Categorie -->
+    <div class="modal fade" id="categorieModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-tags" aria-hidden="true"></i>
+                        <span id="categorieModalLabel">Ajouter une categorie</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="categorieEditId">
+                    <div class="mb-3">
+                        <label for="categorieNom" class="form-label">Nom de la categorie</label>
+                        <input type="text" class="form-control" id="categorieNom" placeholder="Ex: Alimentation">
+                    </div>
+                    <div class="mb-3">
+                        <label for="categorieCouleur" class="form-label">Couleur</label>
+                        <select class="form-select" id="categorieCouleur">
+                            <option value="#28a745">Vert</option>
+                            <option value="#007bff">Bleu</option>
+                            <option value="#ffc107">Jaune</option>
+                            <option value="#dc3545">Rouge</option>
+                            <option value="#6f42c1">Violet</option>
+                            <option value="#fd7e14">Orange</option>
+                            <option value="#20c997">Turquoise</option>
+                            <option value="#e83e8c">Rose</option>
+                            <option value="#6c757d">Gris</option>
+                            <option value="#343a40">Noir</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="categorieSaveBtn">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+    SCRIPTS
+    ========================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/points-vente.js"></script>
+
+</body>
+</html>

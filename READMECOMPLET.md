@@ -220,3 +220,65 @@ Pendant cette phase de construction des maquettes, j'ai renontré plusieurs diff
 - 4- Il fallait déplacer la logique à l’intérieur du DOMContentLoaded dans les fichiers JS concernés.
 - 5- J'ai rendu son comportement dynamique avec updateActionButton() qui vérifiait à chaque fois la page sur laquelle l'utilisateur se trouve.
 - 6- Pour le résoudre, j’ai créé un fichier .nojekyll à la racine du dépôt, ce qui force GitHub Pages à ignorer le traitement Jekyll et à publier l’intégralité du dépôt. Ensuite, j’ai accédé au site via l’URL https://zidanekennegne.github.io/SuiviTerrainAppWeb/frontend/pages/tableau-bord.html.
+
+# *** SEMAINE 3 : MODÉLISATION ET BASE DE DONNÉES
+Cette semaine, j’ai modélisé et construit la base de données relationnelle de SuiviTerrain. J’ai commencé par un MCD complet avec les entités UTILISATEUR, CATEGORIE, POINT_DE_VENTE, VISITE et JOURNAL_CONNEXION, en définissant précisément leurs attributs, leurs clés primaires et leurs cardinalités (1,n / 1,1). J’ai ensuite traduit ce MCD en MLD, en ajoutant la table d’association REALISER pour gérer la relation many-to-many entre les utilisateurs et les visites. J’ai validé les trois formes normales (1NF, 2NF, 3NF) pour garantir l’intégrité et l’absence de redondances. J’ai écrit et exécuté le script schema.sql pour créer les six tables dans PostgreSQL, puis le script seed.sql pour insérer des données de test (utilisateurs, catégories, points de vente, visites, associations et connexions). J’ai également rédigé un fichier requetes.sql avec des requêtes de sélection, filtrage, jointures (INNER et LEFT), agrégations, sous‑requêtes, mises à jour et suppressions. Enfin, j’ai réalisé une sauvegarde complète et testé la restauration sur une base vierge, validant ainsi la portabilité du schéma. La base est maintenant fonctionnelle, peuplée et prête à être interrogée par l’application Flask.
+
+# ** SEMAINE 4 : BACK-END ET CRUD COMPLET
+Les objectifs de cette semaine sont : 
+ - Connecter Flask à PostgreSQL: Utiliser SQLAlchemy pour lier l'application à la base
+ - Créer les modèles SQLAlchemy: Pour transformer le schéma SQL en classes Python
+ - CRUD complet: Implémenter Create, Read, Update, Delete pour les points de vente et les visites
+ - Gabarits Jinja2: Ils vont remplacer les pages HTML statiques par des templates dynamiques
+ - Recherche, filtrage, pagination: Ajouter des fonctionnalités interactives
+
+Aborescence des nouveaux fichiers:
+    SuiviTerrain/
+    ├── backend/
+    │   ├── app.py                 # Point d'entrée de l'application
+    │   ├── config.py              # Configuration (base de données, secrets)
+    │   ├── models.py              # Modèles SQLAlchemy
+    │   ├── requirements.txt       # Dépendances Python
+    │   ├── .env                   # Variables d'environnement (non commité)
+    │   ├── migrations/            # Géré par Flask-Migrate (à créer)
+    │   ├── routes/                # (Optionnel) Découpage des routes
+    │   │   ├── auth.py
+    │   │   ├── points.py
+    │   │   └── visites.py
+    │   └── templates/             # Gabarits Jinja2
+    │       ├── base.html
+    │       ├── tableau-bord.html
+    │       ├── points-vente.html
+    │       ├── detail-point.html
+    │       └── ...
+    └── frontend/                  # (Maquette statique - conservée)
+
+e premier objectif de cette semaine était de transformer la maquette statique en une application dynamique en connectant Flask à PostgreSQL via SQLAlchemy, afin que les données affichées ne soient plus fictives mais bien issues de la base de données. J'ai ainsi créé les modèles correspondant aux tables et mis en place les routes pour afficher les listes de points de vente, de visites, de catégories et d'utilisateurs. Les templates Jinja2 ont remplacé les fichiers HTML statiques, avec un héritage via base.html pour mutualiser la navigation et le footer.
+
+Le deuxième objectif était d'implémenter un CRUD complet pour les quatre entités principales, permettant à l'utilisateur d'ajouter, de modifier et de supprimer des données via des formulaires sécurisés. Chaque formulaire a été enrichi d'une validation côté client avec des messages d'erreur sous les champs, et d'une validation côté serveur pour garantir l'intégrité des données. Les champs comme le téléphone ou l'email sont désormais contrôlés, et les dates de visite ne peuvent pas être dans le passé.
+
+Le troisième objectif concernait les fonctionnalités avancées : le géocodage automatique des adresses via l'API Nominatim, l'upload de photos avec sécurisation et renommage, ainsi que la recherche en temps réel sur toutes les listes. Les messages flash informent l'utilisateur du succès ou des erreurs, et disparaissent automatiquement après cinq secondes. Toutes ces interactions se font sans rechargement de page grâce à JavaScript.
+
+Le dernier objectif visait à garantir une expérience utilisateur fluide et professionnelle, avec des formulaires qui conservent les champs valides même en cas d'erreur, des bordures rouges et des messages explicites sous chaque champ problématique. L'ensemble est responsive et utilise Bootstrap 5, et les données sont systématiquement validées avant d'être envoyées à la base. L'application est désormais fonctionnelle en local et prête à être déployée.
+  # Problème rencontré pour cette semaine 
+Le principal problème a été l'absence de messages flash, causée par un script auto-fermant mal placé qui supprimait les alertes avant leur affichage ; j'ai déplacé les messages dans un conteneur fixe en haut à droite et corrigé le script. L'installation de psycopg2-binary a échoué sous Windows, j'ai dû utiliser une version pré-compilée et passer par WSL2 pour la compilation. Enfin, les validations front-end étaient absentes, ce qui vidait tous les champs du formulaire en cas d'erreur ; j'ai ajouté des attributs HTML5, des messages invalid-feedback et du JavaScript pour valider en temps réel et conserver les données saisies.
+
+-------------------
+Cette semaine a marqué le passage du front-end statique au back-end dynamique avec Flask, SQLAlchemy et PostgreSQL. J'ai structuré le projet avec un dossier backend contenant app.py, config.py, models.py, et les templates Jinja2. Les modèles SQLAlchemy ont été créés pour les entités utilisateur, catégorie, point de vente, visite et journal de connexion, avec la table d'association realiser. Les routes CRUD complètes ont été implémentées pour chaque entité, avec des formulaires d'ajout et de modification. Le géocodage automatique via Nominatim convertit les adresses en coordonnées GPS, et l'upload de photos sécurise les fichiers. Les recherches en temps réel sur toutes les listes et les validations front-end et back-end améliorent l'expérience utilisateur. Les messages flash apparaissent en haut à droite et disparaissent après cinq secondes. L'application est désormais fonctionnelle avec toutes ses fonctionnalités de gestion des données, et la base est prête pour l'étape suivante. Les prochains développements incluront l'authentification et l'API REST. Cette semaine a permis de consolider les bases du projet et de le rendre pleinement opérationnel avant les semaines dédiées à la sécurité et au déploiement
+----------------------------
+
+# **Semaine 5: Flask login...
+Objectif : Sécuriser l'application SuiviTerrain avec une authentification robuste (Flask-Login + JWT), gérer les rôles (admin/agent), tracer les connexions, et exposer une API REST complète pour les points de vente et les visites.
+
+Réalisations : Mise en place de l'inscription, connexion, déconnexion avec hachage des mots de passe (bcrypt/werkzeug). Protection des routes avec @login_required et décorateurs personnalisés pour les rôles. Ajout du journal des connexions (table journal_connexion). Création d'une API REST versionnée (/api/v1/) avec endpoints pour points, visites, catégories et statistiques. Authentification JWT avec tokens, pagination, gestion uniforme des erreurs, rate limiting (100 requêtes/min) et CORS configuré. Tests effectués avec Thunder Client pour valider les cas nominaux et d'erreur.
+
+Problèmes rencontrés : 1- Erreur "Subject must be a string" due à l'identifiant utilisateur (int) passé à create_access_token()  2- Warnings sur la clé JWT trop courte   3- Doublon de fonction api_get_categories dans api.py  . 4- Avertissement sur le stockage in-memory de Flask-Limiter à configurer en production avec Redis.
+1- solution : convertir en str(user.id_user).
+2- solution : ajout de JWT_SECRET_KEY dans config.py.
+3- solution : suppression de la redondance
+4- solution : à configurer en production avec Redis.
+
+# **Semaine 7 : Interface React
+L'objectif de cette semaine est de reconstruire la partie frontend de SuiviTerrain en React.
+L'application React consomme l'API Flask développée en semaine 5, et reprend les fonctionnalités de la maquette statique de la semaine 2, avec une expérience utilisateur fluide.
+

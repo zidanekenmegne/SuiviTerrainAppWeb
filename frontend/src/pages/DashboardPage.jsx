@@ -1,22 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import StatsCards from '../components/dashboard/StatsCards';
 import RecentVisits from '../components/dashboard/RecentVisits';
 import QuickActions from '../components/dashboard/QuickActions';
 import { useToast } from '../contexts/ToastContext';
+import apiClient from '../api/client';
 import styles from '../styles/pages/DashboardPage.module.css';
 
 /**
  * Page Tableau de bord
- * - Affichage des statistiques
- * - Liste des visites récentes
+ * - Statistiques depuis /api/v1/stats
+ * - Visites récentes depuis /api/v1/visites?limit=4
  * - Actions rapides
  */
 const DashboardPage = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
-  
-  // États
+  const navigate = useNavigate();
+
+  // ==========================================================
+  // ÉTATS
+  // ==========================================================
   const [stats, setStats] = useState({
     total: 0,
     realisees: 0,
@@ -34,57 +39,55 @@ const DashboardPage = () => {
     year: 'numeric'
   });
 
-  // Chargement des données
+  // ==========================================================
+  // CHARGEMENT DES DONNÉES (API RÉELLE)
+  // ==========================================================
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Simulation de données (à remplacer par l'API)
-        const mockStats = {
-          total: 12,
-          realisees: 7,
-          encours: 3,
-          attente: 2
-        };
-        
-        const mockVisits = [
-          {
-            id: 1,
-            titre: 'Visite commerciale - Magasin A',
-            adresse: 'Centre-ville',
-            date: '12 juin 2025 à 08:00',
-            statut: 'realise'
-          },
-          {
-            id: 2,
-            titre: 'Collecte de commandes - Client B',
-            adresse: 'Bonamoussadi',
-            date: '12 juin 2025 à 10:30',
-            statut: 'attente'
-          },
-          {
-            id: 3,
-            titre: 'Suivi des retours - Magasin C',
-            adresse: 'Akwa',
-            date: '12 juin 2025 à 13:00',
-            statut: 'retard'
-          },
-          {
-            id: 4,
-            titre: 'Collecte de paiement - Client D',
-            adresse: 'Bepanda',
-            date: '12 juin 2025 à 09:00',
-            statut: 'realise'
-          }
-        ];
+        setError(null);
 
-        setStats(mockStats);
-        setVisits(mockVisits);
+        // Appels API en parallèle pour optimiser
+        const [statsRes, visitesRes] = await Promise.all([
+          apiClient.get('/stats'),
+          apiClient.get('/visites', { params: { limit: 4 } })
+        ]);
+
+        // ==========================================================
+        // Traitement des statistiques
+        // ==========================================================
+        const statsData = statsRes.data?.data?.visites || {};
+        setStats({
+          total: statsData.total || 0,
+          realisees: statsData.realisees || 0,
+          encours: statsData.en_cours || 0,
+          attente: statsData.en_attente || 0
+        });
+
+        // ==========================================================
+        // Traitement des visites récentes
+        // ==========================================================
+        const visitesData = visitesRes.data?.data?.visites || [];
+        
+        // Transformation des données API vers le format attendu par RecentVisits
+        const formattedVisits = visitesData.map(v => ({
+          id: v.id,
+          titre: v.point_vente?.nom 
+            ? `Visite - ${v.point_vente.nom}` 
+            : 'Visite commerciale',
+          adresse: v.point_vente?.adresse || 'Adresse non renseignée',
+          date: formatDate(v.date_prevue, v.heure_prevue),
+          statut: normalizeStatut(v.statut)
+        }));
+
+        setVisits(formattedVisits);
         setError(null);
       } catch (err) {
         console.error('Erreur chargement dashboard:', err);
-        setError('Impossible de charger les données');
-        showToast('Erreur de chargement du tableau de bord', 'error');
+        const message = err.response?.data?.message || 'Impossible de charger les données';
+        setError(message);
+        showToast(message, 'error');
       } finally {
         setLoading(false);
       }
@@ -93,18 +96,69 @@ const DashboardPage = () => {
     fetchDashboardData();
   }, []);
 
-  // Gestionnaire pour le bouton "Nouvelle visite"
+  // ==========================================================
+  // FONCTIONS UTILITAIRES
+  // ==========================================================
+  
+  /**
+   * Formate la date et l'heure pour l'affichage
+   */
+  const formatDate = (dateStr, heureStr) => {
+    if (!dateStr) return 'Date non renseignée';
+    
+    try {
+      const date = new Date(dateStr);
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      const dateFormatted = date.toLocaleDateString('fr-FR', options);
+      
+      if (heureStr) {
+        // Si l'heure est au format "HH:MM:SS", on garde seulement HH:MM
+        const heure = heureStr.substring(0, 5);
+        return `${dateFormatted} à ${heure}`;
+      }
+      
+      return dateFormatted;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  /**
+   * Normalise le statut pour l'affichage
+   * API : 'realisee', 'attente', 'retard', 'encours'
+   * Affichage : 'realise', 'attente', 'retard', 'encours'
+   */
+  const normalizeStatut = (statut) => {
+    const mapping = {
+      'realisee': 'realise',
+      'attente': 'attente',
+      'retard': 'retard',
+      'encours': 'encours'
+    };
+    return mapping[statut] || 'attente';
+  };
+
+  // ==========================================================
+  // GESTIONNAIRES
+  // ==========================================================
+  
+  /**
+   * Redirection vers la création d'une nouvelle visite
+   */
   const handleNewVisit = () => {
-    showToast('Redirection vers la création d\'une visite...');
-    // TODO: Naviguer vers /visites/nouvelle
+    navigate('/visites/nouvelle');
   };
 
-  // Gestionnaire pour le clic sur une visite
+  /**
+   * Redirection vers le détail d'une visite
+   */
   const handleVisitClick = (id) => {
-    showToast(`Affichage du détail de la visite ${id}...`);
-    // TODO: Naviguer vers /visites/${id}
+    navigate(`/visites/${id}`);
   };
 
+  // ==========================================================
+  // RENDU : CHARGEMENT
+  // ==========================================================
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
@@ -118,23 +172,29 @@ const DashboardPage = () => {
     );
   }
 
+  // ==========================================================
+  // RENDU : ERREUR
+  // ==========================================================
   if (error) {
     return (
       <div className="container py-5">
         <div className="alert alert-danger" role="alert">
           <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
-          {error}
+          <strong className="ms-2">Erreur :</strong> {error}
           <button 
             className="btn btn-outline-danger btn-sm ms-3"
             onClick={() => window.location.reload()}
           >
-            Réessayer
+            <i className="bi bi-arrow-clockwise" aria-hidden="true"></i> Réessayer
           </button>
         </div>
       </div>
     );
   }
 
+  // ==========================================================
+  // RENDU : SUCCÈS
+  // ==========================================================
   return (
     <div className={styles.dashboardContainer}>
       

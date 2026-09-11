@@ -20,11 +20,10 @@ const BottomNav = () => {
   // ==========================================================
   // BOUTON CENTRAL : ACTION CONTEXTUELLE
   // ==========================================================
-  // Retourne l'URL de redirection et le label selon la page
   const getCenterAction = () => {
     const actions = {
-      '/': { url: '/points/ajouter', label: 'Ajouter un point' },
-      '/visites': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
+      '/': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
+      '/visites': { url: '/visites/nouvelle', label: 'Nouvelle visite' }, // ← AJOUT
       '/planning': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
       '/historique': { url: '/visites/nouvelle', label: 'Nouvelle visite' },
       '/points': { url: '/points/ajouter', label: 'Ajouter un point' },
@@ -34,7 +33,7 @@ const BottomNav = () => {
       '/rapports': { url: '/rapports/nouveau', label: 'Nouveau rapport' }
     };
     
-    const defaultAction = { url: '/points/ajouter', label: 'Action' };
+    const defaultAction = { url: '/visites/nouvelle', label: 'Nouvelle visite' };
     return actions[location.pathname] || defaultAction;
   };
 

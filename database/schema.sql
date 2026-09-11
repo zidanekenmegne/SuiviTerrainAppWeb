@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS utilisateur (
     mdp VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'agent',
     zone_intervention VARCHAR(100),
+    actif BOOLEAN DEFAULT TRUE,
     date_creation_user TIMESTAMP DEFAULT NOW(),
     derniere_connexion_user TIMESTAMP,
     CONSTRAINT chk_role CHECK (role IN ('admin', 'agent'))

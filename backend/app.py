@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 from config import Config
 from models import db, Utilisateur, PointDeVente, Visite
 from datetime import datetime
@@ -19,8 +20,11 @@ from blueprints.categories import categories_bp
 from blueprints.utilisateurs import utilisateurs_bp
 from blueprints.api import api_bp, limiter
 
+
+
 app = Flask(__name__)
 app.config.from_object(Config)
+CORS(app)  # <- Permet toutes les origines (pour développement)
 
 # Initialisation de la base de données
 db.init_app(app)

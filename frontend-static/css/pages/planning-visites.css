@@ -1,0 +1,916 @@
+/* ==========================================================
+   PLANNING DES VISITES - SuiviTerrain
+   ========================================================== */
+
+/* ==========================================================
+   STYLES GLOBAUX
+   ========================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FFF8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION PC (> 768px)
+   ========================================================== */
+.navbar-pc {
+    background-color: #8B0000;
+    padding: 0.75rem 1.5rem;
+    display: none;
+    flex-shrink: 0;
+}
+
+.navbar-pc .navbar-pc-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.navbar-pc .navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-pc .navbar-brand {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-pc .navbar-brand img {
+    height: 30px;
+}
+
+.navbar-pc .navbar-brand span:first-child {
+    color: #ffffff;
+}
+
+.navbar-pc .navbar-brand span:last-child {
+    color: #C9A84C;
+}
+
+.navbar-pc .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-pc .nav-links li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    font-size: 0.95rem;
+}
+
+.navbar-pc .nav-links li a:hover,
+.navbar-pc .nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.navbar-pc .nav-links li a i {
+    margin-right: 0.4rem;
+}
+
+.navbar-pc .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-pc .nav-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.navbar-pc .nav-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-pc .nav-right .dropdown-toggle {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-pc .nav-right .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-pc .nav-right .dropdown-menu {
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: none;
+}
+
+.navbar-pc .nav-right .dropdown-item {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 500;
+}
+
+.navbar-pc .nav-right .dropdown-item:hover {
+    background-color: #FFF8F0;
+}
+
+.navbar-pc .nav-right .dropdown-item i {
+    margin-right: 0.5rem;
+}
+
+/* ==========================================================
+   RECHERCHE GLOBALE
+   ========================================================== */
+.search-container {
+    position: relative;
+    min-width: 200px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.1rem 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+
+.search-input-wrapper i {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+    transition: color 0.2s;
+}
+
+.search-input-wrapper:focus-within i {
+    color: #8B0000;
+}
+
+.search-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0.3rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    color: #ffffff;
+    outline: none;
+    width: 100%;
+    min-width: 140px;
+}
+
+.search-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input-wrapper:focus-within input {
+    color: #1a1a1a;
+}
+
+.search-input-wrapper:focus-within input::placeholder {
+    color: #6c757d;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10000;
+    padding: 0.3rem 0;
+}
+
+.search-suggestions.visible {
+    display: block;
+}
+
+.search-suggestions .suggestion-empty {
+    padding: 1.5rem 0.8rem;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.search-suggestions .suggestion-empty i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+    color: #ced4da;
+}
+
+/* ==========================================================
+   BANDEAU HAUT MOBILE (< 768px)
+   ========================================================== */
+.top-header-mobile {
+    background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+    padding: 0.75rem 1rem 0.5rem 1rem;
+    border-radius: 0 0 1px 1px;
+    display: none;
+    flex-shrink: 0;
+}
+
+.top-header-mobile .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header-mobile .back-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.top-header-mobile .back-button:hover {
+    opacity: 0.8;
+}
+
+.top-header-mobile .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-header-mobile .header-center .page-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.top-header-mobile .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.top-header-mobile .header-right .notification-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.3rem;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.top-header-mobile .header-right .notification-btn .badge-notif {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================
+   CONTENU PRINCIPAL
+   ========================================================== */
+.main-content {
+    flex: 1;
+    padding: 1.25rem 1.25rem 1rem 1.25rem;
+    background-color: #FFF8F0;
+}
+
+.header-pc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.header-pc h1 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.header-pc h1 i {
+    color: #8B0000;
+    margin-right: 0.4rem;
+}
+
+/* ==========================================================
+   CONTROLES CALENDRIER
+   ========================================================== */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.calendar-controls .month-year {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #1a1a1a;
+}
+
+.calendar-controls .nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-controls .nav-buttons button {
+    background: #ffffff;
+    border: 1px solid #e0dcd6;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    color: #1a1a1a;
+    font-size: 1rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.calendar-controls .nav-buttons button:hover {
+    background-color: #8B0000;
+    color: #ffffff;
+    border-color: #8B0000;
+}
+
+.calendar-controls .nav-buttons .date-picker-btn {
+    background: #ffffff;
+    border: 1px solid #e0dcd6;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    color: #1a1a1a;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.calendar-controls .nav-buttons .date-picker-btn:hover {
+    border-color: #8B0000;
+    color: #8B0000;
+}
+
+/* ==========================================================
+   CALENDRIER GRILLE (PC)
+   ========================================================== */
+.calendar-grid {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    display: none;
+}
+
+.calendar-grid .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #f0ece6;
+}
+
+.calendar-grid .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.15rem;
+}
+
+.calendar-grid .days .day-cell {
+    aspect-ratio: 1 / 0.9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.2rem 0.05rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background: #ffffff;
+    min-height: 36px;
+    position: relative;
+}
+
+.calendar-grid .days .day-cell:hover {
+    background-color: #FFF8F0;
+}
+
+.calendar-grid .days .day-cell .day-number {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    margin-bottom: 0.05rem;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.calendar-grid .days .day-cell .day-number.other-month {
+    color: #ced4da;
+}
+
+.calendar-grid .days .day-cell .day-number.today {
+    background-color: #8B0000;
+    color: #ffffff;
+}
+
+.calendar-grid .days .day-cell .day-number.selected {
+    background-color: #e8a0a0;
+    color: #1a1a1a;
+}
+
+.calendar-grid .days .day-cell .day-number.today.selected {
+    background-color: #e8a0a0;
+    color: #1a1a1a;
+}
+
+.calendar-grid .days .day-cell .day-events {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.1rem;
+}
+
+.calendar-grid .days .day-cell .day-events .event-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+.event-dot.realise { background-color: #28a745; }
+.event-dot.attente { background-color: #ffc107; }
+.event-dot.retard { background-color: #dc3545; }
+.event-dot.encours { background-color: #17a2b8; }
+
+.calendar-grid .days .day-cell .day-event-count {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.5rem;
+    color: #6c757d;
+    margin-top: 0.02rem;
+}
+
+/* ==========================================================
+   LISTE DES VISITES DU JOUR (PC)
+   ========================================================== */
+.visites-day-list {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1rem 1rem 0.5rem 1rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.visites-day-list .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.visites-day-list .day-header h3 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a1a1a;
+    margin-bottom: 0;
+}
+
+.visites-day-list .day-header .day-date {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.visite-item {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #f0ece6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    border-radius: 8px;
+    margin-bottom: 0.2rem;
+}
+
+.visite-item:hover {
+    background-color: #FFF8F0;
+}
+
+.visite-item .visite-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.visite-item .visite-info .visite-titre {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #1a1a1a;
+    margin-bottom: 0.05rem;
+}
+
+.visite-item .visite-info .visite-detail {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.7rem;
+    color: #6c757d;
+}
+
+.visite-item .visite-info .visite-detail i {
+    margin-right: 0.2rem;
+}
+
+.visite-item .badge-status {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.badge-status.realise { background-color: #28a745; color: #fff; }
+.badge-status.attente { background-color: #ffc107; color: #1a1a1a; }
+.badge-status.retard { background-color: #dc3545; color: #fff; }
+.badge-status.encours { background-color: #17a2b8; color: #fff; }
+
+/* ==========================================================
+   PLANNING MOBILE
+   ========================================================== */
+.planning-mobile {
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.planning-mobile .mobile-date-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.planning-mobile .mobile-date-selector button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #8B0000;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+}
+
+.planning-mobile .mobile-date-selector .mobile-date-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+}
+
+.planning-mobile .mobile-day-list {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+}
+
+.planning-mobile .mobile-day-list .mobile-day-header {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0ece6;
+    margin-bottom: 0.5rem;
+}
+
+.planning-mobile .mobile-visite-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0ece6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.planning-mobile .mobile-visite-item:last-child {
+    border-bottom: none;
+}
+
+.planning-mobile .mobile-visite-item .mv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.planning-mobile .mobile-visite-item .mv-info .mv-titre {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #1a1a1a;
+    margin-bottom: 0.05rem;
+}
+
+.planning-mobile .mobile-visite-item .mv-info .mv-detail {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.65rem;
+    color: #6c757d;
+}
+
+.planning-mobile .mobile-visite-item .mv-info .mv-detail i {
+    margin-right: 0.2rem;
+}
+
+.planning-mobile .mobile-visite-item .badge-status {
+    font-size: 0.5rem;
+    padding: 0.15rem 0.4rem;
+}
+
+/* ==========================================================
+   FOOTER PC
+   ========================================================== */
+.footer-pc {
+    background-color: #8B0000;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    flex-shrink: 0;
+    display: none;
+    margin-top: auto;
+}
+
+.footer-pc p {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin-bottom: 0;
+    opacity: 0.85;
+}
+
+/* ==========================================================
+   BARRE DE NAVIGATION MOBILE (< 768px)
+   ========================================================== */
+.bottom-nav-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #f0ece6;
+    padding: 0.4rem 0.5rem 0.6rem 0.5rem;
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+    flex-shrink: 0;
+}
+
+.bottom-nav-mobile .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #6c757d;
+    font-size: 0.5rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 0.15rem 0.3rem;
+    border-radius: 8px;
+    transition: color 0.2s;
+    position: relative;
+    min-width: 40px;
+}
+
+.bottom-nav-mobile .nav-item i {
+    font-size: 1.2rem;
+    margin-bottom: 0.05rem;
+}
+
+.bottom-nav-mobile .nav-item.active {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item:hover {
+    color: #8B0000;
+}
+
+.bottom-nav-mobile .nav-item-center {
+    background: #8B0000;
+    color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -14px;
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.bottom-nav-mobile .nav-item-center:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.bottom-nav-mobile .nav-item-center i {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+    .navbar-pc {
+        display: flex !important;
+    }
+    .top-header-mobile {
+        display: none !important;
+    }
+    .bottom-nav-mobile {
+        display: none !important;
+    }
+    .footer-pc {
+        display: block !important;
+    }
+    .calendar-grid {
+        display: block !important;
+    }
+    .planning-mobile {
+        display: none !important;
+    }
+    .main-content {
+        padding: 1.5rem 2rem 1.5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .header-pc h1 {
+        font-size: 1.6rem;
+    }
+    .calendar-controls .month-year {
+        font-size: 1.3rem;
+    }
+    .visite-item .visite-info .visite-titre {
+        font-size: 0.95rem;
+    }
+    .visite-item .visite-info .visite-detail {
+        font-size: 0.8rem;
+    }
+    .calendar-grid .days .day-cell {
+        min-height: 36px;
+        aspect-ratio: 1 / 0.7;
+    }
+    .calendar-grid .days .day-cell .day-number {
+        font-size: 0.85rem;
+        width: 26px;
+        height: 26px;
+    }
+    .calendar-grid .days .day-cell .day-events .event-dot {
+        width: 5px;
+        height: 5px;
+    }
+    .calendar-grid .days .day-cell .day-event-count {
+        font-size: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-header-mobile {
+        display: block !important;
+    }
+    .bottom-nav-mobile {
+        display: flex !important;
+    }
+    .navbar-pc {
+        display: none !important;
+    }
+    .footer-pc {
+        display: none !important;
+    }
+    .calendar-grid {
+        display: none !important;
+    }
+    .planning-mobile {
+        display: flex !important;
+    }
+    .main-content {
+        padding: 0.75rem 1rem 5rem 1rem;
+    }
+    .header-pc {
+        display: none !important;
+    }
+    .visites-day-list {
+        display: none !important;
+    }
+    .bottom-nav-mobile .nav-item {
+        font-size: 0.45rem;
+        min-width: 32px;
+    }
+    .bottom-nav-mobile .nav-item i {
+        font-size: 1rem;
+    }
+    .bottom-nav-mobile .nav-item-center {
+        width: 44px;
+        height: 44px;
+        margin-top: -10px;
+    }
+    .bottom-nav-mobile .nav-item-center i {
+        font-size: 1.3rem;
+    }
+}
+
+/* ==========================================================
+   ACCESSIBILITÉ
+   ========================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid #C9A84C;
+    outline-offset: 2px;
+}

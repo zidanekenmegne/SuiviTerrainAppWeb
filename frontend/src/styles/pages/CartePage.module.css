@@ -1,0 +1,658 @@
+/* ==========================================================
+   CARTE PAGE - SuiviTerrain
+   ========================================================== */
+
+.carteContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+  background-color: #FFF8F0;
+  position: relative;
+}
+
+/* ==========================================================
+   EN-TÊTE PC
+   ========================================================== */
+.headerPC {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem 0.5rem 2rem;
+  background-color: #FFF8F0;
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.headerPC h1 {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.headerPC h1 i {
+  color: #8B0000;
+  margin-right: 0.4rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ==========================================================
+   BOUTON ITINÉRAIRE
+   ========================================================== */
+.itineraryToggle {
+  background: #ffffff;
+  border: 1px solid #e0dcd6;
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.itineraryToggle:hover:not(:disabled) {
+  border-color: #8B0000;
+  color: #8B0000;
+}
+
+.itineraryToggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.itineraryToggle.active {
+  background-color: #8B0000;
+  border-color: #8B0000;
+  color: #ffffff;
+}
+
+.itineraryToggle i {
+  font-size: 0.95rem;
+}
+
+.itineraryCount {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+  margin-left: 0.2rem;
+}
+
+.itineraryToggle.active .itineraryCount {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* ==========================================================
+   RECHERCHE PC
+   ========================================================== */
+.searchBoxPC {
+  position: relative;
+  min-width: 260px;
+}
+
+.searchBoxPC input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+  border-radius: 10px;
+  border: 1px solid #e0dcd6;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.searchBoxPC input:focus {
+  border-color: #8B0000;
+  outline: none;
+}
+
+.searchBoxPC i {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+/* ==========================================================
+   RECHERCHE MOBILE
+   ========================================================== */
+.searchBarMobile {
+  display: none;
+  padding: 0.5rem 1rem;
+  background-color: #FFF8F0;
+  flex-shrink: 0;
+}
+
+.searchBoxMobile {
+  position: relative;
+  width: 100%;
+}
+
+.searchBoxMobile input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+  border-radius: 10px;
+  border: 1px solid #e0dcd6;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.searchBoxMobile input:focus {
+  border-color: #8B0000;
+  outline: none;
+}
+
+.searchBoxMobile i {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+/* ==========================================================
+   CONTENEUR DE LA CARTE
+   ========================================================== */
+.mapContainer {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 350px;
+}
+
+/* ==========================================================
+   LÉGENDE DES CATÉGORIES
+   ========================================================== */
+.legend {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 12px;
+  padding: 0.5rem 0.6rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  max-width: 200px;
+  backdrop-filter: blur(4px);
+}
+
+.legendTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: #1a1a1a;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.legendTitle i {
+  color: #8B0000;
+  font-size: 0.85rem;
+}
+
+.legendStats {
+  font-weight: 400;
+  color: #6c757d;
+  font-size: 0.65rem;
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.legendItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  width: 100%;
+}
+
+.legendItem:hover {
+  background-color: #FFF8F0;
+  border-color: #e0dcd6;
+}
+
+.legendItem.active {
+  background-color: #8B0000;
+  color: #ffffff;
+  border-color: #8B0000;
+}
+
+.legendColor {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.legendCount {
+  font-size: 0.6rem;
+  color: #6c757d;
+  background: #f8f5f0;
+  padding: 0.05rem 0.35rem;
+  border-radius: 8px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.legendItem.active .legendCount {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* ==========================================================
+   BOUTON DE GÉOLOCALISATION
+   ========================================================== */
+.geoBtn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: #ffffff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.geoBtn:hover:not(:disabled) {
+  background-color: #8B0000;
+  color: #ffffff;
+  transform: scale(1.03);
+}
+
+.geoBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.geoBtn i {
+  font-size: 1.1rem;
+}
+
+.btnText {
+  font-size: 0.8rem;
+}
+
+.spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #8B0000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.geoBtn.loading .spinner {
+  display: inline-block;
+}
+
+.geoBtn.loading .btnText {
+  display: none;
+}
+
+.geoBtn.loading i {
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================
+   LOADER (au cas où)
+   ========================================================== */
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 60vh;
+}
+
+/* ==========================================================
+   PANEL DES POINTS À PROXIMITÉ
+   ========================================================== */
+.proximityPanel {
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  max-height: 45vh;
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(calc(100% - 56px));
+  z-index: 999;
+  display: none;
+}
+
+.proximityPanel.open {
+  transform: translateY(0);
+}
+
+.panelHandle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.6rem 1rem 0.4rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #f0ece6;
+}
+
+.handleBar {
+  width: 40px;
+  height: 4px;
+  background-color: #c0b8b0;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.panelHandle:hover .handleBar {
+  background-color: #8B0000;
+}
+
+.panelTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  margin-left: 0.75rem;
+}
+
+.panelCount {
+  font-weight: 400;
+  color: #6c757d;
+  margin-left: 0.3rem;
+}
+
+.panelContent {
+  overflow-y: auto;
+  padding: 0.25rem 1rem 1rem 1rem;
+  max-height: calc(45vh - 56px);
+}
+
+.proximityItem {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid #f0ece6;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.proximityItem:last-child {
+  border-bottom: none;
+}
+
+.proximityItem:hover {
+  background-color: #FFF8F0;
+}
+
+.piInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.piNom {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #1a1a1a;
+  margin-bottom: 0.05rem;
+}
+
+.piAdresse {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.65rem;
+  color: #6c757d;
+}
+
+.piDistance {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #8B0000;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.proximityEmpty {
+  text-align: center;
+  padding: 1.5rem 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+  .headerPC {
+    display: flex !important;
+  }
+
+  .searchBarMobile {
+    display: none !important;
+  }
+
+  .proximityPanel {
+    display: block !important;
+  }
+
+  .mapContainer {
+    min-height: 550px;
+  }
+
+  .geoBtn {
+    bottom: 80px;
+    right: 30px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+
+  .proximityPanel {
+    bottom: 0;
+    max-height: 35vh;
+  }
+
+  .proximityPanel .panelContent {
+    max-height: calc(35vh - 56px);
+  }
+
+  .carteContainer {
+    height: calc(100vh - 56px);
+  }
+}
+
+@media (max-width: 768px) {
+  .headerPC {
+    display: none !important;
+  }
+
+  .searchBarMobile {
+    display: block !important;
+  }
+
+  .proximityPanel {
+    display: block !important;
+  }
+
+  .mapContainer {
+    min-height: 350px;
+  }
+
+  .geoBtn {
+    bottom: 75px;
+    right: 12px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .geoBtn i {
+    font-size: 0.9rem;
+  }
+
+  .proximityPanel {
+    bottom: 55px;
+    max-height: 45vh;
+  }
+
+  .proximityPanel .panelContent {
+    max-height: calc(45vh - 56px);
+  }
+
+  .carteContainer {
+    height: calc(100vh - 56px);
+  }
+
+  /* Légende plus compacte sur mobile */
+  .legend {
+    top: 8px;
+    left: 8px;
+    padding: 0.4rem 0.5rem;
+    max-width: 150px;
+  }
+
+  .legendTitle {
+    font-size: 0.6rem;
+  }
+
+  .legendItem {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.3rem;
+  }
+
+  .legendLabel {
+    font-size: 0.6rem;
+  }
+
+  .legendCount {
+    font-size: 0.55rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .geoBtn {
+    bottom: 70px;
+    right: 8px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.6rem;
+  }
+
+  .geoBtn i {
+    font-size: 0.8rem;
+  }
+
+  .proximityPanel {
+    bottom: 50px;
+    max-height: 40vh;
+  }
+
+  .proximityPanel .panelContent {
+    max-height: calc(40vh - 50px);
+  }
+
+  .piNom {
+    font-size: 0.7rem;
+  }
+
+  .piAdresse {
+    font-size: 0.55rem;
+  }
+
+  .piDistance {
+    font-size: 0.55rem;
+  }
+
+  /* Légende encore plus compacte */
+  .legend {
+    max-width: 120px;
+    padding: 0.3rem 0.4rem;
+  }
+
+  .legendTitle {
+    font-size: 0.55rem;
+  }
+
+  .legendItem {
+    font-size: 0.55rem;
+  }
+
+  .legendColor {
+    width: 10px;
+    height: 10px;
+  }
+
+  .legendLabel {
+    font-size: 0.55rem;
+  }
+}

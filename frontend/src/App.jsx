@@ -7,6 +7,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PointsPage from './pages/PointsPage';
 import DashboardPage from './pages/DashboardPage';
+import VisitesPage from './pages/VisitesPage';
+import CartePage from './pages/CartePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -28,8 +30,8 @@ function App() {
             }>
               <Route index element={<DashboardPage />} />
               <Route path="points" element={<PointsPage />} />
-              <Route path="visites" element={<div>Visites</div>} />
-              <Route path="carte" element={<div>Carte</div>} />
+              <Route path="visites" element={<VisitesPage />} />
+              <Route path="carte" element={<CartePage />} />
             </Route>
             
             {/* Redirection 404 */}

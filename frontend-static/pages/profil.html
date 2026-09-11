@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profil - SuiviTerrain</title>
+    <meta name="description" content="Consultez et gerez votre profil SuiviTerrain.">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Style global -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Style specifique -->
+    <link rel="stylesheet" href="../css/pages/profil.css">
+</head>
+<body>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION PC
+    ========================================================== -->
+    <nav class="navbar-pc" aria-label="Navigation principale">
+        <div class="navbar-left">
+            <a class="navbar-brand" href="tableau-bord.html">
+                <img src="../assets/images/favicon_io/favicon-16x16.png" alt="SuiviTerrain">
+                <span class="brand-suivi">Suivi</span><span class="brand-terrain">Terrain</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a></li>
+                <li><a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a></li>
+                <li><a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a></li>
+                <li><a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a></li>
+                <li><a href="points-vente.html" class="active"><i class="bi bi-shop" aria-hidden="true"></i> Points</a></li>
+                <li><a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a></li>
+                <li><a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-right">
+            <div class="search-container" id="globalSearchContainer">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Rechercher..." aria-label="Recherche globale">
+                </div>
+                <div class="search-suggestions" id="globalSearchSuggestions"></div>
+            </div>
+
+            <button class="notification-btn" aria-label="Notifications" id="notifBtnPC">
+                <i class="bi bi-bell" aria-hidden="true"></i>
+                <span class="badge-notif" id="badgeNotifPC">3</span>
+            </button>
+
+            <div class="dropdown">
+                <button class="dropdown-toggle" id="userDropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle" aria-hidden="true"></i> Zidane
+                </button>
+                <ul class="dropdown-menu" id="dropdownMenu">
+                    <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Mon profil</a></li>
+                    <li><a class="dropdown-item" href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="connexion.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ==========================================================
+    BANDEAU HAUT MOBILE
+    ========================================================== -->
+    <header class="top-header-mobile">
+        <div class="header-row">
+            <button class="menu-hamburger" id="menuHamburger" aria-label="Menu de navigation">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+
+            <div class="header-center">
+                <span class="page-title">Mon profil</span>
+            </div>
+
+            <div class="header-right">
+                <button class="notification-btn" aria-label="Notifications" id="notifBtnMobile">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span class="badge-notif" id="badgeNotifMobile">3</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-menu-dropdown" id="mobileMenu">
+            <a href="tableau-bord.html"><i class="bi bi-house-door" aria-hidden="true"></i> Accueil</a>
+            <a href="liste-visites.html"><i class="bi bi-list-ul" aria-hidden="true"></i> Visites</a>
+            <a href="planning-visites.html"><i class="bi bi-calendar-check" aria-hidden="true"></i> Planning</a>
+            <a href="historique.html"><i class="bi bi-clock-history" aria-hidden="true"></i> Historique</a>
+            <a href="points-vente.html"><i class="bi bi-shop" aria-hidden="true"></i> Points</a>
+            <a href="gestion-utilisateurs.html"><i class="bi bi-people" aria-hidden="true"></i> Utilisateurs</a>
+            <a href="carte.html"><i class="bi bi-map" aria-hidden="true"></i> Carte</a>
+            <a href="profil.html"><i class="bi bi-person" aria-hidden="true"></i> Profil</a>
+            <a href="parametres.html"><i class="bi bi-gear" aria-hidden="true"></i> Parametres</a>
+            <hr>
+            <a href="connexion.html" class="text-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion</a>
+        </div>
+    </header>
+
+    <!-- ==========================================================
+    CONTENU PRINCIPAL
+    ========================================================== -->
+    <main class="main-content">
+
+        <div class="profile-container">
+
+            <div class="profile-header">
+                <div class="avatar-wrapper" id="avatarWrapper">
+                    <div class="avatar" id="avatarDisplay">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>
+                    </div>
+                    <div class="avatar-badge" id="avatarBadge" aria-label="Modifier la photo de profil">
+                        <i class="bi bi-camera" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <input type="file" id="avatarInput" accept="image/png, image/jpeg, image/gif, image/webp">
+
+                <h2 class="profile-name">Zidane Fredy</h2>
+                <span class="profile-role admin">Administrateur</span>
+            </div>
+
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Statistiques</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">18</div>
+                        <div class="stat-label">Visites realisees</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">En attente</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Points de vente</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-person" aria-hidden="true"></i> Informations personnelles</div>
+
+                <div class="info-item">
+                    <span class="info-icon"><i class="bi bi-person" aria-hidden="true"></i></span>
+                    <span class="info-label">Nom complet</span>
+                    <span class="info-value">Zidane Fredy</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-icon"><i class="bi bi-envelope" aria-hidden="true"></i></span>
+                    <span class="info-label">Email</span>
+                    <span class="info-value">zidane@suiviterrain.com</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-icon"><i class="bi bi-phone" aria-hidden="true"></i></span>
+                    <span class="info-label">Telephone</span>
+                    <span class="info-value">+237 652 14 45 56</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
+                    <span class="info-label">Role</span>
+                    <span class="info-value">Administrateur</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span>
+                    <span class="info-label">Zone d'intervention</span>
+                    <span class="info-value">Douala, Cameroun</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-title"><i class="bi bi-gear" aria-hidden="true"></i> Actions</div>
+                <div class="action-buttons">
+                    <button class="btn-action btn-primary-red" id="btnEditProfil">
+                        <i class="bi bi-pencil" aria-hidden="true"></i> Modifier le profil
+                    </button>
+                    <button class="btn-action btn-outline" id="btnChangePassword">
+                        <i class="bi bi-key" aria-hidden="true"></i> Changer le mot de passe
+                    </button>
+                    <button class="btn-action btn-danger" id="btnLogout">
+                        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Deconnexion
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ==========================================================
+    FOOTER PC
+    ========================================================== -->
+    <footer class="footer-pc" role="contentinfo">
+        <p>&copy; 2026 SuiviTerrain - Tous droits reserves</p>
+    </footer>
+
+    <!-- ==========================================================
+    BARRE DE NAVIGATION MOBILE
+    ========================================================== -->
+    <nav class="bottom-nav-mobile" aria-label="Navigation principale">
+
+        <a href="tableau-bord.html" class="nav-item">
+            <i class="bi bi-house-door" aria-hidden="true"></i>
+            Accueil
+        </a>
+
+        <a href="liste-visites.html" class="nav-item">
+            <i class="bi bi-list-ul" aria-hidden="true"></i>
+            Visites
+        </a>
+
+        <a href="#" class="nav-item-center" id="btnPlusMobile" aria-label="Action selon la page">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </a>
+
+        <a href="points-vente.html" class="nav-item">
+            <i class="bi bi-shop" aria-hidden="true"></i>
+            Points de vente
+        </a>
+
+        <a href="profil.html" class="nav-item active">
+            <i class="bi bi-person" aria-hidden="true"></i>
+            Profil
+        </a>
+
+    </nav>
+
+    <!-- ==========================================================
+    MODALES
+    ========================================================== -->
+
+    <!-- Modale Modifier le profil -->
+    <div class="modal fade" id="modifierProfilModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person" aria-hidden="true"></i>
+                        Modifier le profil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="position:relative;width:120px;height:120px;margin:0 auto 1rem auto;">
+                        <img id="editProfilPhoto" src="../assets/images/avatar-default.png" alt="Photo de profil" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid #f0ece6;">
+                        <div id="editProfilPhotoBadge" style="position:absolute;bottom:4px;right:4px;background:#8B0000;border:3px solid #ffffff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:0.8rem;cursor:pointer;box-shadow:0 2px 8px rgba(139,0,0,0.3);">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </div>
+                        <input type="file" id="editProfilPhotoInput" accept="image/png, image/jpeg, image/gif, image/webp" style="display:none;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editProfilNom" class="form-label">Nom complet</label>
+                        <input type="text" class="form-control" id="editProfilNom" value="Zidane Fredy">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editProfilEmail" value="zidane@suiviterrain.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilTelephone" class="form-label">Telephone</label>
+                        <input type="tel" class="form-control" id="editProfilTelephone" value="+237 652 14 45 56">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProfilZone" class="form-label">Zone d'intervention</label>
+                        <input type="text" class="form-control" id="editProfilZone" value="Douala, Cameroun">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="saveProfilBtn">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Changer le mot de passe -->
+    <div class="modal fade" id="changerMotPasseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Changer le mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Entrez votre mot de passe actuel">
+                            <button type="button" class="btn btn-light border" id="toggleCurrentPwd">
+                                <i class="bi bi-eye" id="currentPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="currentPwdError" class="text-danger" style="display:none;">Mot de passe incorrect</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" placeholder="Entrez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleNewPwd" disabled>
+                                <i class="bi bi-eye" id="newPwdIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre nouveau mot de passe" disabled>
+                            <button type="button" class="btn btn-light border" id="toggleConfirmPwd" disabled>
+                                <i class="bi bi-eye" id="confirmPwdIcon"></i>
+                            </button>
+                        </div>
+                        <div id="confirmPwdError" class="text-danger" style="display:none;">Les mots de passe ne correspondent pas</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annuler" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn-enregistrer" id="savePasswordBtn" disabled>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+    SCRIPTS
+    ========================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/pages/profil.js"></script>
+
+</body>
+</html>

@@ -94,6 +94,75 @@ def api_login():
         message='Authentification réussie'
     )
 
+@api_bp.route('/auth/register', methods=['POST'])
+@limiter.limit("5 per minute")
+def api_register():
+    """Inscription d'un nouvel utilisateur"""
+    try:
+        data = request.get_json()
+        
+        # 1. Validation des champs obligatoires
+        nom = data.get('nom')
+        email = data.get('email')
+        password = data.get('password')
+        role = data.get('role', 'agent')
+        
+        if not nom or not email or not password:
+            return api_response(
+                message='Nom, email et mot de passe sont obligatoires', 
+                status='error', 
+                code=400
+            )
+        
+        # 2. Vérifier si l'email existe déjà
+        existing_user = Utilisateur.query.filter_by(mail=email).first()
+        if existing_user:
+            return api_response(
+                message='Un compte avec cet email existe déjà', 
+                status='error', 
+                code=409
+            )
+        
+        # 3. Hasher le mot de passe
+        from werkzeug.security import generate_password_hash
+        hashed_password = generate_password_hash(password)
+        
+        # 4. Créer l'utilisateur
+        new_user = Utilisateur(
+            nom_user=nom,
+            mail=email,
+            mdp=hashed_password,
+            role=role,
+            actif=True,
+            date_creation_user=datetime.now()
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # 5. Réponse de succès
+        return api_response(
+            data={
+                'user': {
+                    'id': new_user.id_user,
+                    'nom': new_user.nom_user,
+                    'email': new_user.mail,
+                    'role': new_user.role
+                }
+            },
+            message='Compte créé avec succès',
+            code=201
+        )
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur inscription: {str(e)}")  # Pour voir l'erreur dans la console Flask
+        return api_response(
+            message=f'Erreur lors de la création du compte: {str(e)}', 
+            status='error', 
+            code=500
+        )
+
 @api_bp.route('/auth/refresh', methods=['POST'])
 @jwt_required()
 def api_refresh():
@@ -397,37 +466,49 @@ def api_get_stats():
     })
     
 @api_bp.route('/visites/jour', methods=['GET'])
+@jwt_required()
 @cross_origin()
 def api_get_visites_jour():
-    """Visites du jour pour l'agent connecté"""
-    if not current_user.is_authenticated:
-        return api_response(message='Non authentifié', status='error', code=401)
-    
-    current_user_id = current_user.id_user
-    today = datetime.now().date()
-    
-    visites = Visite.query\
-        .join(realiser, Visite.id_visite == realiser.c.id_visite)\
-        .filter(
-            Visite.date_prevue == today,
-            realiser.c.id_user == current_user_id
-        )\
-        .order_by(Visite.heure_prevue)\
-        .all()
-    
-    return api_response(data=[{
-        'id': v.id_visite,
-        'date_prevue': v.date_prevue.isoformat(),
-        'heure_prevue': v.heure_prevue.isoformat() if v.heure_prevue else None,
-        'statut': v.statut,
-        'point_vente': {
-            'id': v.point.id_pt,
-            'nom': v.point.nom_pt,
-            'adresse': v.point.adresse,
-            'latitude': float(v.point.latitude) if v.point.latitude else None,
-            'longitude': float(v.point.longitude) if v.point.longitude else None
-        } if v.point else None
-    } for v in visites])
+    """Visites du jour pour l'agent connecté (JWT)"""
+    try:
+        # Récupérer l'ID depuis le JWT
+        current_user_id = int(get_jwt_identity())
+        today = datetime.now().date()
+        
+        # Requête avec jointure sur la table 'realiser'
+        visites = Visite.query\
+            .join(realiser, Visite.id_visite == realiser.c.id_visite)\
+            .filter(
+                Visite.date_prevue == today,
+                realiser.c.id_user == current_user_id
+            )\
+            .order_by(Visite.heure_prevue)\
+            .all()
+        
+        return api_response(data=[{
+            'id': v.id_visite,
+            'date_prevue': v.date_prevue.isoformat(),
+            'heure_prevue': v.heure_prevue.isoformat() if v.heure_prevue else None,
+            'statut': v.statut,
+            'compte_rendu': v.compte_rendu,
+            'point_vente': {
+                'id': v.point.id_pt,
+                'nom': v.point.nom_pt,
+                'adresse': v.point.adresse,
+                'latitude': float(v.point.latitude) if v.point.latitude else None,
+                'longitude': float(v.point.longitude) if v.point.longitude else None,
+                'categorie': v.point.categorie.nom_cat if v.point.categorie else None,
+                'couleur': v.point.categorie.couleur if v.point.categorie else None
+            } if v.point else None
+        } for v in visites])
+        
+    except Exception as e:
+        print(f"Erreur visites/jour: {str(e)}")
+        return api_response(
+            message=f'Erreur lors du chargement des visites: {str(e)}', 
+            status='error', 
+            code=500
+        )
     
 @api_bp.route('/points/filter', methods=['GET'])
 @cross_origin()
