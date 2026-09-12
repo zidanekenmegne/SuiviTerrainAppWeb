@@ -9,6 +9,7 @@ import PointsPage from './pages/PointsPage';
 import DashboardPage from './pages/DashboardPage';
 import VisitesPage from './pages/VisitesPage';
 import CartePage from './pages/CartePage';
+import UtilisateursPage from './pages/UtilisateursPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -32,6 +33,7 @@ function App() {
               <Route path="points" element={<PointsPage />} />
               <Route path="visites" element={<VisitesPage />} />
               <Route path="carte" element={<CartePage />} />
+              <Route path="utilisateurs" element={<UtilisateursPage />} />
             </Route>
             
             {/* Redirection 404 */}
