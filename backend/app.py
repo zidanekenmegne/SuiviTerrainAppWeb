@@ -22,7 +22,7 @@ from blueprints.api import api_bp, limiter
 
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 CORS(app)  # <- Permet toutes les origines (pour développement)
 

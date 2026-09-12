@@ -25,6 +25,7 @@ class Utilisateur(db.Model, UserMixin):
     role = db.Column(db.String(20), nullable=False, default='agent')
     zone_intervention = db.Column(db.String(100))
     actif = db.Column(db.Boolean, default=True)
+    photo = db.Column(db.String(255), nullable=True)
     date_creation_user = db.Column(db.DateTime, default=datetime.now)
     derniere_connexion_user = db.Column(db.DateTime)
     
