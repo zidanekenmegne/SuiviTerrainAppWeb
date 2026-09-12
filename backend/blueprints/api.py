@@ -343,6 +343,9 @@ def api_get_visites():
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 20, type=int)
     statut = request.args.get('statut', '').strip()
+    date_filter = request.args.get('date', '').strip()      
+    date_from = request.args.get('date_from', '').strip()   
+    date_to = request.args.get('date_to', '').strip()
     
     query = Visite.query
     
@@ -365,7 +368,12 @@ def api_get_visites():
                 'id': v.point.id_pt,
                 'nom': v.point.nom_pt,
                 'adresse': v.point.adresse
-            } if v.point else None
+            } if v.point else None,
+            'agents': [{
+                'id': a.id_user,
+                'nom': a.nom_user,
+                'email': a.mail
+            } for a in v.agents]
         } for v in visites],
         'pagination': {
             'page': page,
@@ -1087,4 +1095,22 @@ def api_delete_photo():
         
     except Exception as e:
         db.session.rollback()
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+    
+@api_bp.route('/utilisateurs/agents', methods=['GET'])
+@jwt_required()
+@cross_origin()
+def api_get_agents():
+    """Liste des agents disponibles (authentifié)"""
+    try:
+        agents = Utilisateur.query.filter_by(role='agent', actif=True)\
+            .order_by(Utilisateur.nom_user).all()
+        
+        return api_response(data=[{
+            'id': a.id_user,
+            'nom': a.nom_user,
+            'email': a.mail,
+            'zone_intervention': a.zone_intervention
+        } for a in agents])
+    except Exception as e:
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
