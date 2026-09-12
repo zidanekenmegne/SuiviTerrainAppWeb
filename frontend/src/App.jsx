@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import VisitesPage from './pages/VisitesPage';
 import CartePage from './pages/CartePage';
 import UtilisateursPage from './pages/UtilisateursPage';
+import ProfilPage from './pages/ProfilPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -34,6 +35,7 @@ function App() {
               <Route path="visites" element={<VisitesPage />} />
               <Route path="carte" element={<CartePage />} />
               <Route path="utilisateurs" element={<UtilisateursPage />} />
+              <Route path="profil" element={<ProfilPage />} />
             </Route>
             
             {/* Redirection 404 */}

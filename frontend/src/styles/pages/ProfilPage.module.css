@@ -1,0 +1,372 @@
+/* ==========================================================
+   PROFIL PAGE - SuiviTerrain
+   ========================================================== */
+
+.profilContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ==========================================================
+   EN-TÊTE PROFIL
+   ========================================================== */
+.profileHeader {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem 1rem 1rem 1rem;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================================
+   AVATAR
+   ========================================================== */
+.avatarWrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 0.5rem auto;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.15);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.avatar:hover {
+  transform: scale(1.02);
+}
+
+.avatar i {
+  font-size: 2.8rem;
+  color: #ffffff;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarBadge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #8B0000;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.avatarBadge:hover {
+  background-color: #6a0000;
+}
+
+/* ==========================================================
+   NOM + RÔLE
+   ========================================================== */
+.profileName {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.profileRole {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  color: #6c757d;
+  display: inline-block;
+  background: #FFF8F0;
+  padding: 0.15rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.profileRole.admin {
+  background: #8B0000;
+  color: #ffffff;
+}
+
+/* ==========================================================
+   CARTES D'INFORMATIONS
+   ========================================================== */
+.infoCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+  margin-bottom: 0.75rem;
+}
+
+.cardTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #f0ece6;
+  padding-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cardTitle i {
+  color: #8B0000;
+}
+
+/* ==========================================================
+   INFO ITEMS
+   ========================================================== */
+.infoItem {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f8f5f0;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoIcon {
+  width: 28px;
+  color: #8B0000;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.7rem;
+  color: #6c757d;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  font-weight: 500;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* ==========================================================
+   STATISTIQUES
+   ========================================================== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.statItem {
+  text-align: center;
+  padding: 0.6rem 0.25rem;
+  background: #FFF8F0;
+  border-radius: 12px;
+}
+
+.statNumber {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #8B0000;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 0.15rem;
+}
+
+/* ==========================================================
+   ACTIONS
+   ========================================================== */
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.btnAction {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btnPrimaryRed {
+  background-color: #8B0000;
+  color: #ffffff;
+}
+
+.btnPrimaryRed:hover {
+  background-color: #6a0000;
+}
+
+.btnOutline {
+  background: transparent;
+  color: #8B0000;
+  border: 2px solid #8B0000;
+}
+
+.btnOutline:hover {
+  background-color: #8B0000;
+  color: #ffffff;
+}
+
+.btnDanger {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.btnDanger:hover {
+  background-color: #b02a37;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+  .profilContainer {
+    padding: 0 2rem;
+  }
+
+  .profileHeader {
+    padding: 2rem 2rem 1.75rem 2rem;
+  }
+
+  .avatarWrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar i {
+    font-size: 4rem;
+  }
+
+  .avatarBadge {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    bottom: 4px;
+    right: 4px;
+  }
+
+  .profileName {
+    font-size: 1.6rem;
+  }
+
+  .statNumber {
+    font-size: 1.8rem;
+  }
+
+  .actionButtons {
+    flex-direction: row;
+  }
+
+  .btnAction {
+    flex: 1;
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 120px;
+  }
+
+  .infoCard {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .infoLabel {
+    width: 100px;
+    font-size: 0.75rem;
+  }
+
+  .infoValue {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .avatarWrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .avatar i {
+    font-size: 2.2rem;
+  }
+
+  .avatarBadge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+
+  .profileName {
+    font-size: 1rem;
+  }
+
+  .statNumber {
+    font-size: 1rem;
+  }
+
+  .statLabel {
+    font-size: 0.5rem;
+  }
+
+  .btnAction {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .infoLabel {
+    width: 60px;
+    font-size: 0.6rem;
+  }
+
+  .infoValue {
+    font-size: 0.7rem;
+  }
+}
