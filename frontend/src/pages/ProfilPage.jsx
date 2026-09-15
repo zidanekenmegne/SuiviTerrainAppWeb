@@ -13,16 +13,22 @@ import styles from '../styles/pages/ProfilPage.module.css';
 
 /**
  * Page Profil utilisateur
- * - Affichage des infos + statistiques
- * - Modification du profil
- * - Changement de mot de passe
- * - Déconnexion
  */
 const ProfilPage = () => {
   // ==========================================================
   // HOOKS
   // ==========================================================
-  const { profil, stats, loading, error, updateProfil, changePassword, refresh } = useProfil();
+  const {
+    profil,
+    stats,
+    loading,
+    error,
+    updateProfil,
+    changePassword,
+    uploadPhoto,
+    refresh
+  } = useProfil();
+
   const { logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -62,6 +68,21 @@ const ProfilPage = () => {
     if (result.success) {
       showToast('Mot de passe modifié avec succès');
       setShowPasswordModal(false);
+      return { success: true };
+    } else {
+      showToast(result.message, 'error');
+      return { success: false, message: result.message };
+    }
+  };
+
+  /**
+   * Upload de la photo de profil
+   */
+  const handleUploadPhoto = async (file) => {
+    const result = await uploadPhoto(file);
+    
+    if (result.success) {
+      showToast('Photo de profil mise à jour');
       return { success: true };
     } else {
       showToast(result.message, 'error');
@@ -121,8 +142,11 @@ const ProfilPage = () => {
   return (
     <div className={styles.profilContainer}>
 
-      {/* En-tête du profil (avatar + nom + rôle) */}
-      <ProfilHeader profil={profil} />
+      {/* En-tête du profil */}
+      <ProfilHeader 
+        profil={profil} 
+        onUploadPhoto={handleUploadPhoto}
+      />
 
       {/* Statistiques */}
       <ProfilStats stats={stats} />

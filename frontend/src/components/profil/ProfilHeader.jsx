@@ -2,53 +2,66 @@ import { useState, useRef } from 'react';
 import styles from '../../styles/pages/ProfilPage.module.css';
 
 /**
- * En-tête du profil (avatar cliquable + nom + rôle)
- * L'avatar peut être cliqué pour changer la photo (aperçu local uniquement)
+ * En-tête du profil avec upload de photo fonctionnel
  */
-const ProfilHeader = ({ profil }) => {
-  const [avatarPreview, setAvatarPreview] = useState(null);
+const ProfilHeader = ({ profil, onUploadPhoto }) => {
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // ==========================================================
-  // GESTION DE L'UPLOAD DE PHOTO
-  // ==========================================================
   const handleAvatarClick = () => {
+    if (uploading) return;
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validation côté client
     if (!file.type.startsWith('image/')) {
       alert('Veuillez sélectionner une image (PNG, JPEG, GIF, WEBP)');
+      e.target.value = '';
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
       alert('L\'image ne doit pas dépasser 5 Mo');
+      e.target.value = '';
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setAvatarPreview(e.target.result);
-    };
-    reader.readAsDataURL(file);
+    // Upload via l'API
+    setUploading(true);
+    try {
+      await onUploadPhoto(file);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
-  // ==========================================================
-  // RENDU
-  // ==========================================================
   const roleLabel = profil?.role === 'admin' ? 'Administrateur' : 'Agent';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
   return (
     <div className={styles.profileHeader}>
       {/* Avatar */}
-      <div className={styles.avatarWrapper} onClick={handleAvatarClick}>
+      <div 
+        className={styles.avatarWrapper} 
+        onClick={handleAvatarClick}
+        style={{ opacity: uploading ? 0.6 : 1 }}
+      >
         <div className={styles.avatar}>
-          {avatarPreview ? (
-            <img src={avatarPreview} alt="Photo de profil" />
+          {profil?.photo ? (
+            <img 
+              src={`${API_URL}${profil.photo}`} 
+              alt="Photo de profil"
+              onError={(e) => {
+                // Si l'image ne charge pas, afficher l'icône par défaut
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<i class="bi bi-person-fill"></i>';
+              }}
+            />
           ) : (
             <i className="bi bi-person-fill" aria-hidden="true"></i>
           )}
@@ -58,7 +71,11 @@ const ProfilHeader = ({ profil }) => {
           aria-label="Modifier la photo de profil"
           title="Modifier la photo"
         >
-          <i className="bi bi-camera" aria-hidden="true"></i>
+          {uploading ? (
+            <span className="spinner-border spinner-border-sm" role="status"></span>
+          ) : (
+            <i className="bi bi-camera" aria-hidden="true"></i>
+          )}
         </div>
         <input
           ref={fileInputRef}
@@ -66,6 +83,7 @@ const ProfilHeader = ({ profil }) => {
           accept="image/png, image/jpeg, image/gif, image/webp"
           onChange={handleFileChange}
           style={{ display: 'none' }}
+          disabled={uploading}
         />
       </div>
 

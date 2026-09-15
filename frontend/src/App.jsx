@@ -11,6 +11,8 @@ import VisitesPage from './pages/VisitesPage';
 import CartePage from './pages/CartePage';
 import UtilisateursPage from './pages/UtilisateursPage';
 import ProfilPage from './pages/ProfilPage';
+import HistoriquePage from './pages/HistoriquePage';
+import PlanningPage from './pages/PlanningPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -36,6 +38,8 @@ function App() {
               <Route path="carte" element={<CartePage />} />
               <Route path="utilisateurs" element={<UtilisateursPage />} />
               <Route path="profil" element={<ProfilPage />} />
+              <Route path="historique" element={<HistoriquePage />} />
+              <Route path="planning" element={<PlanningPage />} />
             </Route>
             
             {/* Redirection 404 */}

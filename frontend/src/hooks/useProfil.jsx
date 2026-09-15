@@ -112,7 +112,45 @@ export const useProfil = () => {
       return { success: false, message };
     }
   }, []);
+// ==========================================================
+// UPLOAD DE PHOTO
+// ==========================================================
+const uploadPhoto = useCallback(async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('photo', file);
+    
+    const response = await apiClient.post('/auth/photo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
+    // Mettre à jour le profil avec la nouvelle photo
+    if (response.data?.data?.photo) {
+      setProfil(prev => ({ ...prev, photo: response.data.data.photo }));
+    }
+    
+    return { success: true, photo: response.data?.data?.photo };
+  } catch (err) {
+    const message = err.response?.data?.message || 'Erreur lors de l\'upload';
+    return { success: false, message };
+  }
+}, []);
 
+// ==========================================================
+// SUPPRESSION DE PHOTO
+// ==========================================================
+const deletePhoto = useCallback(async () => {
+  try {
+    await apiClient.delete('/auth/photo');
+    setProfil(prev => ({ ...prev, photo: null }));
+    return { success: true };
+  } catch (err) {
+    const message = err.response?.data?.message || 'Erreur lors de la suppression';
+    return { success: false, message };
+  }
+}, []);
   // ==========================================================
   // RETOUR
   // ==========================================================
@@ -123,6 +161,8 @@ export const useProfil = () => {
     error,
     updateProfil,
     changePassword,
+    uploadPhoto,      
+    deletePhoto,
     refresh: fetchData
   };
 };
