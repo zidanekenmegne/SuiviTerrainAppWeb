@@ -13,6 +13,7 @@ import UtilisateursPage from './pages/UtilisateursPage';
 import ProfilPage from './pages/ProfilPage';
 import HistoriquePage from './pages/HistoriquePage';
 import PlanningPage from './pages/PlanningPage';
+import RapportsPage from './pages/RapportsPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -40,6 +41,7 @@ function App() {
               <Route path="profil" element={<ProfilPage />} />
               <Route path="historique" element={<HistoriquePage />} />
               <Route path="planning" element={<PlanningPage />} />
+              <Route path="rapports" element={<RapportsPage />} />
             </Route>
             
             {/* Redirection 404 */}
