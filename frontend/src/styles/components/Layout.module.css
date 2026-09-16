@@ -1,0 +1,39 @@
+/* ==========================================================
+   LAYOUT - SuiviTerrain
+   ========================================================== */
+
+.layoutWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #FFF8F0;
+}
+
+.mainContent {
+  flex: 1;
+  background-color: #FFF8F0;
+  padding-bottom: 0;
+}
+
+/* ==========================================================
+   ESPACE POUR LA BOTTOM NAV MOBILE
+   ========================================================== */
+/* 
+   La BottomNav fait 56px de haut.
+   On ajoute 200px sur mobile pour éviter que les derniers
+   éléments des listes soient coupés.
+*/
+@media (max-width: 768px) {
+  .mainContent {
+    padding-bottom: 80px;
+  }
+}
+
+/* ==========================================================
+   ESPACE POUR LE FOOTER PC
+   ========================================================== */
+@media (min-width: 769px) {
+  .mainContent {
+    padding-bottom: 0;
+  }
+}
