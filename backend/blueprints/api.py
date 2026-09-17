@@ -439,6 +439,90 @@ def api_create_visite():
     
     return api_response(data={'id': visite.id_visite}, message='Visite créée', code=201)
 
+@api_bp.route('/visites/<int:id>', methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def api_update_visite(id):
+    """Modifier une visite (authentifié)"""
+    try:
+        visite = Visite.query.get_or_404(id)
+        data = request.get_json()
+        
+        # Mise à jour des champs
+        if 'date_prevue' in data and data['date_prevue']:
+            visite.date_prevue = datetime.strptime(data['date_prevue'], '%Y-%m-%d').date()
+        
+        if 'heure_prevue' in data and data['heure_prevue']:
+            # Accepte HH:MM ou HH:MM:SS
+            heure_str = data['heure_prevue']
+            if len(heure_str) == 5:
+                heure_str += ':00'
+            visite.heure_prevue = datetime.strptime(heure_str, '%H:%M:%S').time()
+        
+        if 'statut' in data:
+            visite.statut = data['statut']
+        
+        if 'compte_rendu' in data:
+            visite.compte_rendu = data['compte_rendu']
+        
+        if 'point_vente_id' in data and data['point_vente_id']:
+            visite.id_pt = int(data['point_vente_id'])
+        
+        if 'date_reelle' in data and data['date_reelle']:
+            visite.date_reelle = datetime.strptime(data['date_reelle'], '%Y-%m-%d').date()
+        
+        if 'heure_reelle' in data and data['heure_reelle']:
+            heure_str = data['heure_reelle']
+            if len(heure_str) == 5:
+                heure_str += ':00'
+            visite.heure_reelle = datetime.strptime(heure_str, '%H:%M:%S').time()
+        
+        visite.date_modif = datetime.now()
+        db.session.commit()
+        
+        return api_response(message='Visite modifiée avec succès')
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur modification visite: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+@api_bp.route('/visites/<int:id>', methods=['DELETE'])
+@jwt_required()
+@cross_origin()
+def api_delete_visite(id):
+    """Supprimer une visite (admin ou créateur)"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        current_user = Utilisateur.query.get(current_user_id)
+        
+        if not current_user:
+            return api_response(message='Utilisateur non trouvé', status='error', code=404)
+        
+        visite = Visite.query.get_or_404(id)
+        
+        # Vérifier les permissions : admin OU agent assigné à la visite
+        is_admin = current_user.role == 'admin'
+        is_assigned = any(a.id_user == current_user_id for a in visite.agents)
+        
+        if not (is_admin or is_assigned):
+            return api_response(
+                message='Vous n\'avez pas la permission de supprimer cette visite',
+                status='error',
+                code=403
+            )
+        
+        db.session.delete(visite)
+        db.session.commit()
+        
+        return api_response(message='Visite supprimée avec succès')
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur suppression visite: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 # ==========================================================
 # 5. STATISTIQUES
 # ==========================================================

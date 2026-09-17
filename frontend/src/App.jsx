@@ -15,6 +15,7 @@ import HistoriquePage from './pages/HistoriquePage';
 import PlanningPage from './pages/PlanningPage';
 import RapportsPage from './pages/RapportsPage';
 import ParametresPage from './pages/ParametresPage';
+import VisiteDetailPage from './pages/VisiteDetailPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -44,6 +45,7 @@ function App() {
               <Route path="planning" element={<PlanningPage />} />
               <Route path="rapports" element={<RapportsPage />} />
               <Route path="parametres" element={<ParametresPage />} />
+              <Route path="visites/:id" element={<VisiteDetailPage />} />
             </Route>
             
             {/* Redirection 404 */}

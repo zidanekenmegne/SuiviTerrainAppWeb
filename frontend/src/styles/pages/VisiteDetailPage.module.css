@@ -1,0 +1,398 @@
+/* ==========================================================
+   VISITE DETAIL PAGE - SuiviTerrain
+   ========================================================== */
+
+.detailContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ==========================================================
+   EN-TÊTE PC
+   ========================================================== */
+.headerPC {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.headerPC h1 {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 0;
+}
+
+.headerPC h1 i {
+  color: #8B0000;
+  margin-right: 0.4rem;
+}
+
+/* ==========================================================
+   EN-TÊTE MOBILE
+   ========================================================== */
+.headerMobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f0ece6;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: #8B0000;
+  font-size: 1.3rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: #FFF8F0;
+}
+
+.pageTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+  flex: 1;
+  text-align: center;
+}
+
+.mobileActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.1rem;
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  color: #8B0000;
+  background-color: #FFF8F0;
+}
+
+/* ==========================================================
+   CARTE D'INFORMATIONS
+   ========================================================== */
+.infoCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #f0ece6;
+  padding-bottom: 0.5rem;
+}
+
+.cardTitle i {
+  color: #8B0000;
+  margin-right: 0.4rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.1rem;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f8f5f0;
+  gap: 1rem;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* ==========================================================
+   BADGE STATUT
+   ========================================================== */
+.statut {
+  display: inline-block;
+  padding: 0.25rem 0.9rem;
+  border-radius: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.statut.realisee {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.statut.planifie {
+  background-color: #ffc107;
+  color: #1a1a1a;
+}
+
+.statut.retard {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.statut.encours {
+  background-color: #17a2b8;
+  color: #ffffff;
+}
+
+/* ==========================================================
+   ACTIONS PC
+   ========================================================== */
+.actionsPC {
+  display: none;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btnSecondary {
+  background: transparent;
+  border: 2px solid #6c757d;
+  border-radius: 10px;
+  color: #6c757d;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btnSecondary:hover {
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
+.btnDanger {
+  background-color: #dc3545;
+  border: 2px solid #dc3545;
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btnDanger:hover {
+  background-color: #b02a37;
+  border-color: #b02a37;
+}
+
+/* ==========================================================
+   BARRE DE STATUT (MOBILE)
+   ========================================================== */
+.statusBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #f0ece6;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  box-shadow: 0 -2px 12px rgba(139, 0, 0, 0.06);
+  gap: 0.5rem;
+}
+
+.statusCurrent {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.statusCurrentLabel {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.statusDropdownBtn {
+  background: #8B0000;
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.4rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.statusDropdownBtn:hover {
+  background-color: #6a0000;
+}
+
+.statusDropdownBtn i {
+  font-size: 0.65rem;
+}
+
+.statusDropdownMenu {
+  position: absolute;
+  bottom: 60px;
+  right: 1rem;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.3rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  list-style: none;
+  margin: 0;
+  z-index: 1001;
+}
+
+.statusDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s;
+}
+
+.statusDropdownItem:hover {
+  background-color: #FFF8F0;
+}
+
+.statusDropdownItem.active {
+  background-color: #8B0000;
+  color: #ffffff;
+}
+
+.statusDropdownItem.active:hover {
+  background-color: #6a0000;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (min-width: 769px) {
+  .detailContainer {
+    padding: 0 2rem;
+  }
+
+  .headerPC {
+    display: flex !important;
+  }
+
+  .headerMobile {
+    display: none !important;
+  }
+
+  .actionsPC {
+    display: flex !important;
+  }
+
+  .statusBar {
+    display: none !important;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 2rem;
+  }
+
+  .infoItem {
+    padding: 0.4rem 0;
+  }
+
+  .infoLabel {
+    font-size: 0.85rem;
+  }
+
+  .infoValue {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .detailContainer {
+    padding: 0 0.75rem 90px 0.75rem;
+  }
+
+  .headerPC {
+    display: none !important;
+  }
+
+  .actionsPC {
+    display: none !important;
+  }
+}
