@@ -24,7 +24,7 @@ const VisiteStatusBar = ({ currentStatut, onStatutChange }) => {
   }, [menuOpen]);
 
   const statuts = [
-    { key: 'planifie', label: 'Planifiée' },
+    { key: 'planifiee', label: 'Planifiée' },
     { key: 'encours', label: 'En cours' },
     { key: 'realisee', label: 'Réalisée' },
     { key: 'retard', label: 'En retard' }

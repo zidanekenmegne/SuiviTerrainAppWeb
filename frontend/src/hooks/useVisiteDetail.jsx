@@ -68,12 +68,12 @@ export const useVisiteDetail = (id) => {
   function normalizeStatut(statut) {
     const mapping = {
       'realisee': 'realisee',
-      'attente': 'planifie',
+      'attente': 'attente',
       'retard': 'retard',
       'encours': 'encours',
-      'planifiee': 'planifie'
+      'planifiee': 'planifiee'
     };
-    return mapping[statut] || 'planifie';
+    return mapping[statut] || 'planifiee';
   }
 
   // ==========================================================

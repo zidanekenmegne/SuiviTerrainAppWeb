@@ -216,9 +216,10 @@ const VisiteDetailPage = () => {
 function getStatutLabel(statut) {
   const labels = {
     'realisee': 'Réalisée',
-    'planifie': 'Planifiée',
+    'planifiee': 'Planifiée',  // ← CORRIGER : 'planifie' → 'planifiee'
     'retard': 'En retard',
-    'encours': 'En cours'
+    'encours': 'En cours',
+    'attente': 'En attente'
   };
   return labels[statut] || statut;
 }

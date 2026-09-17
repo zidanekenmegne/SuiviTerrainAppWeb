@@ -28,7 +28,7 @@ const VisiteEditModal = ({ show, onHide, visite, onSave }) => {
         datePrevue: visite.datePrevue || '',
         heurePrevue: visite.heurePrevue || '08:00',
         pointVenteId: visite.pointVente?.id || '',
-        statut: visite.statut || 'planifie',
+        statut: visite.statut || 'planifiee',
         compteRendu: visite.compteRendu || ''
       });
       setErrors({});
@@ -189,7 +189,7 @@ const VisiteEditModal = ({ show, onHide, visite, onSave }) => {
               onChange={handleChange}
               disabled={loading}
             >
-              <option value="planifie">Planifiée</option>
+              <option value="planifiee">Planifiée</option>
               <option value="encours">En cours</option>
               <option value="realisee">Réalisée</option>
               <option value="retard">En retard</option>

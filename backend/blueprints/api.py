@@ -414,31 +414,75 @@ def api_get_visite(id):
 @cross_origin()
 def api_create_visite():
     """Créer une visite (authentifié)"""
-    data = request.get_json()
+    try:
+        data = request.get_json()
+        current_user_id = int(get_jwt_identity())
+        
+        date_prevue = data.get('date_prevue')
+        heure_prevue = data.get('heure_prevue')
+        id_pt = data.get('point_vente_id')
+        statut = data.get('statut', 'planifiee')
+        compte_rendu = data.get('compte_rendu')
+        agent_id = data.get('agent_id')  # ← NOUVEAU
+        
+        if not date_prevue or not heure_prevue or not id_pt:
+            return api_response(
+                message='Date, heure et point de vente sont obligatoires',
+                status='error',
+                code=400
+            )
+        
+        # Normaliser l'heure (HH:MM → HH:MM:SS)
+        heure_str = heure_prevue
+        if len(heure_str) == 5:
+            heure_str += ':00'
+        
+        # Créer la visite
+        visite = Visite(
+            date_prevue=datetime.strptime(date_prevue, '%Y-%m-%d').date(),
+            heure_prevue=datetime.strptime(heure_str, '%H:%M:%S').time(),
+            id_pt=int(id_pt),
+            statut=statut,
+            compte_rendu=compte_rendu,
+            date_creation=datetime.now()
+        )
+        
+        db.session.add(visite)
+        db.session.flush()  # Pour avoir l'ID
+        
+        # Lier l'agent à la visite (table realiser)
+        target_user_id = int(agent_id) if agent_id else current_user_id
+        
+        # Vérifier que l'utilisateur existe
+        agent = Utilisateur.query.get(target_user_id)
+        if not agent:
+            db.session.rollback()
+            return api_response(
+                message='Agent introuvable',
+                status='error',
+                code=404
+            )
+        
+        db.session.execute(
+            realiser.insert().values(
+                id_user=target_user_id,
+                id_visite=visite.id_visite
+            )
+        )
+        
+        db.session.commit()
+        
+        return api_response(
+            data={'id': visite.id_visite},
+            message='Visite créée avec succès',
+            code=201
+        )
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur création visite: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
     
-    date_prevue = data.get('date_prevue')
-    heure_prevue = data.get('heure_prevue')
-    id_pt = data.get('point_vente_id')
-    statut = data.get('statut', 'planifiee')
-    compte_rendu = data.get('compte_rendu')
-    
-    if not date_prevue or not heure_prevue or not id_pt:
-        return api_response(message='Date, heure et point de vente sont obligatoires', status='error', code=400)
-    
-    visite = Visite(
-        date_prevue=datetime.strptime(date_prevue, '%Y-%m-%d').date(),
-        heure_prevue=datetime.strptime(heure_prevue, '%H:%M').time(),
-        id_pt=int(id_pt),
-        statut=statut,
-        compte_rendu=compte_rendu,
-        date_creation=datetime.now()
-    )
-    
-    db.session.add(visite)
-    db.session.commit()
-    
-    return api_response(data={'id': visite.id_visite}, message='Visite créée', code=201)
-
 @api_bp.route('/visites/<int:id>', methods=['PUT'])
 @jwt_required()
 @cross_origin()

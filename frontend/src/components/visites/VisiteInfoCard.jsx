@@ -20,7 +20,7 @@ const VisiteInfoCard = ({ visite }) => {
   const getStatutLabel = (statut) => {
     const labels = {
       'realisee': 'Réalisée',
-      'planifie': 'Planifiée',
+      'planifiee': 'Planifiée',
       'retard': 'En retard',
       'encours': 'En cours'
     };
