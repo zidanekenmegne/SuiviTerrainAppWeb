@@ -132,3 +132,22 @@ class JournalConnexion(db.Model):
     
     def __repr__(self):
         return f'<JournalConnexion {self.id_journal} - {self.horodatage}>'
+    
+# ==========================================================
+# MODÈLE NOTIFICATION
+# ==========================================================
+class Notification(db.Model):
+    __tablename__ = 'notification'
+    
+    id_notification = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(30), nullable=False, default='info')
+    titre = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    lien = db.Column(db.String(255), nullable=True)
+    lu = db.Column(db.Boolean, default=False, nullable=False)
+    date_creation = db.Column(db.DateTime, default=datetime.now)
+    
+    id_user = db.Column(db.Integer, db.ForeignKey('utilisateur.id_user'), nullable=False)
+    
+    def __repr__(self):
+        return f'<Notification {self.id_notification} - {self.titre}>'

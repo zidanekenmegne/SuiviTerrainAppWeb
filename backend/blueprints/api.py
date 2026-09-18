@@ -4,7 +4,7 @@ from flask_cors import cross_origin
 from flask_limiter import Limiter
 from flask_login import current_user
 from flask_limiter.util import get_remote_address
-from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser
+from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser, Notification
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 
@@ -423,21 +423,17 @@ def api_create_visite():
         id_pt = data.get('point_vente_id')
         statut = data.get('statut', 'planifiee')
         compte_rendu = data.get('compte_rendu')
-        agent_id = data.get('agent_id')  # ← NOUVEAU
+        agent_id = data.get('agent_id')
         
         if not date_prevue or not heure_prevue or not id_pt:
-            return api_response(
-                message='Date, heure et point de vente sont obligatoires',
-                status='error',
-                code=400
-            )
+            return api_response(message='Date, heure et point de vente sont obligatoires', status='error', code=400)
         
-        # Normaliser l'heure (HH:MM → HH:MM:SS)
+        # Normaliser l'heure
         heure_str = heure_prevue
         if len(heure_str) == 5:
             heure_str += ':00'
         
-        # Créer la visite
+        # 1. Créer la visite
         visite = Visite(
             date_prevue=datetime.strptime(date_prevue, '%Y-%m-%d').date(),
             heure_prevue=datetime.strptime(heure_str, '%H:%M:%S').time(),
@@ -446,23 +442,18 @@ def api_create_visite():
             compte_rendu=compte_rendu,
             date_creation=datetime.now()
         )
-        
         db.session.add(visite)
-        db.session.flush()  # Pour avoir l'ID
+        db.session.flush()
         
-        # Lier l'agent à la visite (table realiser)
+        # 2. Définir target_user_id (AVANT la notification)
         target_user_id = int(agent_id) if agent_id else current_user_id
         
-        # Vérifier que l'utilisateur existe
         agent = Utilisateur.query.get(target_user_id)
         if not agent:
             db.session.rollback()
-            return api_response(
-                message='Agent introuvable',
-                status='error',
-                code=404
-            )
+            return api_response(message='Agent introuvable', status='error', code=404)
         
+        # 3. Lier l'agent à la visite
         db.session.execute(
             realiser.insert().values(
                 id_user=target_user_id,
@@ -470,6 +461,17 @@ def api_create_visite():
             )
         )
         
+        # 4. Créer la notification (APRÈS target_user_id)
+        if target_user_id != current_user_id:
+            creer_notification(
+                user_id=target_user_id,
+                titre="Nouvelle visite assignée",
+                message=f"Une visite vous a été assignée pour le {date_prevue} à {heure_prevue}",
+                type='visite',
+                lien=f'/visites/{visite.id_visite}'
+            )
+        
+        # 5. Commit une seule fois
         db.session.commit()
         
         return api_response(
@@ -523,6 +525,17 @@ def api_update_visite(id):
         
         visite.date_modif = datetime.now()
         db.session.commit()
+        # Notifier les agents si le statut a changé
+        if 'statut' in data:
+            for agent in visite.agents:
+                creer_notification(
+                    user_id=agent.id_user,
+                    titre="Statut de visite mis à jour",
+                    message=f"La visite du {visite.date_prevue} est maintenant : {visite.statut}",
+                    type='visite',
+                    lien=f'/visites/{visite.id_visite}'
+                )
+            db.session.commit()
         
         return api_response(message='Visite modifiée avec succès')
         
@@ -1242,3 +1255,123 @@ def api_get_agents():
         } for a in agents])
     except Exception as e:
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+# ==========================================================
+# 9. NOTIFICATIONS
+# ==========================================================
+
+@api_bp.route('/notifications', methods=['GET'])
+@jwt_required()
+@cross_origin()
+def api_get_notifications():
+    """Liste des notifications de l'utilisateur connecté"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        only_unread = request.args.get('unread', 'false').lower() == 'true'
+        
+        query = Notification.query.filter_by(id_user=current_user_id)
+        
+        if only_unread:
+            query = query.filter_by(lu=False)
+        
+        notifications = query.order_by(desc(Notification.date_creation)).limit(100).all()
+        
+        return api_response(data={
+            'notifications': [{
+                'id': n.id_notification,
+                'type': n.type,
+                'titre': n.titre,
+                'message': n.message,
+                'lien': n.lien,
+                'lu': n.lu,
+                'date_creation': n.date_creation.isoformat() if n.date_creation else None
+            } for n in notifications],
+            'total': Notification.query.filter_by(id_user=current_user_id).count(),
+            'non_lues': Notification.query.filter_by(id_user=current_user_id, lu=False).count()
+        })
+    except Exception as e:
+        print(f"Erreur get_notifications: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+@api_bp.route('/notifications/<int:id>/lu', methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def api_mark_notification_read(id):
+    """Marquer une notification comme lue"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        notif = Notification.query.filter_by(
+            id_notification=id, 
+            id_user=current_user_id
+        ).first_or_404()
+        
+        notif.lu = True
+        db.session.commit()
+        
+        return api_response(message='Notification marquée comme lue')
+    except Exception as e:
+        db.session.rollback()
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+@api_bp.route('/notifications/tout-lu', methods=['PUT'])
+@jwt_required()
+@cross_origin()
+def api_mark_all_notifications_read():
+    """Marquer toutes les notifications comme lues"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        
+        Notification.query.filter_by(id_user=current_user_id, lu=False)\
+            .update({'lu': True})
+        db.session.commit()
+        
+        return api_response(message='Toutes les notifications sont lues')
+    except Exception as e:
+        db.session.rollback()
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+@api_bp.route('/notifications/<int:id>', methods=['DELETE'])
+@jwt_required()
+@cross_origin()
+def api_delete_notification(id):
+    """Supprimer une notification"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        notif = Notification.query.filter_by(
+            id_notification=id, 
+            id_user=current_user_id
+        ).first_or_404()
+        
+        db.session.delete(notif)
+        db.session.commit()
+        
+        return api_response(message='Notification supprimée')
+    except Exception as e:
+        db.session.rollback()
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+# ==========================================================
+# HELPER : Créer une notification
+# ==========================================================
+def creer_notification(user_id, titre, message, type='info', lien=None):
+    """Helper pour créer une notification"""
+    try:
+        notif = Notification(
+            id_user=user_id,
+            titre=titre,
+            message=message,
+            type=type,
+            lien=lien,
+            lu=False,
+            date_creation=datetime.now()
+        )
+        db.session.add(notif)
+        # Ne pas commit ici, laisser l'appelant le faire
+        return notif
+    except Exception as e:
+        print(f"Erreur création notification: {str(e)}")
+        return None
