@@ -7,13 +7,18 @@ from flask_limiter.util import get_remote_address
 from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser, Notification
 from datetime import datetime, timedelta
 from sqlalchemy import desc
+from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser, Notification, JournalConnexion
+from flask import current_app
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 
 # ==========================================================
 # LIMITEUR DE REQUÊTES
 # ==========================================================
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(
+    key_func=get_remote_address,
+    enabled=True  # Par défaut activé
+)
 
 # ==========================================================
 # FONCTION DE RÉPONSE UNIFORME
@@ -53,46 +58,68 @@ def api_test():
 # ==========================================================
 
 @api_bp.route('/auth/login', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("10 per minute", exempt_when=lambda: current_app.config.get('TESTING', False))
 def api_login():
     """Authentification et génération de token JWT"""
-    data = request.get_json()
-    email = data.get('email')
-    mdp = data.get('mdp')
-    
-    if not email or not mdp:
-        return api_response(message='Email et mot de passe requis', status='error', code=400)
-    
-    user = Utilisateur.query.filter_by(mail=email).first()
-    
-    if not user:
-        return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
-    
-    from werkzeug.security import check_password_hash
-    if not check_password_hash(user.mdp, mdp):
-        return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
-    
-    if not user.actif:
-        return api_response(message='Compte désactivé', status='error', code=403)
-    
-    # Création du token JWT
-    access_token = create_access_token(
-        identity=str(user.id_user),
-        expires_delta=timedelta(days=7)
-    )
-    
-    return api_response(
-        data={
-            'token': access_token,
-            'user': {
-                'id': user.id_user,
-                'nom': user.nom_user,
-                'email': user.mail,
-                'role': user.role
-            }
-        },
-        message='Authentification réussie'
-    )
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        mdp = data.get('mdp')
+        
+        if not email or not mdp:
+            return api_response(message='Email et mot de passe requis', status='error', code=400)
+        
+        user = Utilisateur.query.filter_by(mail=email).first()
+        
+        if not user:
+            return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
+        
+        from werkzeug.security import check_password_hash
+        if not check_password_hash(user.mdp, mdp):
+            return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
+        
+        if not user.actif:
+            return api_response(message='Compte désactivé', status='error', code=403)
+        
+        # ==========================================================
+        # JOURNAL DE CONNEXION (AJOUT)
+        # ==========================================================
+        journal = JournalConnexion(
+            id_user=user.id_user,
+            adresse_ip=request.remote_addr,
+            horodatage=datetime.now()
+        )
+        db.session.add(journal)
+        
+        # Mise à jour de la dernière connexion
+        user.derniere_connexion_user = datetime.now()
+        
+        db.session.commit()
+        # ==========================================================
+        
+        # Création du token JWT
+        access_token = create_access_token(
+            identity=str(user.id_user),
+            expires_delta=timedelta(days=7)
+        )
+        
+        return api_response(
+            data={
+                'token': access_token,
+                'user': {
+                    'id': user.id_user,
+                    'nom': user.nom_user,
+                    'email': user.mail,
+                    'role': user.role
+                }
+            },
+            message='Authentification réussie'
+        )
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur login: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 @api_bp.route('/auth/register', methods=['POST'])
 @limiter.limit("5 per minute")
