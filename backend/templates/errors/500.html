@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur serveur - SuiviTerrain</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+        .error-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #dc3545;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .error-icon {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+        }
+        .error-message {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .btn-home {
+            background-color: #8B0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-home:hover {
+            background-color: #6a0000;
+            color: #ffffff;
+        }
+        .brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .brand-suivi { color: #8B0000; }
+        .brand-terrain { color: #C9A84C; }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="brand">
+            <span class="brand-suivi">Suivi</span><span class="brand-terrain">Terrain</span>
+        </div>
+        <div class="error-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Erreur interne</h1>
+        <p class="error-message">
+            Une erreur est survenue. Notre équipe technique a été notifiée. 
+            Veuillez réessayer dans quelques instants.
+        </p>
+        <a href="/" class="btn-home">
+            <i class="bi bi-house-door"></i> Retour à l'accueil
+        </a>
+    </div>
+</body>
+</html>

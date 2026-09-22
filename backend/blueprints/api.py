@@ -1,14 +1,19 @@
-from flask import Blueprint, request, jsonify, url_for
+from flask import Blueprint, request, jsonify, url_for, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 from flask_limiter import Limiter
-from flask_login import current_user
 from flask_limiter.util import get_remote_address
-from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser, Notification
+from flask_login import current_user
+from models import (
+    db, Utilisateur, Categorie, PointDeVente, Visite, realiser,
+    Notification, JournalConnexion
+)
 from datetime import datetime, timedelta
 from sqlalchemy import desc
-from models import db, Utilisateur, Categorie, PointDeVente, Visite, realiser, Notification, JournalConnexion
-from flask import current_app
+import os
+import uuid
+from werkzeug.utils import secure_filename
+
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -17,8 +22,9 @@ api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 # ==========================================================
 limiter = Limiter(
     key_func=get_remote_address,
-    enabled=True  # Par défaut activé
+    enabled=True
 )
+
 
 # ==========================================================
 # FONCTION DE RÉPONSE UNIFORME
@@ -30,6 +36,7 @@ def api_response(data=None, message=None, status='success', code=200):
     if data is not None:
         response['data'] = data
     return jsonify(response), code
+
 
 # ==========================================================
 # ROUTE DE TEST (sans authentification)
@@ -53,6 +60,7 @@ def api_test():
         }
     })
 
+
 # ==========================================================
 # 1. AUTHENTIFICATION (JWT)
 # ==========================================================
@@ -67,22 +75,32 @@ def api_login():
         mdp = data.get('mdp')
         
         if not email or not mdp:
+            current_app.logger.warning(
+                f"Tentative de login sans email/mdp depuis {request.remote_addr}"
+            )
             return api_response(message='Email et mot de passe requis', status='error', code=400)
         
         user = Utilisateur.query.filter_by(mail=email).first()
         
         if not user:
+            current_app.logger.warning(
+                f"Login échoué - email inconnu: {email} depuis {request.remote_addr}"
+            )
             return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
         
         from werkzeug.security import check_password_hash
         if not check_password_hash(user.mdp, mdp):
+            current_app.logger.warning(
+                f"Login échoué - mauvais mot de passe pour: {email} depuis {request.remote_addr}"
+            )
             return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
         
         if not user.actif:
+            current_app.logger.warning(f"Login refusé - compte désactivé: {email}")
             return api_response(message='Compte désactivé', status='error', code=403)
         
         # ==========================================================
-        # JOURNAL DE CONNEXION (AJOUT)
+        # JOURNAL DE CONNEXION
         # ==========================================================
         journal = JournalConnexion(
             id_user=user.id_user,
@@ -95,7 +113,10 @@ def api_login():
         user.derniere_connexion_user = datetime.now()
         
         db.session.commit()
-        # ==========================================================
+        
+        current_app.logger.info(
+            f"Login réussi: {user.mail} (ID: {user.id_user}) depuis {request.remote_addr}"
+        )
         
         # Création du token JWT
         access_token = create_access_token(
@@ -118,8 +139,9 @@ def api_login():
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur login: {str(e)}")
+        current_app.logger.error(f"Erreur login: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 @api_bp.route('/auth/register', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -128,7 +150,6 @@ def api_register():
     try:
         data = request.get_json()
         
-        # 1. Validation des champs obligatoires
         nom = data.get('nom')
         email = data.get('email')
         password = data.get('password')
@@ -136,25 +157,22 @@ def api_register():
         
         if not nom or not email or not password:
             return api_response(
-                message='Nom, email et mot de passe sont obligatoires', 
-                status='error', 
+                message='Nom, email et mot de passe sont obligatoires',
+                status='error',
                 code=400
             )
         
-        # 2. Vérifier si l'email existe déjà
         existing_user = Utilisateur.query.filter_by(mail=email).first()
         if existing_user:
             return api_response(
-                message='Un compte avec cet email existe déjà', 
-                status='error', 
+                message='Un compte avec cet email existe déjà',
+                status='error',
                 code=409
             )
         
-        # 3. Hasher le mot de passe
         from werkzeug.security import generate_password_hash
         hashed_password = generate_password_hash(password)
         
-        # 4. Créer l'utilisateur
         new_user = Utilisateur(
             nom_user=nom,
             mail=email,
@@ -167,7 +185,8 @@ def api_register():
         db.session.add(new_user)
         db.session.commit()
         
-        # 5. Réponse de succès
+        current_app.logger.info(f"Nouvel utilisateur inscrit: {email} (rôle: {role})")
+        
         return api_response(
             data={
                 'user': {
@@ -183,20 +202,25 @@ def api_register():
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur inscription: {str(e)}")  # Pour voir l'erreur dans la console Flask
+        current_app.logger.error(f"Erreur inscription: {str(e)}")
         return api_response(
-            message=f'Erreur lors de la création du compte: {str(e)}', 
-            status='error', 
+            message=f'Erreur lors de la création du compte: {str(e)}',
+            status='error',
             code=500
         )
+
 
 @api_bp.route('/auth/refresh', methods=['POST'])
 @jwt_required()
 def api_refresh():
     """Rafraîchir le token JWT"""
     current_user_id = get_jwt_identity()
-    new_token = create_access_token(identity=str(current_user_id), expires_delta=timedelta(days=7))
+    new_token = create_access_token(
+        identity=str(current_user_id),
+        expires_delta=timedelta(days=7)
+    )
     return api_response(data={'token': new_token}, message='Token rafraîchi')
+
 
 # ==========================================================
 # 2. CATÉGORIES (public)
@@ -213,6 +237,7 @@ def api_get_categories():
         'couleur': c.couleur,
         'nombre_points': len(c.points)
     } for c in categories])
+
 
 # ==========================================================
 # 3. POINTS DE VENTE
@@ -263,6 +288,7 @@ def api_get_points():
         }
     })
 
+
 @api_bp.route('/points/<int:id>', methods=['GET'])
 @cross_origin()
 def api_get_point(id):
@@ -282,81 +308,130 @@ def api_get_point(id):
         'date_modif': point.date_modif.isoformat() if point.date_modif else None
     })
 
+
 @api_bp.route('/points', methods=['POST'])
 @jwt_required()
 @cross_origin()
 def api_create_point():
     """Créer un point de vente (authentifié)"""
-    data = request.get_json()
-    current_user_id = get_jwt_identity()
-    user = Utilisateur.query.get(current_user_id)
-    
-    if not user or user.role not in ['admin', 'agent']:
-        return api_response(message='Accès non autorisé', status='error', code=403)
-    
-    nom = data.get('nom')
-    adresse = data.get('adresse')
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-    telephone = data.get('telephone')
-    id_cat = data.get('categorie_id')
-    
-    if not nom or not adresse:
-        return api_response(message='Nom et adresse sont obligatoires', status='error', code=400)
-    
-    point = PointDeVente(
-        nom_pt=nom,
-        adresse=adresse,
-        latitude=latitude,
-        longitude=longitude,
-        telephone=telephone,
-        id_cat=id_cat,
-        date_creation_pt=datetime.now()
-    )
-    
-    db.session.add(point)
-    db.session.commit()
-    
-    return api_response(data={'id': point.id_pt}, message='Point de vente créé', code=201)
+    try:
+        data = request.get_json()
+        current_user_id = get_jwt_identity()
+        user = Utilisateur.query.get(current_user_id)
+        
+        if not user or user.role not in ['admin', 'agent']:
+            return api_response(message='Accès non autorisé', status='error', code=403)
+        
+        nom = data.get('nom')
+        adresse = data.get('adresse')
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        telephone = data.get('telephone')
+        id_cat = data.get('categorie_id')
+        
+        if not nom or not adresse:
+            return api_response(
+                message='Nom et adresse sont obligatoires',
+                status='error',
+                code=400
+            )
+        
+        point = PointDeVente(
+            nom_pt=nom,
+            adresse=adresse,
+            latitude=latitude,
+            longitude=longitude,
+            telephone=telephone,
+            id_cat=id_cat,
+            date_creation_pt=datetime.now()
+        )
+        
+        db.session.add(point)
+        db.session.commit()
+        
+        current_app.logger.info(
+            f"Point de vente créé: ID={point.id_pt}, nom='{point.nom_pt}' "
+            f"par user_id={current_user_id}"
+        )
+        
+        return api_response(
+            data={'id': point.id_pt},
+            message='Point de vente créé',
+            code=201
+        )
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur création point: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 @api_bp.route('/points/<int:id>', methods=['PUT'])
 @jwt_required()
 @cross_origin()
 def api_update_point(id):
     """Modifier un point de vente (authentifié)"""
-    point = PointDeVente.query.get_or_404(id)
-    data = request.get_json()
-    
-    point.nom_pt = data.get('nom', point.nom_pt)
-    point.adresse = data.get('adresse', point.adresse)
-    point.latitude = data.get('latitude', point.latitude)
-    point.longitude = data.get('longitude', point.longitude)
-    point.telephone = data.get('telephone', point.telephone)
-    point.id_cat = data.get('categorie_id', point.id_cat)
-    point.date_modif = datetime.now()
-    
-    db.session.commit()
-    return api_response(message='Point de vente modifié')
+    try:
+        point = PointDeVente.query.get_or_404(id)
+        data = request.get_json()
+        
+        point.nom_pt = data.get('nom', point.nom_pt)
+        point.adresse = data.get('adresse', point.adresse)
+        point.latitude = data.get('latitude', point.latitude)
+        point.longitude = data.get('longitude', point.longitude)
+        point.telephone = data.get('telephone', point.telephone)
+        point.id_cat = data.get('categorie_id', point.id_cat)
+        point.date_modif = datetime.now()
+        
+        db.session.commit()
+        
+        current_app.logger.info(f"Point de vente modifié: ID={point.id_pt}")
+        
+        return api_response(message='Point de vente modifié')
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur modification point: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 @api_bp.route('/points/<int:id>', methods=['DELETE'])
 @jwt_required()
 @cross_origin()
 def api_delete_point(id):
     """Supprimer un point de vente (admin uniquement)"""
-    current_user_id = get_jwt_identity()
-    user = Utilisateur.query.get(current_user_id)
-    
-    if not user or user.role != 'admin':
-        return api_response(message='Accès administrateur requis', status='error', code=403)
-    
-    point = PointDeVente.query.get_or_404(id)
-    
-    if Visite.query.filter_by(id_pt=id).count() > 0:
-        return api_response(message='Impossible de supprimer un point avec des visites associées', status='error', code=400)
-    
-    db.session.delete(point)
-    db.session.commit()
-    return api_response(message='Point de vente supprimé')
+    try:
+        current_user_id = get_jwt_identity()
+        user = Utilisateur.query.get(current_user_id)
+        
+        if not user or user.role != 'admin':
+            return api_response(
+                message='Accès administrateur requis',
+                status='error',
+                code=403
+            )
+        
+        point = PointDeVente.query.get_or_404(id)
+        
+        if Visite.query.filter_by(id_pt=id).count() > 0:
+            return api_response(
+                message='Impossible de supprimer un point avec des visites associées',
+                status='error',
+                code=400
+            )
+        
+        db.session.delete(point)
+        db.session.commit()
+        
+        current_app.logger.info(f"Point de vente supprimé: ID={id} par user_id={current_user_id}")
+        
+        return api_response(message='Point de vente supprimé')
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur suppression point: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 # ==========================================================
 # 4. VISITES
@@ -370,8 +445,8 @@ def api_get_visites():
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 20, type=int)
     statut = request.args.get('statut', '').strip()
-    date_filter = request.args.get('date', '').strip()      
-    date_from = request.args.get('date_from', '').strip()   
+    date_filter = request.args.get('date', '').strip()
+    date_from = request.args.get('date_from', '').strip()
     date_to = request.args.get('date_to', '').strip()
     
     query = Visite.query
@@ -379,8 +454,30 @@ def api_get_visites():
     if statut:
         query = query.filter_by(statut=statut)
     
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%Y-%m-%d').date()
+            query = query.filter(Visite.date_prevue == date_obj)
+        except ValueError:
+            pass
+    
+    if date_from:
+        try:
+            date_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+            query = query.filter(Visite.date_prevue >= date_obj)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            date_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+            query = query.filter(Visite.date_prevue <= date_obj)
+        except ValueError:
+            pass
+    
     total = query.count()
-    visites = query.order_by(desc(Visite.date_prevue)).offset((page - 1) * limit).limit(limit).all()
+    visites = query.order_by(desc(Visite.date_prevue))\
+        .offset((page - 1) * limit).limit(limit).all()
     
     return api_response(data={
         'visites': [{
@@ -410,6 +507,7 @@ def api_get_visites():
         }
     })
 
+
 @api_bp.route('/visites/<int:id>', methods=['GET'])
 @jwt_required()
 @cross_origin()
@@ -436,6 +534,7 @@ def api_get_visite(id):
         } for a in visite.agents]
     })
 
+
 @api_bp.route('/visites', methods=['POST'])
 @jwt_required()
 @cross_origin()
@@ -453,14 +552,16 @@ def api_create_visite():
         agent_id = data.get('agent_id')
         
         if not date_prevue or not heure_prevue or not id_pt:
-            return api_response(message='Date, heure et point de vente sont obligatoires', status='error', code=400)
+            return api_response(
+                message='Date, heure et point de vente sont obligatoires',
+                status='error',
+                code=400
+            )
         
-        # Normaliser l'heure
         heure_str = heure_prevue
         if len(heure_str) == 5:
             heure_str += ':00'
         
-        # 1. Créer la visite
         visite = Visite(
             date_prevue=datetime.strptime(date_prevue, '%Y-%m-%d').date(),
             heure_prevue=datetime.strptime(heure_str, '%H:%M:%S').time(),
@@ -472,7 +573,6 @@ def api_create_visite():
         db.session.add(visite)
         db.session.flush()
         
-        # 2. Définir target_user_id (AVANT la notification)
         target_user_id = int(agent_id) if agent_id else current_user_id
         
         agent = Utilisateur.query.get(target_user_id)
@@ -480,7 +580,6 @@ def api_create_visite():
             db.session.rollback()
             return api_response(message='Agent introuvable', status='error', code=404)
         
-        # 3. Lier l'agent à la visite
         db.session.execute(
             realiser.insert().values(
                 id_user=target_user_id,
@@ -488,7 +587,6 @@ def api_create_visite():
             )
         )
         
-        # 4. Créer la notification (APRÈS target_user_id)
         if target_user_id != current_user_id:
             creer_notification(
                 user_id=target_user_id,
@@ -498,8 +596,13 @@ def api_create_visite():
                 lien=f'/visites/{visite.id_visite}'
             )
         
-        # 5. Commit une seule fois
         db.session.commit()
+        
+        current_app.logger.info(
+            f"Visite créée: ID={visite.id_visite}, "
+            f"point_id={id_pt}, agent_id={target_user_id}, "
+            f"date={date_prevue}"
+        )
         
         return api_response(
             data={'id': visite.id_visite},
@@ -509,9 +612,10 @@ def api_create_visite():
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur création visite: {str(e)}")
+        current_app.logger.error(f"Erreur création visite: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
-    
+
+
 @api_bp.route('/visites/<int:id>', methods=['PUT'])
 @jwt_required()
 @cross_origin()
@@ -521,12 +625,10 @@ def api_update_visite(id):
         visite = Visite.query.get_or_404(id)
         data = request.get_json()
         
-        # Mise à jour des champs
         if 'date_prevue' in data and data['date_prevue']:
             visite.date_prevue = datetime.strptime(data['date_prevue'], '%Y-%m-%d').date()
         
         if 'heure_prevue' in data and data['heure_prevue']:
-            # Accepte HH:MM ou HH:MM:SS
             heure_str = data['heure_prevue']
             if len(heure_str) == 5:
                 heure_str += ':00'
@@ -552,7 +654,7 @@ def api_update_visite(id):
         
         visite.date_modif = datetime.now()
         db.session.commit()
-        # Notifier les agents si le statut a changé
+        
         if 'statut' in data:
             for agent in visite.agents:
                 creer_notification(
@@ -564,11 +666,13 @@ def api_update_visite(id):
                 )
             db.session.commit()
         
+        current_app.logger.info(f"Visite modifiée: ID={visite.id_visite}")
+        
         return api_response(message='Visite modifiée avec succès')
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur modification visite: {str(e)}")
+        current_app.logger.error(f"Erreur modification visite: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -586,7 +690,6 @@ def api_delete_visite(id):
         
         visite = Visite.query.get_or_404(id)
         
-        # Vérifier les permissions : admin OU agent assigné à la visite
         is_admin = current_user.role == 'admin'
         is_assigned = any(a.id_user == current_user_id for a in visite.agents)
         
@@ -600,12 +703,15 @@ def api_delete_visite(id):
         db.session.delete(visite)
         db.session.commit()
         
+        current_app.logger.info(f"Visite supprimée: ID={id} par user_id={current_user_id}")
+        
         return api_response(message='Visite supprimée avec succès')
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur suppression visite: {str(e)}")
+        current_app.logger.error(f"Erreur suppression visite: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 # ==========================================================
 # 5. STATISTIQUES
@@ -640,18 +746,17 @@ def api_get_stats():
         },
         'points_par_categorie': points_par_categorie
     })
-    
+
+
 @api_bp.route('/visites/jour', methods=['GET'])
 @jwt_required()
 @cross_origin()
 def api_get_visites_jour():
     """Visites du jour pour l'agent connecté (JWT)"""
     try:
-        # Récupérer l'ID depuis le JWT
         current_user_id = int(get_jwt_identity())
         today = datetime.now().date()
         
-        # Requête avec jointure sur la table 'realiser'
         visites = Visite.query\
             .join(realiser, Visite.id_visite == realiser.c.id_visite)\
             .filter(
@@ -679,13 +784,14 @@ def api_get_visites_jour():
         } for v in visites])
         
     except Exception as e:
-        print(f"Erreur visites/jour: {str(e)}")
+        current_app.logger.error(f"Erreur visites/jour: {str(e)}")
         return api_response(
-            message=f'Erreur lors du chargement des visites: {str(e)}', 
-            status='error', 
+            message=f'Erreur lors du chargement des visites: {str(e)}',
+            status='error',
             code=500
         )
-    
+
+
 @api_bp.route('/points/filter', methods=['GET'])
 @cross_origin()
 def api_filter_points():
@@ -706,9 +812,8 @@ def api_filter_points():
         query = query.join(Categorie).filter(Categorie.nom_cat.ilike(f'%{categorie}%'))
     
     if zone:
-        # Points de vente dans la zone d'intervention de l'agent
-        # On peut chercher les utilisateurs de cette zone et leurs visites
-        query = query.join(Visite).join(Utilisateur).filter(Utilisateur.zone_intervention.ilike(f'%{zone}%'))
+        query = query.join(Visite).join(Utilisateur)\
+            .filter(Utilisateur.zone_intervention.ilike(f'%{zone}%'))
     
     points = query.order_by(PointDeVente.nom_pt).limit(200).all()
     
@@ -725,6 +830,7 @@ def api_filter_points():
         'categorie_id': p.id_cat
     } for p in points])
 
+
 # ==========================================================
 # 6. UTILISATEURS (admin uniquement)
 # ==========================================================
@@ -740,12 +846,11 @@ def api_get_utilisateurs():
         
         if not current_user or current_user.role != 'admin':
             return api_response(
-                message='Accès administrateur requis', 
-                status='error', 
+                message='Accès administrateur requis',
+                status='error',
                 code=403
             )
         
-        # Récupérer tous les utilisateurs
         utilisateurs = Utilisateur.query.order_by(Utilisateur.nom_user).all()
         
         return api_response(data=[{
@@ -760,7 +865,7 @@ def api_get_utilisateurs():
         } for u in utilisateurs])
         
     except Exception as e:
-        print(f"Erreur utilisateurs: {str(e)}")
+        current_app.logger.error(f"Erreur utilisateurs: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -775,8 +880,8 @@ def api_get_utilisateur(id):
         
         if not current_user or current_user.role != 'admin':
             return api_response(
-                message='Accès administrateur requis', 
-                status='error', 
+                message='Accès administrateur requis',
+                status='error',
                 code=403
             )
         
@@ -794,7 +899,7 @@ def api_get_utilisateur(id):
         })
         
     except Exception as e:
-        print(f"Erreur utilisateur: {str(e)}")
+        current_app.logger.error(f"Erreur utilisateur: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -809,8 +914,8 @@ def api_create_utilisateur():
         
         if not current_user or current_user.role != 'admin':
             return api_response(
-                message='Accès administrateur requis', 
-                status='error', 
+                message='Accès administrateur requis',
+                status='error',
                 code=403
             )
         
@@ -822,31 +927,28 @@ def api_create_utilisateur():
         role = data.get('role', 'agent')
         zone = data.get('zone_intervention', '').strip()
         
-        # Validation
         if not nom or not email or not password:
             return api_response(
-                message='Nom, email et mot de passe sont obligatoires', 
-                status='error', 
+                message='Nom, email et mot de passe sont obligatoires',
+                status='error',
                 code=400
             )
         
         if len(password) < 6:
             return api_response(
-                message='Le mot de passe doit contenir au moins 6 caractères', 
-                status='error', 
+                message='Le mot de passe doit contenir au moins 6 caractères',
+                status='error',
                 code=400
             )
         
-        # Vérifier si l'email existe déjà
         existing = Utilisateur.query.filter_by(mail=email).first()
         if existing:
             return api_response(
-                message='Un compte avec cet email existe déjà', 
-                status='error', 
+                message='Un compte avec cet email existe déjà',
+                status='error',
                 code=409
             )
         
-        # Créer l'utilisateur
         from werkzeug.security import generate_password_hash
         hashed_password = generate_password_hash(password)
         
@@ -863,6 +965,8 @@ def api_create_utilisateur():
         db.session.add(new_user)
         db.session.commit()
         
+        current_app.logger.info(f"Utilisateur créé: {email} (rôle: {role})")
+        
         return api_response(
             data={'id': new_user.id_user},
             message='Utilisateur créé avec succès',
@@ -871,7 +975,7 @@ def api_create_utilisateur():
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur création utilisateur: {str(e)}")
+        current_app.logger.error(f"Erreur création utilisateur: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -886,27 +990,25 @@ def api_update_utilisateur(id):
         
         if not current_user or current_user.role != 'admin':
             return api_response(
-                message='Accès administrateur requis', 
-                status='error', 
+                message='Accès administrateur requis',
+                status='error',
                 code=403
             )
         
         utilisateur = Utilisateur.query.get_or_404(id)
         data = request.get_json()
         
-        # Mise à jour des champs
         if 'nom' in data:
             utilisateur.nom_user = data['nom'].strip()
         if 'email' in data:
-            # Vérifier l'unicité de l'email
             existing = Utilisateur.query.filter(
                 Utilisateur.mail == data['email'],
                 Utilisateur.id_user != id
             ).first()
             if existing:
                 return api_response(
-                    message='Cet email est déjà utilisé', 
-                    status='error', 
+                    message='Cet email est déjà utilisé',
+                    status='error',
                     code=409
                 )
             utilisateur.mail = data['email'].strip()
@@ -919,11 +1021,13 @@ def api_update_utilisateur(id):
         
         db.session.commit()
         
+        current_app.logger.info(f"Utilisateur modifié: ID={id}")
+        
         return api_response(message='Utilisateur modifié avec succès')
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur modification utilisateur: {str(e)}")
+        current_app.logger.error(f"Erreur modification utilisateur: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -938,38 +1042,59 @@ def api_delete_utilisateur(id):
         
         if not current_user or current_user.role != 'admin':
             return api_response(
-                message='Accès administrateur requis', 
-                status='error', 
+                message='Accès administrateur requis',
+                status='error',
                 code=403
             )
         
-        # Empêcher l'auto-suppression
         if id == current_user_id:
             return api_response(
-                message='Vous ne pouvez pas supprimer votre propre compte', 
-                status='error', 
+                message='Vous ne pouvez pas supprimer votre propre compte',
+                status='error',
                 code=400
             )
         
         utilisateur = Utilisateur.query.get_or_404(id)
         
-        # Vérifier s'il y a des visites associées
         if utilisateur.visites:
             return api_response(
-                message='Impossible de supprimer un utilisateur avec des visites associées', 
-                status='error', 
+                message='Impossible de supprimer un utilisateur avec des visites associées',
+                status='error',
                 code=400
             )
         
         db.session.delete(utilisateur)
         db.session.commit()
         
+        current_app.logger.info(f"Utilisateur supprimé: ID={id} par user_id={current_user_id}")
+        
         return api_response(message='Utilisateur supprimé avec succès')
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur suppression utilisateur: {str(e)}")
+        current_app.logger.error(f"Erreur suppression utilisateur: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
+
+@api_bp.route('/utilisateurs/agents', methods=['GET'])
+@jwt_required()
+@cross_origin()
+def api_get_agents():
+    """Liste des agents disponibles (authentifié)"""
+    try:
+        agents = Utilisateur.query.filter_by(role='agent', actif=True)\
+            .order_by(Utilisateur.nom_user).all()
+        
+        return api_response(data=[{
+            'id': a.id_user,
+            'nom': a.nom_user,
+            'email': a.mail,
+            'zone_intervention': a.zone_intervention
+        } for a in agents])
+    except Exception as e:
+        current_app.logger.error(f"Erreur agents: {str(e)}")
+        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 # ==========================================================
 # 7. PROFIL UTILISATEUR (utilisateur connecté)
@@ -999,7 +1124,7 @@ def api_get_me():
             'derniere_connexion': user.derniere_connexion_user.isoformat() if user.derniere_connexion_user else None
         })
     except Exception as e:
-        print(f"Erreur get_me: {str(e)}")
+        current_app.logger.error(f"Erreur get_me: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1017,12 +1142,10 @@ def api_update_me():
         
         data = request.get_json()
         
-        # Mise à jour des champs autorisés
         if 'nom' in data and data['nom'].strip():
             user.nom_user = data['nom'].strip()
         
         if 'email' in data and data['email'].strip():
-            # Vérifier l'unicité de l'email
             existing = Utilisateur.query.filter(
                 Utilisateur.mail == data['email'],
                 Utilisateur.id_user != current_user_id
@@ -1051,7 +1174,7 @@ def api_update_me():
         )
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur update_me: {str(e)}")
+        current_app.logger.error(f"Erreur update_me: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1085,10 +1208,12 @@ def api_change_password():
         user.mdp = generate_password_hash(new_password)
         db.session.commit()
         
+        current_app.logger.info(f"Mot de passe modifié pour user_id={current_user_id}")
+        
         return api_response(message='Mot de passe modifié avec succès')
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur change_password: {str(e)}")
+        current_app.logger.error(f"Erreur change_password: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1100,7 +1225,6 @@ def api_get_user_stats():
     try:
         current_user_id = int(get_jwt_identity())
         
-        # Visites réalisées pour cet utilisateur
         visites_realisees = Visite.query.join(
             realiser, Visite.id_visite == realiser.c.id_visite
         ).filter(
@@ -1108,7 +1232,6 @@ def api_get_user_stats():
             Visite.statut == 'realisee'
         ).count()
         
-        # Visites en attente pour cet utilisateur
         visites_attente = Visite.query.join(
             realiser, Visite.id_visite == realiser.c.id_visite
         ).filter(
@@ -1116,7 +1239,6 @@ def api_get_user_stats():
             Visite.statut == 'attente'
         ).count()
         
-        # Nombre total de points de vente
         points_total = PointDeVente.query.count()
         
         return api_response(data={
@@ -1125,17 +1247,13 @@ def api_get_user_stats():
             'points_vente': points_total
         })
     except Exception as e:
-        print(f"Erreur user_stats: {str(e)}")
+        current_app.logger.error(f"Erreur user_stats: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 # ==========================================================
 # 8. UPLOAD PHOTO DE PROFIL
 # ==========================================================
-
-import os
-import uuid
-from werkzeug.utils import secure_filename
-from flask import current_app
 
 ALLOWED_AVATAR_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 MAX_AVATAR_SIZE = 5 * 1024 * 1024  # 5 Mo
@@ -1159,7 +1277,6 @@ def api_upload_photo():
         if not user:
             return api_response(message='Utilisateur non trouvé', status='error', code=404)
         
-        # Vérifier qu'un fichier est envoyé
         if 'photo' not in request.files:
             return api_response(message='Aucun fichier envoyé', status='error', code=400)
         
@@ -1168,7 +1285,6 @@ def api_upload_photo():
         if file.filename == '':
             return api_response(message='Nom de fichier vide', status='error', code=400)
         
-        # Vérifier le type de fichier
         if not allowed_avatar_file(file.filename):
             return api_response(
                 message='Format non autorisé. Utilisez PNG, JPG, JPEG, GIF ou WEBP',
@@ -1176,7 +1292,6 @@ def api_upload_photo():
                 code=400
             )
         
-        # Vérifier la taille (via le contenu)
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
@@ -1188,19 +1303,16 @@ def api_upload_photo():
                 code=400
             )
         
-        # Créer le dossier uploads/avatars s'il n'existe pas
         upload_folder = os.path.join(
             current_app.config['UPLOAD_FOLDER'],
             'avatars'
         )
         os.makedirs(upload_folder, exist_ok=True)
         
-        # Générer un nom unique
         ext = file.filename.rsplit('.', 1)[1].lower()
         unique_filename = f"user_{current_user_id}_{uuid.uuid4().hex[:8]}.{ext}"
         filepath = os.path.join(upload_folder, unique_filename)
         
-        # Supprimer l'ancienne photo si elle existe
         if user.photo:
             old_path = os.path.join(
                 current_app.config['UPLOAD_FOLDER'],
@@ -1213,12 +1325,12 @@ def api_upload_photo():
                 except:
                     pass
         
-        # Sauvegarder le nouveau fichier
         file.save(filepath)
         
-        # Mettre à jour l'utilisateur
         user.photo = f"/static/uploads/avatars/{unique_filename}"
         db.session.commit()
+        
+        current_app.logger.info(f"Photo de profil uploadée pour user_id={current_user_id}")
         
         return api_response(
             data={'photo': user.photo},
@@ -1227,7 +1339,7 @@ def api_upload_photo():
         
     except Exception as e:
         db.session.rollback()
-        print(f"Erreur upload photo: {str(e)}")
+        current_app.logger.error(f"Erreur upload photo: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1244,7 +1356,6 @@ def api_delete_photo():
             return api_response(message='Utilisateur non trouvé', status='error', code=404)
         
         if user.photo:
-            # Supprimer le fichier physique
             filepath = os.path.join(
                 current_app.config['UPLOAD_FOLDER'],
                 'avatars',
@@ -1263,25 +1374,9 @@ def api_delete_photo():
         
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Erreur suppression photo: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
-    
-@api_bp.route('/utilisateurs/agents', methods=['GET'])
-@jwt_required()
-@cross_origin()
-def api_get_agents():
-    """Liste des agents disponibles (authentifié)"""
-    try:
-        agents = Utilisateur.query.filter_by(role='agent', actif=True)\
-            .order_by(Utilisateur.nom_user).all()
-        
-        return api_response(data=[{
-            'id': a.id_user,
-            'nom': a.nom_user,
-            'email': a.mail,
-            'zone_intervention': a.zone_intervention
-        } for a in agents])
-    except Exception as e:
-        return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
+
 
 # ==========================================================
 # 9. NOTIFICATIONS
@@ -1317,7 +1412,7 @@ def api_get_notifications():
             'non_lues': Notification.query.filter_by(id_user=current_user_id, lu=False).count()
         })
     except Exception as e:
-        print(f"Erreur get_notifications: {str(e)}")
+        current_app.logger.error(f"Erreur get_notifications: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1329,7 +1424,7 @@ def api_mark_notification_read(id):
     try:
         current_user_id = int(get_jwt_identity())
         notif = Notification.query.filter_by(
-            id_notification=id, 
+            id_notification=id,
             id_user=current_user_id
         ).first_or_404()
         
@@ -1339,6 +1434,7 @@ def api_mark_notification_read(id):
         return api_response(message='Notification marquée comme lue')
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Erreur marquage notification: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1357,6 +1453,7 @@ def api_mark_all_notifications_read():
         return api_response(message='Toutes les notifications sont lues')
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Erreur marquage toutes notifications: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1368,7 +1465,7 @@ def api_delete_notification(id):
     try:
         current_user_id = int(get_jwt_identity())
         notif = Notification.query.filter_by(
-            id_notification=id, 
+            id_notification=id,
             id_user=current_user_id
         ).first_or_404()
         
@@ -1378,6 +1475,7 @@ def api_delete_notification(id):
         return api_response(message='Notification supprimée')
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Erreur suppression notification: {str(e)}")
         return api_response(message=f'Erreur: {str(e)}', status='error', code=500)
 
 
@@ -1397,8 +1495,7 @@ def creer_notification(user_id, titre, message, type='info', lien=None):
             date_creation=datetime.now()
         )
         db.session.add(notif)
-        # Ne pas commit ici, laisser l'appelant le faire
         return notif
     except Exception as e:
-        print(f"Erreur création notification: {str(e)}")
+        current_app.logger.error(f"Erreur création notification: {str(e)}")
         return None

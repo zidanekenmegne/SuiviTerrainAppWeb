@@ -18,6 +18,25 @@ def app():
     """Instance Flask configurée pour les tests"""
     flask_app.config.from_object(TestConfig)
     
+    db_uri = flask_app.config['SQLALCHEMY_DATABASE_URI']
+    if '_test' not in db_uri.lower():
+        raise RuntimeError(
+            f"\n{'='*70}\n"
+            f"🚨🚨🚨  DANGER MORTEL  🚨🚨🚨\n"
+            f"{'='*70}\n\n"
+            f"Les tests tentent de tourner sur la base de PRODUCTION !\n\n"
+            f"URI configurée : {db_uri}\n\n"
+            f"Le nom de la base DOIT contenir '_test'.\n"
+            f"Corrigez TestConfig.SQLALCHEMY_DATABASE_URI dans config.py.\n\n"
+            f"Cette sécurité empêche db.drop_all() de détruire vos données.\n"
+            f"{'='*70}\n"
+        )
+    
+    # Confirmation visuelle dans la console
+    print(f"\n{'='*70}")
+    print(f" Tests sur la base : {db_uri.split('/')[-1]}")
+    print(f"{'='*70}\n")
+    
     with flask_app.app_context():
         db.create_all()
         yield flask_app
