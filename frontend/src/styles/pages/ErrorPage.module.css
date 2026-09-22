@@ -1,0 +1,109 @@
+/* ==========================================================
+   ERROR PAGES - SuiviTerrain
+   ========================================================== */
+
+.errorContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  padding: 1rem;
+}
+
+.errorCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.brandSuivi {
+  color: #8B0000;
+}
+
+.brandTerrain {
+  color: #C9A84C;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  color: #8B0000;
+  margin-bottom: 1rem;
+}
+
+.errorCode {
+  font-size: 5rem;
+  font-weight: 800;
+  color: #8B0000;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.errorTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.errorMessage {
+  color: #6c757d;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btnHome {
+  background-color: #8B0000;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btnHome:hover {
+  background-color: #6a0000;
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .errorCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .errorCode {
+    font-size: 4rem;
+  }
+
+  .errorIcon {
+    font-size: 3rem;
+  }
+
+  .errorTitle {
+    font-size: 1.25rem;
+  }
+
+  .errorMessage {
+    font-size: 0.85rem;
+  }
+}

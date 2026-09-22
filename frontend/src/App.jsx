@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { NotificationsProvider } from './contexts/NotificationsContext';  // ← VÉRIFIER
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Layout from './components/layout/Layout';
 import LoginPage from './pages/LoginPage';
@@ -17,43 +18,48 @@ import RapportsPage from './pages/RapportsPage';
 import ParametresPage from './pages/ParametresPage';
 import VisiteDetailPage from './pages/VisiteDetailPage';
 import NouvelleVisitePage from './pages/NouvelleVisitePage';
+import NotificationsPage from './pages/NotificationsPage';  // ← VÉRIFIER
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
     <ToastProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Routes publiques */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            
-            {/* Routes protégées */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<DashboardPage />} />
-              <Route path="points" element={<PointsPage />} />
-              <Route path="visites" element={<VisitesPage />} />
-              <Route path="carte" element={<CartePage />} />
-              <Route path="utilisateurs" element={<UtilisateursPage />} />
-              <Route path="profil" element={<ProfilPage />} />
-              <Route path="historique" element={<HistoriquePage />} />
-              <Route path="planning" element={<PlanningPage />} />
-              <Route path="rapports" element={<RapportsPage />} />
-              <Route path="parametres" element={<ParametresPage />} />
-              <Route path="visites/nouvelle" element={<NouvelleVisitePage />} />
-              <Route path="visites/:id" element={<VisiteDetailPage />} />
-            </Route>
-            
-            {/* Redirection 404 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
+        <NotificationsProvider>        {/* ← AJOUT OBLIGATOIRE */}
+          <BrowserRouter>
+            <Routes>
+              {/* Routes publiques */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              
+              {/* Routes protégées */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<DashboardPage />} />
+                <Route path="points" element={<PointsPage />} />
+                <Route path="visites" element={<VisitesPage />} />
+                <Route path="visites/nouvelle" element={<NouvelleVisitePage />} />
+                <Route path="visites/:id" element={<VisiteDetailPage />} />
+                <Route path="carte" element={<CartePage />} />
+                <Route path="utilisateurs" element={<UtilisateursPage />} />
+                <Route path="profil" element={<ProfilPage />} />
+                <Route path="historique" element={<HistoriquePage />} />
+                <Route path="planning" element={<PlanningPage />} />
+                <Route path="rapports" element={<RapportsPage />} />
+                <Route path="parametres" element={<ParametresPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+              </Route>
+              
+              {/* Redirection 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </BrowserRouter>
+        </NotificationsProvider>       {/* ← FERMETURE OBLIGATOIRE */}
       </AuthProvider>
     </ToastProvider>
   );

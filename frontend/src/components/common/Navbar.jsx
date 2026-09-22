@@ -3,11 +3,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import apiClient from '../../api/client';
 import styles from '../../styles/components/Navbar.module.css';
+import { useNotifications } from '../../contexts/NotificationsContext';
+
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
 
   // ==========================================================
   // ÉTATS
@@ -259,7 +262,9 @@ const Navbar = () => {
             onClick={() => navigate('/notifications')}
           >
             <i className="bi bi-bell" aria-hidden="true"></i>
-            {/* Pas de compteur tant que le système de notifications n'est pas en place */}
+            {unreadCount > 0 && (
+                <span className={styles.badgeNotif}>{unreadCount}</span>
+            )}
           </button>
 
           {/* Dropdown profil */}

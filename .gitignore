@@ -30,6 +30,8 @@ build/
 .env.local
 .env.production
 *.env
+.env.*
+!.env.example
 
 # ================================
 # EDITEURS DE CODE
