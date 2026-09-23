@@ -27,6 +27,15 @@ if database_url.startswith('postgres://'):
 # Vérification : la variable doit être définie
 if not os.environ.get('DATABASE_URL'):
     print("ATTENTION : DATABASE_URL n'est pas définie dans les variables d'environnement")
+# Log de diagnostic (à retirer après résolution)
+print(f"DIAGNOSTIC - Variables d'environnement disponibles :")
+for key in sorted(os.environ.keys()):
+    if 'DATABASE' in key or 'SECRET' in key or 'JWT' in key or 'FRONTEND' in key:
+        value = os.environ[key]
+        # Masquer les secrets
+        if 'SECRET' in key or 'JWT' in key or 'DATABASE' in key:
+            value = value[:20] + '...' if len(value) > 20 else value
+        print(f"  {key} = {value}")
 
 import requests
 from flask import Flask, jsonify, redirect, render_template, request, url_for
