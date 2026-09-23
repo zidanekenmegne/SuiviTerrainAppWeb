@@ -29,7 +29,9 @@ const LoginForm = () => {
       
       if (result.success) {
         showToast('Connexion réussie ! Bienvenue ' + result.user.nom);
-        navigate('/');
+        setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
       } else {
         showToast(result.message || 'Erreur de connexion', 'error');
       }

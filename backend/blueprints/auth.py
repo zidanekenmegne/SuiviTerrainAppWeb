@@ -7,9 +7,8 @@ import re
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# ==========================================================
+
 # FONCTIONS DE VALIDATION
-# ==========================================================
 
 def valider_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -21,9 +20,7 @@ def valider_mot_de_passe(mdp):
 def valider_nom(nom):
     return nom and len(nom.strip()) >= 2
 
-# ==========================================================
 # ROUTES D'AUTHENTIFICATION
-# ==========================================================
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

@@ -14,67 +14,78 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(null);
 
-  // Vérifier l'authentification au chargement
+  // ==========================================================
+  // INITIALISATION : restaurer la session au chargement
+  // ==========================================================
   useEffect(() => {
-    const initAuth = async () => {
+    const initAuth = () => {
       const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
-      
+
       if (storedToken && storedUser) {
         try {
+          const parsedUser = JSON.parse(storedUser);
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          setUser(parsedUser);
           apiClient.defaults.headers.Authorization = `Bearer ${storedToken}`;
         } catch (error) {
-          console.error('Erreur lors de la restauration de la session:', error);
-          logout();
+          console.error('Erreur restauration session:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
       }
+
       setLoading(false);
     };
 
     initAuth();
   }, []);
 
-  // Fonction de connexion
-    const login = async (email, password) => {
+  // ==========================================================
+  // CONNEXION
+  // ==========================================================
+  const login = async (email, password) => {
     try {
-        const response = await apiClient.post('/auth/login', { email, mdp: password });
-        console.log('Réponse API login:', response.data); // ← Pour déboguer
-        
-        // Vérifier si la réponse a le format attendu
-        if (!response.data || !response.data.data) {
-        throw new Error('Format de réponse API invalide');
-        }
-        
-        const { token, user } = response.data.data;
-        
-        if (!token || !user) {
-        throw new Error('Token ou utilisateur manquant');
-        }
-        
-        // Sauvegarder dans localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        // Mettre à jour les états
-        setToken(token);
-        setUser(user);
-        apiClient.defaults.headers.Authorization = `Bearer ${token}`;
-        
-        return { success: true, user };
-    } catch (error) {
-        console.error('Erreur de connexion détaillée:', error.response?.data || error.message);
-        return { 
-        success: false, 
-        message: error.response?.data?.message || 'Erreur lors de la connexion' 
-        };
-    }
-    };
+      const response = await apiClient.post('/auth/login', {
+        email,
+        mdp: password
+      });
 
-  // Fonction de déconnexion
+      if (!response.data || !response.data.data) {
+        throw new Error('Format de réponse API invalide');
+      }
+
+      const { token: newToken, user: newUser } = response.data.data;
+
+      if (!newToken || !newUser) {
+        throw new Error('Token ou utilisateur manquant');
+      }
+
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(newUser));
+
+      setToken(newToken);
+      setUser(newUser);
+      apiClient.defaults.headers.Authorization = `Bearer ${newToken}`;
+
+      console.log('✅ Connexion réussie :', newUser.nom);
+
+      return { success: true, user: newUser };
+
+    } catch (error) {
+      console.error('❌ Erreur de connexion:', error.response?.data || error.message);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Erreur lors de la connexion'
+      };
+    }
+  };
+
+  // ==========================================================
+  // DÉCONNEXION
+  // ==========================================================
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -83,21 +94,26 @@ export const AuthProvider = ({ children }) => {
     delete apiClient.defaults.headers.Authorization;
   };
 
-  // Fonction d'inscription
+  // ==========================================================
+  // INSCRIPTION
+  // ==========================================================
   const register = async (userData) => {
     try {
       const response = await apiClient.post('/auth/register', userData);
       return { success: true, data: response.data };
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Erreur lors de l\'inscription' 
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Erreur lors de l\'inscription'
       };
     }
   };
 
-  const isAuthenticated = !!user && !!token;
+  // ==========================================================
+  // ÉTAT D'AUTHENTIFICATION
+  // ==========================================================
+  const isAuthenticated = Boolean(user && token);
 
   const value = {
     user,

@@ -1,46 +1,69 @@
-from flask import Flask, render_template, redirect, url_for, jsonify, request
-from flask_login import LoginManager, login_required, current_user
-from flask_jwt_extended import JWTManager
+"""
+Application SuiviTerrain
+Point d'entrée principal — Flask + PostgreSQL
+
+Ce module initialise :
+    - L'application Flask
+    - La base de données PostgreSQL
+    - L'authentification (JWT + Flask-Login)
+    - Les blueprints (API REST + routes HTML)
+    - La journalisation applicative
+    - La gestion des erreurs
+"""
+
+import logging
+import os
+from datetime import datetime
+from logging.handlers import RotatingFileHandler
+
+import requests
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_login import LoginManager, current_user, login_required
+
 from config import Config
-from models import db, Utilisateur, PointDeVente, Visite, Categorie
-from datetime import datetime
-import requests
-import logging
-from logging.handlers import RotatingFileHandler
-import os
+from models import Categorie, PointDeVente, Utilisateur, Visite, db
 
-# Import des blueprints
-from blueprints.auth import auth_bp
-from blueprints.points import points_bp
-from blueprints.visites import visites_bp
-from blueprints.categories import categories_bp
-from blueprints.utilisateurs import utilisateurs_bp
+# Blueprints
 from blueprints.api import api_bp, limiter
+from blueprints.auth import auth_bp
+from blueprints.categories import categories_bp
+from blueprints.points import points_bp
+from blueprints.utilisateurs import utilisateurs_bp
+from blueprints.visites import visites_bp
 
+
+# ==========================================================
+# INITIALISATION DE L'APPLICATION
+# ==========================================================
 
 app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
-CORS(app)  # Permet toutes les origines (pour développement)
 
 
 # ==========================================================
-# CONFIGURATION DE LA JOURNALISATION
+# JOURNALISATION
 # ==========================================================
-def configure_logging(app):
-    """Configure les logs applicatifs"""
-    # Créer le dossier logs s'il n'existe pas
-    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+
+def configure_logging(application):
+    """
+    Configure la journalisation applicative avec rotation de fichiers.
+    - Fichier : logs/suiviterrain.log
+    - Rotation : 5 Mo max, 5 backups conservés
+    """
+    log_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'logs'
+    )
     os.makedirs(log_dir, exist_ok=True)
-    
-    # Format des logs
+
     formatter = logging.Formatter(
         '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     )
-    
-    # Handler pour fichier (rotation : 5 Mo max, 5 backups)
+
     file_handler = RotatingFileHandler(
         os.path.join(log_dir, 'suiviterrain.log'),
         maxBytes=5 * 1024 * 1024,
@@ -49,33 +72,32 @@ def configure_logging(app):
     )
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
-    
-    # Handler pour la console
+
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     console_handler.setLevel(logging.INFO)
-    
-    # Configurer le logger de l'application
-    app.logger.addHandler(file_handler)
-    app.logger.addHandler(console_handler)
-    app.logger.setLevel(logging.INFO)
-    
-    # Log de démarrage
-    app.logger.info('SuiviTerrain démarré')
+
+    application.logger.addHandler(file_handler)
+    application.logger.addHandler(console_handler)
+    application.logger.setLevel(logging.INFO)
+
+    application.logger.info('SuiviTerrain démarré')
 
 
 configure_logging(app)
 
 
 # ==========================================================
-# INITIALISATION DE LA BASE DE DONNÉES
+# BASE DE DONNÉES
 # ==========================================================
+
 db.init_app(app)
 
 
 # ==========================================================
-# FLASK-LOGIN (configuration)
+# AUTHENTIFICATION — FLASK-LOGIN (pages HTML)
 # ==========================================================
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
@@ -89,28 +111,59 @@ def load_user(user_id):
 
 
 # ==========================================================
-# JWT (JSON Web Token)
+# AUTHENTIFICATION — JWT (API REST)
 # ==========================================================
+
 jwt = JWTManager(app)
 
 
 # ==========================================================
-# CORS (Cross-Origin Resource Sharing)
+# CORS — Sécurisé
 # ==========================================================
-CORS(app, origins=['http://localhost:3000', 'http://localhost:5173', 'https://votre-domaine.com'])
+# Seules les origines explicitement autorisées peuvent appeler l'API.
+# En développement : localhost (Vite).
+# En production : ajouter le domaine réel (ex. suiviterrain.vercel.app).
+
+ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+]
+
+# En production, la variable d'environnement FRONTEND_URL doit être définie.
+production_origin = os.environ.get('FRONTEND_URL')
+if production_origin:
+    ALLOWED_ORIGINS.append(production_origin)
+
+CORS(
+    app,
+    origins=ALLOWED_ORIGINS,
+    supports_credentials=True,
+    allow_headers=['Content-Type', 'Authorization'],
+    methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+)
 
 
 # ==========================================================
-# RATE LIMITING (Limitation des requêtes)
+# RATE LIMITING
 # ==========================================================
+
 limiter.init_app(app)
 
 
 # ==========================================================
 # FONCTIONS UTILITAIRES
 # ==========================================================
+
 def geocoder_adresse(adresse):
-    """Convertit une adresse en latitude/longitude via Nominatim (OpenStreetMap)"""
+    """
+    Convertit une adresse en coordonnées GPS via Nominatim (OpenStreetMap).
+
+    Args:
+        adresse (str): Adresse à géocoder.
+
+    Returns:
+        dict | None: {'latitude': float, 'longitude': float} ou None si échec.
+    """
     try:
         url = "https://nominatim.openstreetmap.org/search"
         params = {
@@ -119,11 +172,10 @@ def geocoder_adresse(adresse):
             "limit": 1,
             "accept-language": "fr"
         }
-        headers = {
-            "User-Agent": "SuiviTerrainApp/1.0"
-        }
+        headers = {"User-Agent": "SuiviTerrainApp/1.0"}
+
         response = requests.get(url, params=params, headers=headers, timeout=5)
-        
+
         if response.status_code == 200:
             data = response.json()
             if data:
@@ -132,35 +184,41 @@ def geocoder_adresse(adresse):
                     "longitude": float(data[0]["lon"])
                 }
         return None
-    except:
+    except Exception as exc:
+        app.logger.warning(f"Géocodage échoué pour « {adresse} » : {exc}")
         return None
 
 
 # ==========================================================
-# ROUTES PRINCIPALES
+# ROUTES HTML (templates Jinja2)
 # ==========================================================
 
 @app.route('/')
 def index():
+    """Redirige vers le tableau de bord."""
     return redirect(url_for('tableau_bord'))
 
 
 @app.route('/tableau-bord')
 @login_required
 def tableau_bord():
-    # Données statistiques
+    """Page HTML du tableau de bord (ancienne interface Jinja2)."""
     total_visites = Visite.query.count()
     total_realisees = Visite.query.filter_by(statut='realisee').count()
     total_encours = Visite.query.filter_by(statut='encours').count()
     total_attente = Visite.query.filter_by(statut='attente').count()
-    
-    # Dernières visites
-    visites_recentes = Visite.query.order_by(Visite.date_creation.desc()).limit(5).all()
-    
-    # Date actuelle
+
+    visites_recentes = (
+        Visite.query
+        .order_by(Visite.date_creation.desc())
+        .limit(5)
+        .all()
+    )
+
     date_actuelle = datetime.now().strftime('%d %B %Y')
-    
-    return render_template('tableau-bord.html',
+
+    return render_template(
+        'tableau-bord.html',
         total_visites=total_visites,
         total_realisees=total_realisees,
         total_encours=total_encours,
@@ -173,11 +231,13 @@ def tableau_bord():
 @app.route('/check-auth')
 @login_required
 def check_auth():
+    """Vérifie l'état d'authentification (debug)."""
     return f"Connecté en tant que : {current_user.nom_user}"
 
 
 @app.route('/session-check')
 def session_check():
+    """Retourne l'état de la session courante (debug)."""
     from flask import session
     return {
         'session': dict(session),
@@ -189,20 +249,23 @@ def session_check():
 @app.route('/carte')
 @login_required
 def carte():
+    """Page HTML de la carte (ancienne interface Jinja2)."""
     categories = Categorie.query.order_by(Categorie.nom_cat).all()
-    
-    # Récupérer les zones uniques des utilisateurs
-    zones = db.session.query(Utilisateur.zone_intervention)\
-        .filter(Utilisateur.zone_intervention.isnot(None))\
-        .distinct()\
-        .order_by(Utilisateur.zone_intervention)\
+
+    zones_query = (
+        db.session.query(Utilisateur.zone_intervention)
+        .filter(Utilisateur.zone_intervention.isnot(None))
+        .distinct()
+        .order_by(Utilisateur.zone_intervention)
         .all()
-    zones = [z[0] for z in zones if z[0]]
-    
+    )
+    zones = [z[0] for z in zones_query if z[0]]
+
     today = datetime.now().date().isoformat()
-    
-    return render_template('carte.html', 
-        categories=categories, 
+
+    return render_template(
+        'carte.html',
+        categories=categories,
         zones=zones,
         today=today
     )
@@ -214,18 +277,39 @@ def carte():
 
 @app.errorhandler(404)
 def not_found(error):
-    """Gestion des 404 : API JSON ou page HTML selon la route"""
+    """Gestion des 404 : réponse JSON pour /api, page HTML sinon."""
     if request.path.startswith('/api/'):
-        return jsonify({'status': 'error', 'message': 'Ressource non trouvée', 'code': 404}), 404
+        return jsonify({
+            'status': 'error',
+            'message': 'Ressource non trouvée',
+            'code': 404
+        }), 404
     return render_template('errors/404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
-    """Gestion des 500 : API JSON ou page HTML selon la route"""
+    """
+    Gestion des 500 : en production, ne jamais exposer la trace d'erreur.
+    Un identifiant de corrélation est généré et loggé côté serveur.
+    """
+    import uuid
+
     db.session.rollback()
+    error_id = uuid.uuid4().hex[:8]
+    app.logger.error(f"[{error_id}] Erreur interne : {error}")
+
+    if app.config.get('DEBUG'):
+        message = f'Erreur : {str(error)}'
+    else:
+        message = f'Erreur interne du serveur (référence : {error_id})'
+
     if request.path.startswith('/api/'):
-        return jsonify({'status': 'error', 'message': 'Erreur interne du serveur', 'code': 500}), 500
+        return jsonify({
+            'status': 'error',
+            'message': message,
+            'code': 500
+        }), 500
     return render_template('errors/500.html'), 500
 
 
@@ -238,7 +322,7 @@ app.register_blueprint(points_bp)
 app.register_blueprint(visites_bp)
 app.register_blueprint(categories_bp)
 app.register_blueprint(utilisateurs_bp)
-app.register_blueprint(api_bp)  # ← API REST
+app.register_blueprint(api_bp)
 
 
 # ==========================================================
@@ -248,6 +332,6 @@ app.register_blueprint(api_bp)  # ← API REST
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Créer le dossier uploads s'il n'existe pas
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
     app.run(debug=True, host='0.0.0.0', port=5000)

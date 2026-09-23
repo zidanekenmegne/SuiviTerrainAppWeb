@@ -60,7 +60,7 @@ def runner(app):
 def init_db(app):
     """Initialise la base avec des données de test"""
     with app.app_context():
-        # ✅ Rollback de sécurité
+        #  Rollback de sécurité
         db.session.rollback()
         
         # ==========================================================
