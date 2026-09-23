@@ -16,6 +16,18 @@ import os
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
+# ==========================================================
+# CONVERSION DE L'URL POSTGRESQL (AVANT tout import de Config)
+# ==========================================================
+# Render fournit postgres:// mais SQLAlchemy attend postgresql://
+database_url = os.environ.get('DATABASE_URL', '')
+if database_url.startswith('postgres://'):
+    os.environ['DATABASE_URL'] = database_url.replace('postgres://', 'postgresql://', 1)
+
+# Vérification : la variable doit être définie
+if not os.environ.get('DATABASE_URL'):
+    print("ATTENTION : DATABASE_URL n'est pas définie dans les variables d'environnement")
+
 import requests
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS
@@ -24,6 +36,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_login import LoginManager, current_user, login_required
 
+# Import de Config APRÈS la conversion
 from config import Config
 from models import Categorie, PointDeVente, Utilisateur, Visite, db
 
