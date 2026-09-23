@@ -178,7 +178,7 @@ const Navbar = () => {
         {/* ===== BRAND + LIENS ===== */}
         <div className={styles.navbarBrandWrapper}>
           <Link to="/" className={styles.navbarBrand}>
-            <img src="/favicon.svg" alt="SuiviTerrain" width="28" height="28" />
+            <img src="/favicon.png" alt="SuiviTerrain" width="28" height="28" />
             <span>Suivi</span><span className={styles.brandGold}>Terrain</span>
           </Link>
 
