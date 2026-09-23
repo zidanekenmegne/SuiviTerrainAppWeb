@@ -10,14 +10,14 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+
     UPLOAD_FOLDER = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         'static/uploads'
     )
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    
+
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
@@ -28,13 +28,8 @@ class Config:
 class TestConfig(Config):
     """Configuration pour les tests pytest — base de test uniquement"""
     TESTING = True
-    
-    # Base de données de test (OBLIGATOIREMENT différente de la prod)
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
-    
-    # Secrets DÉDIÉS aux tests (jamais les mêmes qu'en prod)
     SECRET_KEY = 'test-secret-key-for-pytest-only'
     JWT_SECRET_KEY = 'test-jwt-secret-key-for-pytest-only-32chars'
-    
     WTF_CSRF_ENABLED = False
     RATELIMIT_ENABLED = False
