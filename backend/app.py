@@ -334,30 +334,38 @@ def internal_error(error):
         }), 500
     return render_template('errors/500.html'), 500
 
-@app.route('/api/v1/admin/init-db')
+@app.route('/api/v1/admin/init-db', methods=['GET'])
 def init_db_route():
-    from flask import request
-    token = request.args.get('token')
-    if token != os.environ.get('SECRET_KEY'):
+    from flask import request, jsonify
+    from werkzeug.security import generate_password_hash
+    
+    # Sécurité : mot de passe en dur (temporaire)
+    if request.args.get('pwd') != 'InitSuivi2026!':
         return jsonify({'error': 'unauthorized'}), 401
     
-    with app.app_context():
-        db.create_all()
-        
-        # Créer l'admin si absent
-        from werkzeug.security import generate_password_hash
-        if Utilisateur.query.filter_by(mail='admin@suiviterrain.com').first() is None:
-            admin = Utilisateur(
-                nom_user='Admin',
-                mail='admin@suiviterrain.com',
-                mdp=generate_password_hash('admin123'),
-                role='admin',
-                actif=True
-            )
-            db.session.add(admin)
-            db.session.commit()
-            return jsonify({'status': 'admin créé'})
-        return jsonify({'status': 'admin existe déjà'})
+    try:
+        with app.app_context():
+            # Créer les tables si absentes
+            db.create_all()
+            
+            # Créer l'admin si absent
+            admin = Utilisateur.query.filter_by(mail='admin@suiviterrain.com').first()
+            if admin is None:
+                admin = Utilisateur(
+                    nom_user='Admin',
+                    mail='admin@suiviterrain.com',
+                    mdp=generate_password_hash('admin123'),
+                    role='admin',
+                    actif=True
+                )
+                db.session.add(admin)
+                db.session.commit()
+                return jsonify({'status': 'success', 'message': 'Admin créé'})
+            
+            return jsonify({'status': 'success', 'message': 'Admin existe déjà'})
+    
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 # ==========================================================
 # ENREGISTREMENT DES BLUEPRINTS
 # ==========================================================
