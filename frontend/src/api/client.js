@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuration de base de l'API
 const api = axios.create({
-  baseURL: '/api/v1',  // Le proxy Vite redirige vers Flask
+  baseURL: import.meta.env.VITE_API_URL || '/api/v1',  // Le proxy Vite redirige vers Flask
   headers: {
     'Content-Type': 'application/json',
   },
