@@ -22,7 +22,11 @@ from logging.handlers import RotatingFileHandler
 # Render fournit postgres:// mais SQLAlchemy attend postgresql://
 database_url = os.environ.get('DATABASE_URL', '')
 if database_url.startswith('postgres://'):
-    os.environ['DATABASE_URL'] = database_url.replace('postgres://', 'postgresql://', 1)
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+# Force le driver psycopg2 (v2) — SQLAlchemy 2.0 tente psycopg (v3) par défaut
+if database_url.startswith('postgresql://'):
+    database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
+os.environ['DATABASE_URL'] = database_url
 
 # Vérification : la variable doit être définie
 if not os.environ.get('DATABASE_URL'):
