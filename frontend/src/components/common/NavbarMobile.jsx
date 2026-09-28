@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useNotifications } from '../../contexts/NotificationsContext';
 import styles from '../../styles/components/NavbarMobile.module.css';
 
 /**
@@ -9,7 +10,8 @@ import styles from '../../styles/components/NavbarMobile.module.css';
 const NavbarMobile = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const notifCount = 3;
+  const { unreadCount } = useNotifications();
+  const notifCount = unreadCount; 
 
   const menuLinks = [
     { to: '/', label: 'Accueil', icon: 'bi bi-house-door' },
