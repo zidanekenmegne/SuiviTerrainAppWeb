@@ -115,6 +115,41 @@ def validate_phone(telephone):
     return bool(TELEPHONE_REGEX.match(telephone.replace(' ', '')))
 
 
+def geocoder_adresse(adresse):
+    """
+    Convertit une adresse en coordonnées GPS via Nominatim (OpenStreetMap).
+    Retourne (latitude, longitude) ou (None, None) si échec.
+    """
+    import requests
+    try:
+        adresse_geo = adresse
+        if 'cameroun' not in adresse.lower():
+            adresse_geo = f"{adresse}, Cameroun"
+
+        response = requests.get(
+            "https://nominatim.openstreetmap.org/search",
+            params={
+                "q": adresse_geo,
+                "format": "json",
+                "limit": 1,
+                "accept-language": "fr"
+            },
+            headers={"User-Agent": "SuiviTerrainApp/1.0"},
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                return float(data[0]["lat"]), float(data[0]["lon"])
+
+        return None, None
+
+    except Exception as exc:
+        current_app.logger.warning(f"Géocodage échoué pour « {adresse} » : {exc}")
+        return None, None
+
+
 # ==========================================================
 # ROUTE DE TEST
 # ==========================================================
@@ -158,9 +193,7 @@ def api_login():
         user = Utilisateur.query.filter_by(mail=email).first()
 
         if not user:
-            current_app.logger.warning(
-                f"Login échoué - email inconnu : {email}"
-            )
+            current_app.logger.warning(f"Login échoué - email inconnu : {email}")
             return api_response(
                 message='Email ou mot de passe incorrect',
                 status='error',
@@ -196,9 +229,7 @@ def api_login():
         user.derniere_connexion_user = datetime.now()
         db.session.commit()
 
-        current_app.logger.info(
-            f"Login réussi : {user.mail} (ID {user.id_user})"
-        )
+        current_app.logger.info(f"Login réussi : {user.mail} (ID {user.id_user})")
 
         access_token = create_access_token(
             identity=str(user.id_user),
@@ -341,6 +372,7 @@ def api_get_categories():
         'nombre_points': len(c.points)
     } for c in categories])
 
+
 @api_bp.route('/categories', methods=['POST'])
 @jwt_required()
 @limiter.limit("30 per minute")
@@ -399,6 +431,7 @@ def api_create_categorie():
             status='error',
             code=500
         )
+
 
 # ==========================================================
 # 3. POINTS DE VENTE
@@ -505,6 +538,20 @@ def api_create_point():
                 code=400
             )
 
+        # Géocodage automatique si pas de coordonnées fournies
+        if not latitude or not longitude:
+            lat_geo, lon_geo = geocoder_adresse(adresse)
+            if lat_geo is not None and lon_geo is not None:
+                latitude = lat_geo
+                longitude = lon_geo
+                current_app.logger.info(
+                    f"Géocodage réussi pour '{adresse}' : {latitude}, {longitude}"
+                )
+            else:
+                current_app.logger.warning(
+                    f"Géocodage échoué pour '{adresse}' — point créé sans coordonnées"
+                )
+
         if id_cat is not None:
             try:
                 id_cat = int(id_cat)
@@ -518,8 +565,8 @@ def api_create_point():
         point = PointDeVente(
             nom_pt=nom,
             adresse=adresse,
-            latitude=latitude,
-            longitude=longitude,
+            latitude=latitude if latitude else None,
+            longitude=longitude if longitude else None,
             telephone=telephone,
             id_cat=id_cat,
             date_creation_pt=datetime.now()
@@ -673,7 +720,6 @@ def api_get_visites():
 
         query = Visite.query
 
-        # Filtre par rôle : un agent ne voit que ses visites
         if user.role != 'admin':
             query = query.join(realiser).filter(realiser.c.id_user == user.id_user)
 
@@ -752,11 +798,7 @@ def api_get_visites():
 @jwt_required()
 @cross_origin()
 def api_get_visite(id):
-    """
-    Détail d'une visite.
-    - Admin : accès à toutes les visites.
-    - Agent : accès uniquement aux visites qui lui sont assignées.
-    """
+    """Détail d'une visite."""
     try:
         user = get_current_user()
         if not user:
@@ -764,7 +806,6 @@ def api_get_visite(id):
 
         visite = Visite.query.get_or_404(id)
 
-        # Contrôle du propriétaire pour les agents
         if user.role != 'admin':
             is_assigned = any(a.id_user == user.id_user for a in visite.agents)
             if not is_assigned:
@@ -912,7 +953,6 @@ def api_update_visite(id):
 
         visite = Visite.query.get_or_404(id)
 
-        # Contrôle du propriétaire
         if user.role != 'admin':
             is_assigned = any(a.id_user == user.id_user for a in visite.agents)
             if not is_assigned:
@@ -1697,7 +1737,6 @@ def api_upload_photo():
                 code=400
             )
 
-        # Vérification du type MIME réel
         try:
             from PIL import Image
             img = Image.open(file.stream)
