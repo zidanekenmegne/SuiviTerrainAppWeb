@@ -341,6 +341,64 @@ def api_get_categories():
         'nombre_points': len(c.points)
     } for c in categories])
 
+@api_bp.route('/categories', methods=['POST'])
+@jwt_required()
+@limiter.limit("30 per minute")
+@cross_origin()
+def api_create_categorie():
+    """Crée une catégorie (admin uniquement)."""
+    try:
+        user = get_current_user()
+        if not user or user.role != 'admin':
+            return api_response(
+                message='Accès administrateur requis',
+                status='error',
+                code=403
+            )
+
+        data = request.get_json() or {}
+        nom = (data.get('nom') or '').strip()
+        couleur = (data.get('couleur') or '#000000').strip()
+
+        if not nom:
+            return api_response(
+                message='Le nom de la catégorie est obligatoire',
+                status='error',
+                code=400
+            )
+
+        existing = Categorie.query.filter_by(nom_cat=nom).first()
+        if existing:
+            return api_response(
+                message='Cette catégorie existe déjà',
+                status='error',
+                code=409
+            )
+
+        categorie = Categorie(nom_cat=nom, couleur=couleur)
+        db.session.add(categorie)
+        db.session.commit()
+
+        current_app.logger.info(f"Catégorie créée : {nom} (ID {categorie.id_cat})")
+
+        return api_response(
+            data={
+                'id': categorie.id_cat,
+                'nom': categorie.nom_cat,
+                'couleur': categorie.couleur
+            },
+            message='Catégorie créée avec succès',
+            code=201
+        )
+
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur création catégorie : {exc}")
+        return api_response(
+            message='Erreur lors de la création de la catégorie',
+            status='error',
+            code=500
+        )
 
 # ==========================================================
 # 3. POINTS DE VENTE
