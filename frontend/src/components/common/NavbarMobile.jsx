@@ -6,12 +6,14 @@ import styles from '../../styles/components/NavbarMobile.module.css';
 /**
  * Bandeau haut mobile + Menu hamburger
  * - Affiché uniquement sur les écrans < 768px
+ * - Badge notifications désactivé (sera réactivé en v2)
  */
 const NavbarMobile = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  // unreadCount est gardé pour la v2 (badge désactivé)
+  // eslint-disable-next-line no-unused-vars
   const { unreadCount } = useNotifications();
-  const notifCount = unreadCount; 
 
   const menuLinks = [
     { to: '/', label: 'Accueil', icon: 'bi bi-house-door' },
@@ -43,7 +45,7 @@ const NavbarMobile = () => {
   return (
     <header className={styles.topHeaderMobile}>
       <div className={styles.headerRow}>
-        
+
         {/* Hamburger */}
         <button
           className={styles.menuHamburger}
@@ -58,17 +60,14 @@ const NavbarMobile = () => {
           <span className={styles.pageTitle}>{getPageTitle()}</span>
         </div>
 
-        {/* Notifications */}
+        {/* Notifications — badge désactivé */}
         <div className={styles.headerRight}>
-          <button 
+          <button
             className={styles.notificationBtn}
             aria-label="Notifications"
             onClick={() => window.location.href = '/notifications'}
           >
             <i className="bi bi-bell" aria-hidden="true"></i>
-            {notifCount > 0 && (
-              <span className={styles.badgeNotif}>{notifCount}</span>
-            )}
           </button>
         </div>
 

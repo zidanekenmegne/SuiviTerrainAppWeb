@@ -1965,6 +1965,50 @@ def api_delete_notification(id):
             code=500
         )
 
+@api_bp.route('/categories/<int:id>', methods=['DELETE'])
+@jwt_required()
+@limiter.limit("10 per minute")
+@cross_origin()
+def api_delete_categorie(id):
+    """Supprime une catégorie (admin uniquement)."""
+    try:
+        user = get_current_user()
+        if not user or user.role != 'admin':
+            return api_response(
+                message='Accès administrateur requis',
+                status='error',
+                code=403
+            )
+
+        categorie = Categorie.query.get_or_404(id)
+
+        if len(categorie.points) > 0:
+            return api_response(
+                message=f'Impossible de supprimer : {len(categorie.points)} point(s) associé(s)',
+                status='error',
+                code=400
+            )
+
+        db.session.delete(categorie)
+        db.session.commit()
+
+        current_app.logger.info(f"Catégorie supprimée : ID {id}")
+
+        return api_response(message='Catégorie supprimée avec succès')
+
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur suppression catégorie : {exc}")
+        return api_response(
+            message='Erreur lors de la suppression de la catégorie',
+            status='error',
+            code=500
+        )
+
+@api_bp.route('/categories/<int:id>', methods=['DELETE'])
+@jwt_required()
+@limiter.limit("10 per minute")
+@cross_origin()
 
 # ==========================================================
 # HELPER : Créer une notification
