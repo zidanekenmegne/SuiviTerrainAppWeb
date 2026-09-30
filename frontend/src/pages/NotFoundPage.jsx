@@ -20,7 +20,7 @@ const NotFoundPage = () => {
         <div className={styles.errorCode}>404</div>
         <h1 className={styles.errorTitle}>Page introuvable</h1>
         <p className={styles.errorMessage}>
-          Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+          Désolé, cette page n'a pas encore implémentée.
         </p>
 
         <Link to="/" className={styles.btnHome}>
