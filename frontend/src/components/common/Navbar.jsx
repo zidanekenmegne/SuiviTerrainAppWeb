@@ -262,9 +262,9 @@ const Navbar = () => {
             onClick={() => navigate('/notifications')}
           >
             <i className="bi bi-bell" aria-hidden="true"></i>
-            {unreadCount > 0 && (
+            {/* {unreadCount > 0 && (
                 <span className={styles.badgeNotif}>{unreadCount}</span>
-            )}
+            )} */}
           </button>
 
           {/* Dropdown profil */}

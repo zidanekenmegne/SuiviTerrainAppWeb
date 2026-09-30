@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../api/client';
+import { useToast } from '../../contexts/ToastContext';
 import styles from '../../styles/pages/PointsPage.module.css';
 
-const CategoriesList = ({ onOpenEdit, onAddCategory }) => {
+const CategoriesList = ({ onOpenEdit, onAddCategory, onDeleted }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchCategories();
@@ -22,6 +27,28 @@ const CategoriesList = ({ onOpenEdit, onAddCategory }) => {
       console.error('Erreur API:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (cat) => {
+    setCategoryToDelete(cat);
+    setShowConfirmDelete(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!categoryToDelete) return;
+    try {
+      setDeleting(true);
+      await apiClient.delete(`/categories/${categoryToDelete.id}`);
+      showToast(`Catégorie "${categoryToDelete.nom}" supprimée`);
+      setShowConfirmDelete(false);
+      setCategoryToDelete(null);
+      fetchCategories();
+      if (onDeleted) onDeleted();
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Erreur lors de la suppression', 'error');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -70,7 +97,7 @@ const CategoriesList = ({ onOpenEdit, onAddCategory }) => {
               <th>Nom</th>
               <th>Couleur</th>
               <th>Nombre de points</th>
-              <th style={{ textAlign: 'center' }}>Action</th>
+              <th style={{ textAlign: 'center' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -92,12 +119,26 @@ const CategoriesList = ({ onOpenEdit, onAddCategory }) => {
                     ></span>
                   </td>
                   <td>{cat.nombre_points || 0}</td>
-                  <td style={{ textAlign: 'center' }}>
+                  <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                     <button
                       className={styles.btnDetail}
                       onClick={() => onOpenEdit(cat)}
+                      style={{ marginRight: '0.5rem' }}
+                      title="Modifier"
                     >
-                      Modifier
+                      <i className="bi bi-pencil" aria-hidden="true"></i> Modifier
+                    </button>
+                    <button
+                      className={styles.btnDetail}
+                      onClick={() => handleDeleteClick(cat)}
+                      style={{
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        border: 'none'
+                      }}
+                      title="Supprimer"
+                    >
+                      <i className="bi bi-trash" aria-hidden="true"></i> Supprimer
                     </button>
                   </td>
                 </tr>
@@ -106,9 +147,64 @@ const CategoriesList = ({ onOpenEdit, onAddCategory }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Modale de confirmation de suppression */}
+      {showConfirmDelete && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999
+          }}
+          onClick={() => !deleting && setShowConfirmDelete(false)}
+        >
+          <div
+            style={{
+              background: 'white',
+              padding: '1.5rem',
+              borderRadius: '12px',
+              maxWidth: '400px',
+              width: '90%'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h5 style={{ color: '#8B0000', marginBottom: '1rem' }}>
+              <i className="bi bi-exclamation-triangle"></i> Confirmation
+            </h5>
+            <p>
+              Voulez-vous vraiment supprimer la catégorie <strong>{categoryToDelete?.nom}</strong> ?
+            </p>
+            {categoryToDelete?.nombre_points > 0 && (
+              <p style={{ color: '#dc3545', fontSize: '0.9rem' }}>
+                ⚠️ Cette catégorie contient {categoryToDelete.nombre_points} point(s) de vente.
+                La suppression sera refusée.
+              </p>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setShowConfirmDelete(false)}
+                disabled={deleting}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+              >
+                {deleting ? 'Suppression...' : 'Supprimer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-// ✅ EXPORT PAR DÉFAUT (correction)
 export default CategoriesList;
