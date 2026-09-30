@@ -115,39 +115,132 @@ def validate_phone(telephone):
     return bool(TELEPHONE_REGEX.match(telephone.replace(' ', '')))
 
 
-def geocoder_adresse(adresse):
-    """
-    Convertit une adresse en coordonnées GPS via Nominatim (OpenStreetMap).
-    Retourne (latitude, longitude) ou (None, None) si échec.
-    """
+# ==========================================================
+# GÉOCODAGE ROBUSTE (Nominatim + fallbacks)
+# ==========================================================
+
+# Villes du Cameroun avec coordonnées par défaut (fallback)
+VILLES_CAMEROUN = {
+    'douala': (4.0511, 9.7679),
+    'yaoundé': (3.8480, 11.5021),
+    'yaounde': (3.8480, 11.5021),
+    'bafoussam': (5.4781, 10.4175),
+    'garoua': (9.3017, 13.3921),
+    'kribi': (2.9391, 9.9098),
+    'bamenda': (5.9597, 10.1459),
+    'maroua': (10.5956, 14.3247),
+    'ngaoundéré': (7.3167, 13.5833),
+    'ngaoundere': (7.3167, 13.5833),
+    'bertoua': (4.5772, 13.6846),
+    'ebolowa': (2.9086, 11.1544),
+    'limbe': (4.0228, 9.2136),
+    'buea': (4.1527, 9.2410),
+    'edea': (3.8000, 10.1333),
+    'dschang': (5.4455, 10.0527),
+    'foumban': (5.7266, 10.8986),
+    'kousseri': (12.0769, 15.0306),
+    'bafang': (5.1572, 10.1806),
+    'mbouda': (5.6262, 10.2536),
+    'nkongsamba': (4.9547, 9.9404),
+    'sangmelima': (2.9333, 11.9833),
+}
+
+
+def _detect_city_from_address(adresse):
+    """Détecte une ville connue du Cameroun dans l'adresse."""
+    if not adresse:
+        return None, None
+    adresse_lower = adresse.lower()
+    for ville, coords in VILLES_CAMEROUN.items():
+        if ville in adresse_lower:
+            return ville, coords
+    return None, None
+
+
+def _nominatim_search(query, timeout=6):
+    """Requête à Nominatim. Retourne (lat, lon) ou (None, None)."""
     import requests
     try:
-        adresse_geo = adresse
-        if 'cameroun' not in adresse.lower():
-            adresse_geo = f"{adresse}, Cameroun"
-
         response = requests.get(
             "https://nominatim.openstreetmap.org/search",
             params={
-                "q": adresse_geo,
+                "q": query,
                 "format": "json",
                 "limit": 1,
-                "accept-language": "fr"
+                "accept-language": "fr",
+                "addressdetails": 1,
             },
             headers={"User-Agent": "SuiviTerrainApp/1.0"},
-            timeout=5
+            timeout=timeout
         )
-
         if response.status_code == 200:
             data = response.json()
             if data:
                 return float(data[0]["lat"]), float(data[0]["lon"])
-
-        return None, None
-
     except Exception as exc:
-        current_app.logger.warning(f"Géocodage échoué pour « {adresse} » : {exc}")
+        current_app.logger.debug(f"Nominatim échec pour '{query}' : {exc}")
+    return None, None
+
+
+def _simplify_address(adresse):
+    """Simplifie une adresse (retire les numéros, garde 3 parties max)."""
+    if not adresse:
+        return adresse
+    simplified = re.sub(r'\b\d+\b', '', adresse)
+    parts = [p.strip() for p in simplified.split(',') if p.strip()]
+    parts = parts[:3]
+    return ', '.join(parts) if parts else adresse
+
+
+def geocoder_adresse(adresse):
+    """
+    Géocodage robuste en cascade :
+    1. Nominatim avec l'adresse complète (+ Cameroun)
+    2. Nominatim avec l'adresse simplifiée
+    3. Nominatim avec juste la ville détectée
+    4. Coordonnées par défaut de la ville (fallback local)
+
+    Returns:
+        (lat, lon) ou (None, None)
+    """
+    if not adresse or not adresse.strip():
         return None, None
+
+    adresse = adresse.strip()
+    ville_detectee, ville_coords = _detect_city_from_address(adresse)
+
+    # Stratégie 1 : adresse complète + Cameroun
+    query1 = adresse if 'cameroun' in adresse.lower() else f"{adresse}, Cameroun"
+    lat, lon = _nominatim_search(query1)
+    if lat and lon:
+        current_app.logger.info(f"Géocodage [1] OK : '{adresse}' → {lat}, {lon}")
+        return lat, lon
+
+    # Stratégie 2 : adresse simplifiée
+    adresse_simple = _simplify_address(adresse)
+    if adresse_simple and adresse_simple != adresse:
+        query2 = adresse_simple if 'cameroun' in adresse_simple.lower() else f"{adresse_simple}, Cameroun"
+        lat, lon = _nominatim_search(query2)
+        if lat and lon:
+            current_app.logger.info(f"Géocodage [2] OK : '{adresse}' → {lat}, {lon}")
+            return lat, lon
+
+    # Stratégie 3 : juste la ville
+    if ville_detectee:
+        query3 = f"{ville_detectee}, Cameroun"
+        lat, lon = _nominatim_search(query3)
+        if lat and lon:
+            current_app.logger.info(f"Géocodage [3] OK : '{adresse}' → {lat}, {lon}")
+            return lat, lon
+
+    # Stratégie 4 : fallback local
+    if ville_coords:
+        lat, lon = ville_coords
+        current_app.logger.warning(f"Géocodage [4-fallback] : '{adresse}' → {lat}, {lon}")
+        return lat, lon
+
+    current_app.logger.warning(f"Géocodage impossible pour '{adresse}'")
+    return None, None
 
 
 # ==========================================================
@@ -161,9 +254,7 @@ def api_test():
     return jsonify({
         'status': 'success',
         'message': 'API SuiviTerrain fonctionne',
-        'data': {
-            'version': '1.0'
-        }
+        'data': {'version': '1.0'}
     })
 
 
@@ -181,43 +272,23 @@ def api_login():
         mdp = data.get('mdp') or ''
 
         if not email or not mdp:
-            current_app.logger.warning(
-                f"Tentative de login incomplète depuis {request.remote_addr}"
-            )
-            return api_response(
-                message='Email et mot de passe requis',
-                status='error',
-                code=400
-            )
+            current_app.logger.warning(f"Login incomplet depuis {request.remote_addr}")
+            return api_response(message='Email et mot de passe requis', status='error', code=400)
 
         user = Utilisateur.query.filter_by(mail=email).first()
 
         if not user:
             current_app.logger.warning(f"Login échoué - email inconnu : {email}")
-            return api_response(
-                message='Email ou mot de passe incorrect',
-                status='error',
-                code=401
-            )
+            return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
 
         from werkzeug.security import check_password_hash
         if not check_password_hash(user.mdp, mdp):
-            current_app.logger.warning(
-                f"Login échoué - mot de passe invalide pour : {email}"
-            )
-            return api_response(
-                message='Email ou mot de passe incorrect',
-                status='error',
-                code=401
-            )
+            current_app.logger.warning(f"Login échoué - mdp invalide : {email}")
+            return api_response(message='Email ou mot de passe incorrect', status='error', code=401)
 
         if not user.actif:
             current_app.logger.warning(f"Login refusé - compte désactivé : {email}")
-            return api_response(
-                message='Compte désactivé',
-                status='error',
-                code=403
-            )
+            return api_response(message='Compte désactivé', status='error', code=403)
 
         journal = JournalConnexion(
             id_user=user.id_user,
@@ -252,11 +323,7 @@ def api_login():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur login : {exc}")
-        return api_response(
-            message='Erreur lors de la connexion',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la connexion', status='error', code=500)
 
 
 @api_bp.route('/auth/register', methods=['POST'])
@@ -272,45 +339,27 @@ def api_register():
         role = data.get('role', 'agent')
 
         if not nom or not email or not password:
-            return api_response(
-                message='Nom, email et mot de passe sont obligatoires',
-                status='error',
-                code=400
-            )
+            return api_response(message='Nom, email et mot de passe sont obligatoires', status='error', code=400)
 
         if not validate_email(email):
-            return api_response(
-                message='Format d\'email invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Format d\'email invalide', status='error', code=400)
 
         is_valid, pwd_message = validate_password(password)
         if not is_valid:
             return api_response(message=pwd_message, status='error', code=400)
 
         if role not in ROLES_VALIDES:
-            return api_response(
-                message='Rôle invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Rôle invalide', status='error', code=400)
 
         existing_user = Utilisateur.query.filter_by(mail=email).first()
         if existing_user:
-            return api_response(
-                message='Un compte avec cet email existe déjà',
-                status='error',
-                code=409
-            )
+            return api_response(message='Un compte avec cet email existe déjà', status='error', code=409)
 
         from werkzeug.security import generate_password_hash
-        hashed_password = generate_password_hash(password)
-
         new_user = Utilisateur(
             nom_user=nom,
             mail=email,
-            mdp=hashed_password,
+            mdp=generate_password_hash(password),
             role=role,
             actif=True,
             date_creation_user=datetime.now()
@@ -322,14 +371,8 @@ def api_register():
         current_app.logger.info(f"Nouvel utilisateur inscrit : {email} (rôle : {role})")
 
         return api_response(
-            data={
-                'user': {
-                    'id': new_user.id_user,
-                    'nom': new_user.nom_user,
-                    'email': new_user.mail,
-                    'role': new_user.role
-                }
-            },
+            data={'user': {'id': new_user.id_user, 'nom': new_user.nom_user,
+                           'email': new_user.mail, 'role': new_user.role}},
             message='Compte créé avec succès',
             code=201
         )
@@ -337,11 +380,7 @@ def api_register():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur inscription : {exc}")
-        return api_response(
-            message='Erreur lors de la création du compte',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la création du compte', status='error', code=500)
 
 
 @api_bp.route('/auth/refresh', methods=['POST'])
@@ -382,30 +421,18 @@ def api_create_categorie():
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         data = request.get_json() or {}
         nom = (data.get('nom') or '').strip()
         couleur = (data.get('couleur') or '#000000').strip()
 
         if not nom:
-            return api_response(
-                message='Le nom de la catégorie est obligatoire',
-                status='error',
-                code=400
-            )
+            return api_response(message='Le nom de la catégorie est obligatoire', status='error', code=400)
 
         existing = Categorie.query.filter_by(nom_cat=nom).first()
         if existing:
-            return api_response(
-                message='Cette catégorie existe déjà',
-                status='error',
-                code=409
-            )
+            return api_response(message='Cette catégorie existe déjà', status='error', code=409)
 
         categorie = Categorie(nom_cat=nom, couleur=couleur)
         db.session.add(categorie)
@@ -414,11 +441,7 @@ def api_create_categorie():
         current_app.logger.info(f"Catégorie créée : {nom} (ID {categorie.id_cat})")
 
         return api_response(
-            data={
-                'id': categorie.id_cat,
-                'nom': categorie.nom_cat,
-                'couleur': categorie.couleur
-            },
+            data={'id': categorie.id_cat, 'nom': categorie.nom_cat, 'couleur': categorie.couleur},
             message='Catégorie créée avec succès',
             code=201
         )
@@ -426,11 +449,39 @@ def api_create_categorie():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur création catégorie : {exc}")
-        return api_response(
-            message='Erreur lors de la création de la catégorie',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la création de la catégorie', status='error', code=500)
+
+
+@api_bp.route('/categories/<int:id>', methods=['DELETE'])
+@jwt_required()
+@limiter.limit("10 per minute")
+@cross_origin()
+def api_delete_categorie(id):
+    """Supprime une catégorie (admin uniquement)."""
+    try:
+        user = get_current_user()
+        if not user or user.role != 'admin':
+            return api_response(message='Accès administrateur requis', status='error', code=403)
+
+        categorie = Categorie.query.get_or_404(id)
+
+        if len(categorie.points) > 0:
+            return api_response(
+                message=f'Impossible de supprimer : {len(categorie.points)} point(s) associé(s)',
+                status='error',
+                code=400
+            )
+
+        db.session.delete(categorie)
+        db.session.commit()
+
+        current_app.logger.info(f"Catégorie supprimée : ID {id}")
+        return api_response(message='Catégorie supprimée avec succès')
+
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur suppression catégorie : {exc}")
+        return api_response(message='Erreur lors de la suppression de la catégorie', status='error', code=500)
 
 
 # ==========================================================
@@ -476,9 +527,7 @@ def api_get_points():
             'date_creation': p.date_creation_pt.isoformat() if p.date_creation_pt else None
         } for p in points],
         'pagination': {
-            'page': page,
-            'limit': limit,
-            'total': total,
+            'page': page, 'limit': limit, 'total': total,
             'pages': (total + limit - 1) // limit
         }
     })
@@ -525,18 +574,10 @@ def api_create_point():
         id_cat = data.get('categorie_id')
 
         if not nom or not adresse:
-            return api_response(
-                message='Nom et adresse sont obligatoires',
-                status='error',
-                code=400
-            )
+            return api_response(message='Nom et adresse sont obligatoires', status='error', code=400)
 
         if not validate_phone(telephone):
-            return api_response(
-                message='Format de téléphone invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Format de téléphone invalide', status='error', code=400)
 
         # Géocodage automatique si pas de coordonnées fournies
         if not latitude or not longitude:
@@ -544,23 +585,15 @@ def api_create_point():
             if lat_geo is not None and lon_geo is not None:
                 latitude = lat_geo
                 longitude = lon_geo
-                current_app.logger.info(
-                    f"Géocodage réussi pour '{adresse}' : {latitude}, {longitude}"
-                )
+                current_app.logger.info(f"Géocodage réussi pour '{adresse}' : {latitude}, {longitude}")
             else:
-                current_app.logger.warning(
-                    f"Géocodage échoué pour '{adresse}' — point créé sans coordonnées"
-                )
+                current_app.logger.warning(f"Géocodage échoué pour '{adresse}'")
 
         if id_cat is not None:
             try:
                 id_cat = int(id_cat)
             except (ValueError, TypeError):
-                return api_response(
-                    message='Identifiant de catégorie invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Identifiant de catégorie invalide', status='error', code=400)
 
         point = PointDeVente(
             nom_pt=nom,
@@ -575,24 +608,14 @@ def api_create_point():
         db.session.add(point)
         db.session.commit()
 
-        current_app.logger.info(
-            f"Point de vente créé : ID {point.id_pt} par user {user.id_user}"
-        )
+        current_app.logger.info(f"Point de vente créé : ID {point.id_pt} par user {user.id_user}")
 
-        return api_response(
-            data={'id': point.id_pt},
-            message='Point de vente créé',
-            code=201
-        )
+        return api_response(data={'id': point.id_pt}, message='Point de vente créé', code=201)
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur création point de vente : {exc}")
-        return api_response(
-            message='Erreur lors de la création du point de vente',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la création du point de vente', status='error', code=500)
 
 
 @api_bp.route('/points/<int:id>', methods=['PUT'])
@@ -608,7 +631,14 @@ def api_update_point(id):
         if 'nom' in data and data['nom']:
             point.nom_pt = data['nom'].strip()
         if 'adresse' in data and data['adresse']:
-            point.adresse = data['adresse'].strip()
+            new_adresse = data['adresse'].strip()
+            if new_adresse != point.adresse:
+                point.adresse = new_adresse
+                lat_geo, lon_geo = geocoder_adresse(new_adresse)
+                if lat_geo and lon_geo:
+                    point.latitude = lat_geo
+                    point.longitude = lon_geo
+                    current_app.logger.info(f"Re-géocodage : '{new_adresse}' → {lat_geo}, {lon_geo}")
         if 'latitude' in data:
             point.latitude = data['latitude']
         if 'longitude' in data:
@@ -616,37 +646,24 @@ def api_update_point(id):
         if 'telephone' in data:
             telephone = (data['telephone'] or '').strip() or None
             if not validate_phone(telephone):
-                return api_response(
-                    message='Format de téléphone invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Format de téléphone invalide', status='error', code=400)
             point.telephone = telephone
         if 'categorie_id' in data and data['categorie_id']:
             try:
                 point.id_cat = int(data['categorie_id'])
             except (ValueError, TypeError):
-                return api_response(
-                    message='Identifiant de catégorie invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Identifiant de catégorie invalide', status='error', code=400)
 
         point.date_modif = datetime.now()
         db.session.commit()
 
         current_app.logger.info(f"Point de vente modifié : ID {point.id_pt}")
-
         return api_response(message='Point de vente modifié')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur modification point de vente : {exc}")
-        return api_response(
-            message='Erreur lors de la modification',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la modification', status='error', code=500)
 
 
 @api_bp.route('/points/<int:id>', methods=['DELETE'])
@@ -657,13 +674,8 @@ def api_delete_point(id):
     """Supprime un point de vente (admin uniquement)."""
     try:
         user = get_current_user()
-
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         point = PointDeVente.query.get_or_404(id)
 
@@ -677,20 +689,13 @@ def api_delete_point(id):
         db.session.delete(point)
         db.session.commit()
 
-        current_app.logger.info(
-            f"Point de vente supprimé : ID {id} par user {user.id_user}"
-        )
-
+        current_app.logger.info(f"Point de vente supprimé : ID {id} par user {user.id_user}")
         return api_response(message='Point de vente supprimé')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur suppression point de vente : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la suppression', status='error', code=500)
 
 
 # ==========================================================
@@ -701,11 +706,7 @@ def api_delete_point(id):
 @jwt_required()
 @cross_origin()
 def api_get_visites():
-    """
-    Liste des visites.
-    - Admin : voit toutes les visites.
-    - Agent : ne voit que ses visites assignées.
-    """
+    """Liste des visites (admin : toutes ; agent : les siennes)."""
     try:
         user = get_current_user()
         if not user:
@@ -725,11 +726,7 @@ def api_get_visites():
 
         if statut:
             if statut not in STATUTS_VISITE_VALIDES:
-                return api_response(
-                    message='Statut invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Statut invalide', status='error', code=400)
             query = query.filter_by(statut=statut)
 
         if date_filter:
@@ -771,27 +768,17 @@ def api_get_visites():
                     'nom': v.point.nom_pt,
                     'adresse': v.point.adresse
                 } if v.point else None,
-                'agents': [{
-                    'id': a.id_user,
-                    'nom': a.nom_user,
-                    'email': a.mail
-                } for a in v.agents]
+                'agents': [{'id': a.id_user, 'nom': a.nom_user, 'email': a.mail} for a in v.agents]
             } for v in visites],
             'pagination': {
-                'page': page,
-                'limit': limit,
-                'total': total,
+                'page': page, 'limit': limit, 'total': total,
                 'pages': (total + limit - 1) // limit
             }
         })
 
     except Exception as exc:
         current_app.logger.error(f"Erreur liste visites : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des visites',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des visites', status='error', code=500)
 
 
 @api_bp.route('/visites/<int:id>', methods=['GET'])
@@ -809,14 +796,8 @@ def api_get_visite(id):
         if user.role != 'admin':
             is_assigned = any(a.id_user == user.id_user for a in visite.agents)
             if not is_assigned:
-                current_app.logger.warning(
-                    f"Accès refusé : user {user.id_user} → visite {id}"
-                )
-                return api_response(
-                    message='Accès non autorisé à cette visite',
-                    status='error',
-                    code=403
-                )
+                current_app.logger.warning(f"Accès refusé : user {user.id_user} → visite {id}")
+                return api_response(message='Accès non autorisé à cette visite', status='error', code=403)
 
         return api_response(data={
             'id': visite.id_visite,
@@ -831,20 +812,12 @@ def api_get_visite(id):
                 'nom': visite.point.nom_pt,
                 'adresse': visite.point.adresse
             } if visite.point else None,
-            'agents': [{
-                'id': a.id_user,
-                'nom': a.nom_user,
-                'email': a.mail
-            } for a in visite.agents]
+            'agents': [{'id': a.id_user, 'nom': a.nom_user, 'email': a.mail} for a in visite.agents]
         })
 
     except Exception as exc:
         current_app.logger.error(f"Erreur détail visite : {exc}")
-        return api_response(
-            message='Erreur lors du chargement de la visite',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement de la visite', status='error', code=500)
 
 
 @api_bp.route('/visites', methods=['POST'])
@@ -874,11 +847,7 @@ def api_create_visite():
             )
 
         if statut not in STATUTS_VISITE_VALIDES:
-            return api_response(
-                message='Statut invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Statut invalide', status='error', code=400)
 
         heure_str = heure_prevue
         if len(heure_str) == 5:
@@ -933,11 +902,7 @@ def api_create_visite():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur création visite : {exc}")
-        return api_response(
-            message='Erreur lors de la création de la visite',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la création de la visite', status='error', code=500)
 
 
 @api_bp.route('/visites/<int:id>', methods=['PUT'])
@@ -956,11 +921,7 @@ def api_update_visite(id):
         if user.role != 'admin':
             is_assigned = any(a.id_user == user.id_user for a in visite.agents)
             if not is_assigned:
-                return api_response(
-                    message='Accès non autorisé à cette visite',
-                    status='error',
-                    code=403
-                )
+                return api_response(message='Accès non autorisé à cette visite', status='error', code=403)
 
         data = request.get_json()
 
@@ -975,11 +936,7 @@ def api_update_visite(id):
 
         if 'statut' in data:
             if data['statut'] not in STATUTS_VISITE_VALIDES:
-                return api_response(
-                    message='Statut invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Statut invalide', status='error', code=400)
             visite.statut = data['statut']
 
         if 'compte_rendu' in data:
@@ -1012,17 +969,12 @@ def api_update_visite(id):
             db.session.commit()
 
         current_app.logger.info(f"Visite modifiée : ID {visite.id_visite}")
-
         return api_response(message='Visite modifiée avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur modification visite : {exc}")
-        return api_response(
-            message='Erreur lors de la modification de la visite',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la modification de la visite', status='error', code=500)
 
 
 @api_bp.route('/visites/<int:id>', methods=['DELETE'])
@@ -1052,17 +1004,12 @@ def api_delete_visite(id):
         db.session.commit()
 
         current_app.logger.info(f"Visite supprimée : ID {id} par user {user.id_user}")
-
         return api_response(message='Visite supprimée avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur suppression visite : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression de la visite',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la suppression de la visite', status='error', code=500)
 
 
 # ==========================================================
@@ -1074,27 +1021,19 @@ def api_delete_visite(id):
 @cross_origin()
 def api_get_stats():
     """Statistiques globales (authentifié)."""
-    total_visites = Visite.query.count()
-    total_realisees = Visite.query.filter_by(statut='realisee').count()
-    total_attente = Visite.query.filter_by(statut='attente').count()
-    total_retard = Visite.query.filter_by(statut='retard').count()
-    total_encours = Visite.query.filter_by(statut='encours').count()
-
-    points_par_categorie = [{
-        'categorie': cat.nom_cat,
-        'couleur': cat.couleur,
-        'nombre': len(cat.points)
-    } for cat in Categorie.query.all()]
-
     return api_response(data={
         'visites': {
-            'total': total_visites,
-            'realisees': total_realisees,
-            'en_attente': total_attente,
-            'en_retard': total_retard,
-            'en_cours': total_encours
+            'total': Visite.query.count(),
+            'realisees': Visite.query.filter_by(statut='realisee').count(),
+            'en_attente': Visite.query.filter_by(statut='attente').count(),
+            'en_retard': Visite.query.filter_by(statut='retard').count(),
+            'en_cours': Visite.query.filter_by(statut='encours').count()
         },
-        'points_par_categorie': points_par_categorie
+        'points_par_categorie': [{
+            'categorie': cat.nom_cat,
+            'couleur': cat.couleur,
+            'nombre': len(cat.points)
+        } for cat in Categorie.query.all()]
     })
 
 
@@ -1135,11 +1074,7 @@ def api_get_visites_jour():
 
     except Exception as exc:
         current_app.logger.error(f"Erreur visites du jour : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des visites du jour',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des visites du jour', status='error', code=500)
 
 
 @api_bp.route('/points/filter', methods=['GET'])
@@ -1193,11 +1128,7 @@ def api_get_utilisateurs():
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         utilisateurs = Utilisateur.query.order_by(Utilisateur.nom_user).all()
 
@@ -1214,11 +1145,7 @@ def api_get_utilisateurs():
 
     except Exception as exc:
         current_app.logger.error(f"Erreur liste utilisateurs : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des utilisateurs',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des utilisateurs', status='error', code=500)
 
 
 @api_bp.route('/utilisateurs/<int:id>', methods=['GET'])
@@ -1229,11 +1156,7 @@ def api_get_utilisateur(id):
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         utilisateur = Utilisateur.query.get_or_404(id)
 
@@ -1250,11 +1173,7 @@ def api_get_utilisateur(id):
 
     except Exception as exc:
         current_app.logger.error(f"Erreur détail utilisateur : {exc}")
-        return api_response(
-            message='Erreur lors du chargement de l\'utilisateur',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement de l\'utilisateur', status='error', code=500)
 
 
 @api_bp.route('/utilisateurs', methods=['POST'])
@@ -1266,11 +1185,7 @@ def api_create_utilisateur():
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         data = request.get_json()
 
@@ -1281,45 +1196,27 @@ def api_create_utilisateur():
         zone = (data.get('zone_intervention') or '').strip()
 
         if not nom or not email or not password:
-            return api_response(
-                message='Nom, email et mot de passe sont obligatoires',
-                status='error',
-                code=400
-            )
+            return api_response(message='Nom, email et mot de passe sont obligatoires', status='error', code=400)
 
         if not validate_email(email):
-            return api_response(
-                message='Format d\'email invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Format d\'email invalide', status='error', code=400)
 
         is_valid, pwd_message = validate_password(password)
         if not is_valid:
             return api_response(message=pwd_message, status='error', code=400)
 
         if role not in ROLES_VALIDES:
-            return api_response(
-                message='Rôle invalide',
-                status='error',
-                code=400
-            )
+            return api_response(message='Rôle invalide', status='error', code=400)
 
         existing = Utilisateur.query.filter_by(mail=email).first()
         if existing:
-            return api_response(
-                message='Un compte avec cet email existe déjà',
-                status='error',
-                code=409
-            )
+            return api_response(message='Un compte avec cet email existe déjà', status='error', code=409)
 
         from werkzeug.security import generate_password_hash
-        hashed_password = generate_password_hash(password)
-
         new_user = Utilisateur(
             nom_user=nom,
             mail=email,
-            mdp=hashed_password,
+            mdp=generate_password_hash(password),
             role=role,
             zone_intervention=zone if zone else None,
             actif=True,
@@ -1330,21 +1227,12 @@ def api_create_utilisateur():
         db.session.commit()
 
         current_app.logger.info(f"Utilisateur créé : {email} (rôle : {role})")
-
-        return api_response(
-            data={'id': new_user.id_user},
-            message='Utilisateur créé avec succès',
-            code=201
-        )
+        return api_response(data={'id': new_user.id_user}, message='Utilisateur créé avec succès', code=201)
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur création utilisateur : {exc}")
-        return api_response(
-            message='Erreur lors de la création de l\'utilisateur',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la création de l\'utilisateur', status='error', code=500)
 
 
 @api_bp.route('/utilisateurs/<int:id>', methods=['PUT'])
@@ -1356,11 +1244,7 @@ def api_update_utilisateur(id):
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         utilisateur = Utilisateur.query.get_or_404(id)
         data = request.get_json()
@@ -1371,30 +1255,18 @@ def api_update_utilisateur(id):
         if 'email' in data and data['email']:
             new_email = data['email'].strip()
             if not validate_email(new_email):
-                return api_response(
-                    message='Format d\'email invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Format d\'email invalide', status='error', code=400)
             existing = Utilisateur.query.filter(
                 Utilisateur.mail == new_email,
                 Utilisateur.id_user != id
             ).first()
             if existing:
-                return api_response(
-                    message='Cet email est déjà utilisé',
-                    status='error',
-                    code=409
-                )
+                return api_response(message='Cet email est déjà utilisé', status='error', code=409)
             utilisateur.mail = new_email
 
         if 'role' in data:
             if data['role'] not in ROLES_VALIDES:
-                return api_response(
-                    message='Rôle invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Rôle invalide', status='error', code=400)
             utilisateur.role = data['role']
 
         if 'zone_intervention' in data:
@@ -1407,17 +1279,12 @@ def api_update_utilisateur(id):
         db.session.commit()
 
         current_app.logger.info(f"Utilisateur modifié : ID {id}")
-
         return api_response(message='Utilisateur modifié avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur modification utilisateur : {exc}")
-        return api_response(
-            message='Erreur lors de la modification de l\'utilisateur',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la modification de l\'utilisateur', status='error', code=500)
 
 
 @api_bp.route('/utilisateurs/<int:id>', methods=['DELETE'])
@@ -1429,18 +1296,10 @@ def api_delete_utilisateur(id):
     try:
         user = get_current_user()
         if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
+            return api_response(message='Accès administrateur requis', status='error', code=403)
 
         if id == user.id_user:
-            return api_response(
-                message='Vous ne pouvez pas supprimer votre propre compte',
-                status='error',
-                code=400
-            )
+            return api_response(message='Vous ne pouvez pas supprimer votre propre compte', status='error', code=400)
 
         utilisateur = Utilisateur.query.get_or_404(id)
 
@@ -1455,17 +1314,12 @@ def api_delete_utilisateur(id):
         db.session.commit()
 
         current_app.logger.info(f"Utilisateur supprimé : ID {id} par user {user.id_user}")
-
         return api_response(message='Utilisateur supprimé avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur suppression utilisateur : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression de l\'utilisateur',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la suppression de l\'utilisateur', status='error', code=500)
 
 
 @api_bp.route('/utilisateurs/agents', methods=['GET'])
@@ -1486,11 +1340,7 @@ def api_get_agents():
 
     except Exception as exc:
         current_app.logger.error(f"Erreur liste agents : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des agents',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des agents', status='error', code=500)
 
 
 # ==========================================================
@@ -1521,11 +1371,7 @@ def api_get_me():
 
     except Exception as exc:
         current_app.logger.error(f"Erreur get_me : {exc}")
-        return api_response(
-            message='Erreur lors du chargement du profil',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement du profil', status='error', code=500)
 
 
 @api_bp.route('/auth/me', methods=['PUT'])
@@ -1547,21 +1393,13 @@ def api_update_me():
         if 'email' in data and data['email'].strip():
             new_email = data['email'].strip()
             if not validate_email(new_email):
-                return api_response(
-                    message='Format d\'email invalide',
-                    status='error',
-                    code=400
-                )
+                return api_response(message='Format d\'email invalide', status='error', code=400)
             existing = Utilisateur.query.filter(
                 Utilisateur.mail == new_email,
                 Utilisateur.id_user != user.id_user
             ).first()
             if existing:
-                return api_response(
-                    message='Cet email est déjà utilisé',
-                    status='error',
-                    code=409
-                )
+                return api_response(message='Cet email est déjà utilisé', status='error', code=409)
             user.mail = new_email
 
         if 'zone_intervention' in data:
@@ -1571,26 +1409,16 @@ def api_update_me():
         db.session.commit()
 
         return api_response(
-            data={
-                'id': user.id_user,
-                'nom': user.nom_user,
-                'email': user.mail,
-                'role': user.role,
-                'zone_intervention': user.zone_intervention,
-                'photo': user.photo,
-                'actif': user.actif
-            },
+            data={'id': user.id_user, 'nom': user.nom_user, 'email': user.mail,
+                  'role': user.role, 'zone_intervention': user.zone_intervention,
+                  'photo': user.photo, 'actif': user.actif},
             message='Profil mis à jour avec succès'
         )
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur update_me : {exc}")
-        return api_response(
-            message='Erreur lors de la mise à jour du profil',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la mise à jour du profil', status='error', code=500)
 
 
 @api_bp.route('/auth/password', methods=['PUT'])
@@ -1609,40 +1437,26 @@ def api_change_password():
         new_password = data.get('new_password', '')
 
         if not current_password or not new_password:
-            return api_response(
-                message='Tous les champs sont obligatoires',
-                status='error',
-                code=400
-            )
+            return api_response(message='Tous les champs sont obligatoires', status='error', code=400)
 
         is_valid, pwd_message = validate_password(new_password)
         if not is_valid:
             return api_response(message=pwd_message, status='error', code=400)
 
         from werkzeug.security import check_password_hash, generate_password_hash
-
         if not check_password_hash(user.mdp, current_password):
-            return api_response(
-                message='Mot de passe actuel incorrect',
-                status='error',
-                code=400
-            )
+            return api_response(message='Mot de passe actuel incorrect', status='error', code=400)
 
         user.mdp = generate_password_hash(new_password)
         db.session.commit()
 
         current_app.logger.info(f"Mot de passe modifié pour user {user.id_user}")
-
         return api_response(message='Mot de passe modifié avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur change_password : {exc}")
-        return api_response(
-            message='Erreur lors du changement de mot de passe',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du changement de mot de passe', status='error', code=500)
 
 
 @api_bp.route('/stats/user', methods=['GET'])
@@ -1669,21 +1483,15 @@ def api_get_user_stats():
             Visite.statut == 'attente'
         ).count()
 
-        points_total = PointDeVente.query.count()
-
         return api_response(data={
             'visites_realisees': visites_realisees,
             'visites_attente': visites_attente,
-            'points_vente': points_total
+            'points_vente': PointDeVente.query.count()
         })
 
     except Exception as exc:
         current_app.logger.error(f"Erreur user_stats : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des statistiques',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des statistiques', status='error', code=500)
 
 
 # ==========================================================
@@ -1720,22 +1528,15 @@ def api_upload_photo():
             return api_response(message='Nom de fichier vide', status='error', code=400)
 
         if not allowed_avatar_file(file.filename):
-            return api_response(
-                message='Format non autorisé. Utilisez PNG, JPG, JPEG, GIF ou WEBP',
-                status='error',
-                code=400
-            )
+            return api_response(message='Format non autorisé. Utilisez PNG, JPG, JPEG, GIF ou WEBP',
+                                status='error', code=400)
 
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
 
         if file_size > MAX_AVATAR_SIZE:
-            return api_response(
-                message='L\'image ne doit pas dépasser 5 Mo',
-                status='error',
-                code=400
-            )
+            return api_response(message='L\'image ne doit pas dépasser 5 Mo', status='error', code=400)
 
         try:
             from PIL import Image
@@ -1743,16 +1544,9 @@ def api_upload_photo():
             img.verify()
             file.stream.seek(0)
         except Exception:
-            return api_response(
-                message='Fichier image invalide ou corrompu',
-                status='error',
-                code=400
-            )
+            return api_response(message='Fichier image invalide ou corrompu', status='error', code=400)
 
-        upload_folder = os.path.join(
-            current_app.config['UPLOAD_FOLDER'],
-            'avatars'
-        )
+        upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'avatars')
         os.makedirs(upload_folder, exist_ok=True)
 
         ext = file.filename.rsplit('.', 1)[1].lower()
@@ -1777,20 +1571,12 @@ def api_upload_photo():
         db.session.commit()
 
         current_app.logger.info(f"Photo de profil mise à jour pour user {user.id_user}")
-
-        return api_response(
-            data={'photo': user.photo},
-            message='Photo mise à jour avec succès'
-        )
+        return api_response(data={'photo': user.photo}, message='Photo mise à jour avec succès')
 
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur upload photo : {exc}")
-        return api_response(
-            message='Erreur lors du téléversement de la photo',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du téléversement de la photo', status='error', code=500)
 
 
 @api_bp.route('/auth/photo', methods=['DELETE'])
@@ -1824,11 +1610,7 @@ def api_delete_photo():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur suppression photo : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression de la photo',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la suppression de la photo', status='error', code=500)
 
 
 # ==========================================================
@@ -1848,7 +1630,6 @@ def api_get_notifications():
         only_unread = request.args.get('unread', 'false').lower() == 'true'
 
         query = Notification.query.filter_by(id_user=user.id_user)
-
         if only_unread:
             query = query.filter_by(lu=False)
 
@@ -1870,11 +1651,7 @@ def api_get_notifications():
 
     except Exception as exc:
         current_app.logger.error(f"Erreur liste notifications : {exc}")
-        return api_response(
-            message='Erreur lors du chargement des notifications',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du chargement des notifications', status='error', code=500)
 
 
 @api_bp.route('/notifications/<int:id>/lu', methods=['PUT'])
@@ -1901,11 +1678,7 @@ def api_mark_notification_read(id):
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur marquage notification : {exc}")
-        return api_response(
-            message='Erreur lors du marquage de la notification',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du marquage de la notification', status='error', code=500)
 
 
 @api_bp.route('/notifications/tout-lu', methods=['PUT'])
@@ -1919,8 +1692,7 @@ def api_mark_all_notifications_read():
         if not user:
             return api_response(message='Utilisateur non trouvé', status='error', code=404)
 
-        Notification.query.filter_by(id_user=user.id_user, lu=False)\
-            .update({'lu': True})
+        Notification.query.filter_by(id_user=user.id_user, lu=False).update({'lu': True})
         db.session.commit()
 
         return api_response(message='Toutes les notifications sont lues')
@@ -1928,11 +1700,7 @@ def api_mark_all_notifications_read():
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur marquage notifications : {exc}")
-        return api_response(
-            message='Erreur lors du marquage des notifications',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors du marquage des notifications', status='error', code=500)
 
 
 @api_bp.route('/notifications/<int:id>', methods=['DELETE'])
@@ -1959,56 +1727,8 @@ def api_delete_notification(id):
     except Exception as exc:
         db.session.rollback()
         current_app.logger.error(f"Erreur suppression notification : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression de la notification',
-            status='error',
-            code=500
-        )
+        return api_response(message='Erreur lors de la suppression de la notification', status='error', code=500)
 
-@api_bp.route('/categories/<int:id>', methods=['DELETE'])
-@jwt_required()
-@limiter.limit("10 per minute")
-@cross_origin()
-def api_delete_categorie(id):
-    """Supprime une catégorie (admin uniquement)."""
-    try:
-        user = get_current_user()
-        if not user or user.role != 'admin':
-            return api_response(
-                message='Accès administrateur requis',
-                status='error',
-                code=403
-            )
-
-        categorie = Categorie.query.get_or_404(id)
-
-        if len(categorie.points) > 0:
-            return api_response(
-                message=f'Impossible de supprimer : {len(categorie.points)} point(s) associé(s)',
-                status='error',
-                code=400
-            )
-
-        db.session.delete(categorie)
-        db.session.commit()
-
-        current_app.logger.info(f"Catégorie supprimée : ID {id}")
-
-        return api_response(message='Catégorie supprimée avec succès')
-
-    except Exception as exc:
-        db.session.rollback()
-        current_app.logger.error(f"Erreur suppression catégorie : {exc}")
-        return api_response(
-            message='Erreur lors de la suppression de la catégorie',
-            status='error',
-            code=500
-        )
-
-@api_bp.route('/categories/<int:id>', methods=['DELETE'])
-@jwt_required()
-@limiter.limit("10 per minute")
-@cross_origin()
 
 # ==========================================================
 # HELPER : Créer une notification
@@ -2018,6 +1738,7 @@ def creer_notification(user_id, titre, message, type='info', lien=None):
     """
     Crée une notification pour un utilisateur.
     Ne commit pas : l'appelant est responsable du commit.
+    Ne retourne RIEN (évite le bug "view function did not return a valid response").
     """
     try:
         notif = Notification(
@@ -2030,7 +1751,6 @@ def creer_notification(user_id, titre, message, type='info', lien=None):
             date_creation=datetime.now()
         )
         db.session.add(notif)
-        return notif
     except Exception as exc:
         current_app.logger.error(f"Erreur création notification : {exc}")
-        return None
+    return None
